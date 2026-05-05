@@ -1,138 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>toolspace &mdash; agent install manifests</title>
-  <meta name="description" content="A registry of install manifests for autonomous agents. Built on the install-manifest-spec.">
+  <meta name="description" content="A registry of install manifests for autonomous agents. Built on the install-manifest-spec." />
+  <meta name="color-scheme" content="dark light" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="toolspace &mdash; agent install manifests" />
+  <meta property="og:description" content="A registry of install manifests for autonomous agents. Built on the install-manifest-spec." />
+  <meta property="og:url" content="https://toolspace.yepgent.com/" />
+  <meta property="og:type" content="website" />
+
+  <!-- Agent affordance: tell other agents we expose a structured registry. -->
+  <link rel="alternate" type="application/json" href="/manifests.json" title="toolspace manifest index" />
+
+  <!-- Shared yepgent theme. Mirrored byte-for-byte from yepgent.com/style.css
+       so a future sync script can detect drift. -->
+  <link rel="stylesheet" href="/style.css" />
+
   <style>
-    :root {
-      --fg: #1a1a1a;
-      --muted: #5c5c5c;
-      --bg: #fafaf7;
-      --surface: #ffffff;
-      --accent: #2d5a8a;
-      --accent-soft: #ecf1f7;
-      --code-bg: #f0eee8;
-      --border: #d8d4cc;
-      --pill-stable-fg: #1f5e3a;
-      --pill-stable-bg: #e6f1ea;
-      --pill-legacy-fg: #6b5410;
-      --pill-legacy-bg: #f3edd6;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --fg: #ececec;
-        --muted: #9c9c98;
-        --bg: #14140f;
-        --surface: #1c1c17;
-        --accent: #87aedb;
-        --accent-soft: #1d2734;
-        --code-bg: #21201a;
-        --border: #2f2d27;
-        --pill-stable-fg: #9ad9b2;
-        --pill-stable-bg: #1a2e22;
-        --pill-legacy-fg: #d6c485;
-        --pill-legacy-bg: #2c2716;
-      }
-    }
-    * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      color: var(--fg);
-      background: var(--bg);
-      line-height: 1.6;
-    }
-    main {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 4rem 1.5rem;
-    }
-    .hero {
+    /* Page-specific overrides for the toolspace landing surface. */
+
+    .hero-row {
       display: flex;
       align-items: center;
-      gap: 1.1rem;
-      margin-bottom: 0.4rem;
+      gap: 0.9rem;
+      margin: 1rem 0 0.4rem;
     }
-    .hero svg { flex-shrink: 0; color: var(--fg); }
-    h1 {
-      font-size: 2.25rem;
+    .hero-glyph {
+      width: 56px;
+      height: 56px;
+      flex: 0 0 auto;
+      color: var(--accent);
+    }
+    .hero h1 {
       margin: 0;
+      font-size: clamp(2rem, 5.5vw, 3rem);
       letter-spacing: -0.02em;
+      line-height: 1.12;
     }
-    .tag {
+    .hero h1 .dot { color: var(--accent); }
+    .hero p.lede { margin-top: 0.25rem; }
+
+    /* agent -> manifest -> tool flow illustration */
+    .flow {
+      display: block;
+      width: 100%;
+      max-width: 480px;
+      margin: 1.25rem 0;
       color: var(--muted);
-      font-size: 1.05rem;
-      margin: 0 0 2rem;
     }
-    h2 {
-      font-size: 1.25rem;
-      margin-top: 2.75rem;
-      margin-bottom: 0.75rem;
-      letter-spacing: -0.01em;
-      display: flex;
-      align-items: center;
-      gap: 0.55rem;
-    }
-    h2 svg { color: var(--muted); flex-shrink: 0; }
-    p, li { font-size: 1rem; }
-    ul { padding-left: 1.25rem; }
-    a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
-    a:hover { text-decoration-color: currentColor; }
-    code {
-      background: var(--code-bg);
-      padding: 0.1em 0.4em;
-      border-radius: 3px;
-      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-      font-size: 0.92em;
-    }
-    pre {
-      background: var(--code-bg);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 1rem;
-      overflow-x: auto;
-      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-      font-size: 0.88rem;
-      line-height: 1.5;
-    }
-    .surface {
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 1rem 1.25rem;
-      margin: 0.75rem 0;
-      background: var(--surface);
-    }
-    .surface h3 {
-      margin: 0 0 0.4rem;
-      font-size: 1.05rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.55rem;
-      flex-wrap: wrap;
-    }
-    .surface p { margin: 0.4rem 0 0; color: var(--muted); font-size: 0.95rem; }
-    .surface p + p { margin-top: 0.55rem; }
-    .pill {
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      padding: 0.18em 0.6em;
-      border-radius: 999px;
-      vertical-align: middle;
-    }
-    .pill.stable { color: var(--pill-stable-fg); background: var(--pill-stable-bg); }
-    .pill.legacy { color: var(--pill-legacy-fg); background: var(--pill-legacy-bg); }
+
+    /* Quickstart card: lifts the install command up top, lightly accented. */
     .quickstart {
-      background: var(--accent-soft);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1rem 1.25rem;
-      margin: 1.75rem 0 0.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--accent-edge);
+      border-radius: 10px;
+      padding: 1rem 1.1rem;
+      margin: 1.25rem 0 0.5rem;
     }
     .quickstart-label {
       margin: 0 0 0.55rem;
@@ -140,91 +67,139 @@
       font-weight: 600;
       letter-spacing: 0.06em;
       text-transform: uppercase;
+      color: var(--accent);
+    }
+    .quickstart pre { margin: 0; }
+
+    /* Section icon: small line glyph next to h2. */
+    h2 .glyph {
+      width: 18px;
+      height: 18px;
+      vertical-align: -3px;
+      margin-right: 0.45rem;
       color: var(--muted);
     }
-    .quickstart pre {
-      margin: 0;
-      background: var(--surface);
+
+    /* Manifest "surface" cards: same shape as yepgent's agent-grid items
+       but full-width; mint hover edge so they feel alive. */
+    .surface {
+      background: var(--card-bg);
+      border: 1px solid var(--card-edge);
+      border-radius: 10px;
+      padding: 1rem 1.15rem;
+      margin: 0.6rem 0;
+      transition: border-color 0.15s ease;
     }
-    .flow {
-      display: block;
-      width: 100%;
-      max-width: 480px;
-      margin: 1.5rem auto 0;
-      color: var(--muted);
+    .surface:hover { border-color: var(--accent-edge); }
+    .surface h3 {
+      margin: 0 0 0.4rem;
+      font-size: 1.05rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
     }
-    footer {
-      margin-top: 4rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border);
+    .surface p { margin: 0.4rem 0 0; color: var(--muted); font-size: 0.95rem; }
+    .surface p + p { margin-top: 0.55rem; }
+
+    /* Version pills: sit inline next to "Schema". */
+    .pill {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.2em 0.6em;
+      border-radius: 999px;
+      vertical-align: middle;
+      border: 1px solid var(--accent-edge);
+    }
+    .pill.stable { color: var(--accent); background: var(--accent-soft); }
+    .pill.legacy {
       color: var(--muted);
-      font-size: 0.9rem;
+      background: transparent;
+      border-color: var(--field-edge);
     }
   </style>
 </head>
 <body>
-  <main>
-    <div class="hero">
-      <!-- Hero glyph: a manifest document with a verification seal. -->
-      <svg width="56" height="56" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M12 5h22l10 10v36H12z"/>
-        <path d="M34 5v10h10"/>
-        <line x1="18" y1="22" x2="38" y2="22"/>
-        <line x1="18" y1="28" x2="38" y2="28"/>
-        <line x1="18" y1="34" x2="32" y2="34"/>
-        <circle cx="40" cy="42" r="9" style="fill: var(--bg)"/>
-        <circle cx="40" cy="42" r="9"/>
-        <path d="M36 42.5l3 3 6-6.5"/>
+  <header class="site-nav">
+    <a class="brand" href="/">
+      <svg class="brand-glyph" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 6h22l10 10v34H14z" stroke="var(--accent)"/>
+        <path d="M36 6v10h10" stroke="var(--accent)"/>
+        <circle cx="40" cy="42" r="9" fill="var(--bg)" stroke="var(--accent)"/>
+        <path d="M36 42.5l3 3 6-6.5" stroke="var(--accent)"/>
       </svg>
-      <h1>toolspace</h1>
-    </div>
-    <p class="tag">A registry of install manifests for autonomous agents.</p>
+      <span>toolspace<span class="dot">.</span></span>
+    </a>
+    <nav>
+      <a href="https://yepgent.com/">yepgent</a>
+      <a href="https://github.com/drknowhow/install-manifest-spec">spec</a>
+      <a href="https://github.com/drknowhow/toolspace-site">source</a>
+    </nav>
+  </header>
 
-    <p>
-      Toolspace hosts <a href="https://github.com/drknowhow/install-manifest-spec">install-manifest-spec</a>
-      manifests &mdash; signed JSON descriptions of what an agent needs to set up a tool: env vars, prompts,
-      verification, revocation. Agents can install from this registry, from raw GitHub URLs, or from any
-      mirror &mdash; <strong>the spec is the moat, not the registry</strong>.
-    </p>
+  <main>
+    <section class="hero">
+      <div class="hero-row">
+        <!-- Hero glyph: a manifest doc with a verification seal. -->
+        <svg class="hero-glyph" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 5h22l10 10v36H12z"/>
+          <path d="M34 5v10h10"/>
+          <line x1="18" y1="22" x2="38" y2="22"/>
+          <line x1="18" y1="28" x2="38" y2="28"/>
+          <line x1="18" y1="34" x2="32" y2="34"/>
+          <circle cx="40" cy="42" r="9" fill="var(--bg)"/>
+          <circle cx="40" cy="42" r="9"/>
+          <path d="M36 42.5l3 3 6-6.5"/>
+        </svg>
+        <h1>A registry<br /><span class="muted">for autonomous agents<span class="blink">&nbsp;</span></span></h1>
+      </div>
+      <p class="lede">install manifests &mdash; signed, schema-validated, agent-installable.</p>
 
-    <!-- Flow illustration: agent fetches a manifest, installs a tool. -->
-    <svg class="flow" viewBox="0 0 480 110" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <!-- agent (rounded chip) -->
-      <rect x="14" y="38" width="100" height="40" rx="6"/>
-      <text x="64" y="63" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="13" text-anchor="middle" stroke="none" fill="currentColor">agent</text>
-      <!-- arrow 1 -->
-      <line x1="118" y1="58" x2="178" y2="58"/>
-      <path d="M173 53l5 5-5 5"/>
-      <!-- manifest doc -->
-      <path d="M196 30h62l14 14v44h-76z"/>
-      <path d="M258 30v14h14"/>
-      <line x1="206" y1="56" x2="266" y2="56"/>
-      <line x1="206" y1="64" x2="266" y2="64"/>
-      <line x1="206" y1="72" x2="246" y2="72"/>
-      <text x="234" y="103" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" text-anchor="middle" stroke="none" fill="currentColor">manifest</text>
-      <!-- arrow 2 -->
-      <line x1="290" y1="58" x2="350" y2="58"/>
-      <path d="M345 53l5 5-5 5"/>
-      <!-- tool (rounded chip with little gear hint) -->
-      <rect x="358" y="38" width="106" height="40" rx="6"/>
-      <text x="411" y="63" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="13" text-anchor="middle" stroke="none" fill="currentColor">tool</text>
-    </svg>
+      <p>
+        Toolspace hosts <a href="https://github.com/drknowhow/install-manifest-spec">install-manifest-spec</a>
+        manifests &mdash; signed JSON descriptions of what an agent needs to set up a tool: env vars,
+        prompts, verification, revocation. Agents can install from this registry, from raw GitHub URLs,
+        or from any mirror &mdash; <strong>the spec is the moat, not the registry</strong>.
+      </p>
 
-    <div class="quickstart">
-      <p class="quickstart-label">Get started</p>
-      <pre>pip install install-manifest
-install-manifest install &lt;url-or-path&gt;</pre>
-    </div>
+      <!-- Flow illustration: agent fetches a manifest, installs a tool. -->
+      <svg class="flow" viewBox="0 0 480 110" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="14" y="38" width="100" height="40" rx="6"/>
+        <text x="64" y="63" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="13" text-anchor="middle" stroke="none" fill="currentColor">agent</text>
+        <line x1="118" y1="58" x2="178" y2="58"/>
+        <path d="M173 53l5 5-5 5"/>
+        <path d="M196 30h62l14 14v44h-76z" stroke="var(--accent)"/>
+        <path d="M258 30v14h14" stroke="var(--accent)"/>
+        <line x1="206" y1="56" x2="266" y2="56" stroke="var(--accent)"/>
+        <line x1="206" y1="64" x2="266" y2="64" stroke="var(--accent)"/>
+        <line x1="206" y1="72" x2="246" y2="72" stroke="var(--accent)"/>
+        <text x="234" y="103" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" text-anchor="middle" stroke="none" fill="var(--accent)">manifest</text>
+        <line x1="290" y1="58" x2="350" y2="58"/>
+        <path d="M345 53l5 5-5 5"/>
+        <rect x="358" y="38" width="106" height="40" rx="6"/>
+        <text x="411" y="63" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="13" text-anchor="middle" stroke="none" fill="currentColor">tool</text>
+      </svg>
+
+      <div class="quickstart">
+        <p class="quickstart-label">Get started</p>
+<pre><code>pip install install-manifest
+install-manifest install &lt;url-or-path&gt;</code></pre>
+      </div>
+    </section>
 
     <h2>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M9 4c-2 0-3 1-3 3v3c0 1-1 2-2 2 1 0 2 1 2 2v3c0 2 1 3 3 3"/>
         <path d="M15 4c2 0 3 1 3 3v3c0 1 1 2 2 2-1 0-2 1-2 2v3c0 2-1 3-3 3"/>
       </svg>
       What a manifest looks like
     </h2>
 
-    <pre>{
+<pre><code>{
   "schema_version": "0.2",
   "name": "gmail",
   "version": "1.0.0",
@@ -233,15 +208,15 @@ install-manifest install &lt;url-or-path&gt;</pre>
   "actions": [
     { "name": "send", "input_schema": { "...": "..." }, "side_effects": "external" }
   ]
-}</pre>
-    <p>
+}</code></pre>
+    <p class="small muted">
       Full reference: <a href="/examples/gmail.v0.2.json"><code>/examples/gmail.v0.2.json</code></a>.
       Every field is documented in the
       <a href="/schemas/install-manifest-v0.2.json"><code>v0.2 schema</code></a>.
     </p>
 
-    <h2>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <h2 id="agents">
+      <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <rect x="6" y="6" width="12" height="12" rx="2"/>
         <rect x="9.5" y="9.5" width="5" height="5"/>
         <line x1="3" y1="10" x2="6" y2="10"/>
@@ -281,7 +256,7 @@ install-manifest install &lt;url-or-path&gt;</pre>
     </div>
 
     <h2>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <circle cx="9" cy="8" r="3"/>
         <path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5"/>
         <circle cx="17" cy="9" r="2.5"/>
@@ -298,7 +273,7 @@ install-manifest install &lt;url-or-path&gt;</pre>
     </p>
 
     <h2>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <rect x="3" y="4" width="18" height="16" rx="2"/>
         <path d="M7 9l3 3-3 3"/>
         <line x1="13" y1="15" x2="17" y2="15"/>
@@ -306,9 +281,9 @@ install-manifest install &lt;url-or-path&gt;</pre>
       CLI
     </h2>
 
-    <pre>pip install install-manifest
+<pre><code>pip install install-manifest
 install-manifest validate &lt;url-or-path&gt;
-install-manifest install &lt;url-or-path&gt;</pre>
+install-manifest install &lt;url-or-path&gt;</code></pre>
 
     <p>The <a href="https://github.com/drknowhow/install-manifest-spec/tree/main/cli">install-manifest CLI</a> ships with the schema bundled, so it works offline. Network is only used for the manifest itself.</p>
 
