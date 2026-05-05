@@ -1,0 +1,478 @@
+/* yepgent.com — shared theme.
+   Single source of truth for tokens, base typography, and layout.
+   Page-specific bits stay inline in their own <style> block. */
+
+:root {
+  --bg: #0e0f12;
+  --fg: #e8e8ea;
+  --muted: #8a8c92;
+  --accent: #7cf5c4;
+  --accent-soft: rgba(124, 245, 196, 0.12);
+  --accent-edge: rgba(124, 245, 196, 0.30);
+  --rule: #1f2127;
+  --field-bg: #15171c;
+  --field-edge: #262931;
+  --card-bg: rgba(255, 255, 255, 0.025);
+  --card-edge: rgba(255, 255, 255, 0.06);
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #fafafa;
+    --fg: #131418;
+    --muted: #5e6068;
+    --accent: #0a8a5a;
+    --accent-soft: rgba(10, 138, 90, 0.10);
+    --accent-edge: rgba(10, 138, 90, 0.30);
+    --rule: #e6e7eb;
+    --field-bg: #ffffff;
+    --field-edge: #d6d8de;
+    --card-bg: rgba(0, 0, 0, 0.02);
+    --card-edge: rgba(0, 0, 0, 0.08);
+  }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.55 ui-sans-serif, system-ui, -apple-system,
+        "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  min-height: 100vh;
+  /* Soft ambient glow — subtle radial in the accent color, top-left.
+     Adds warmth without becoming decoration. */
+  background-image:
+    radial-gradient(
+      circle at 12% 8%,
+      var(--accent-soft) 0%,
+      transparent 38%
+    );
+  background-attachment: fixed;
+}
+
+main {
+  max-width: 42rem;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1rem 1.25rem 4rem;
+}
+
+/* Site nav — sticky, lightweight, used on every page. */
+header.site-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 1.25rem 1.25rem 0.5rem;
+}
+header.site-nav .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--fg);
+  font-weight: 600;
+  font-size: 1.05rem;
+  text-decoration: none;
+}
+header.site-nav .brand:hover { color: var(--accent); }
+header.site-nav .brand-glyph {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+}
+header.site-nav nav {
+  display: flex;
+  gap: 1.1rem;
+  font-size: 0.92rem;
+}
+header.site-nav nav a {
+  color: var(--muted);
+  text-decoration: none;
+}
+header.site-nav nav a:hover { color: var(--fg); }
+
+/* Tight nav strip used on inner pages without the full header. */
+nav.top {
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin-bottom: 2.5rem;
+}
+nav.top a { color: var(--muted); text-decoration: none; }
+nav.top a:hover { color: var(--fg); }
+
+/* Headings ---------------------------------------------------- */
+h1 {
+  font-size: clamp(2rem, 5.5vw, 3rem);
+  letter-spacing: -0.02em;
+  margin: 1.5rem 0 0.5rem;
+  font-weight: 700;
+  line-height: 1.12;
+}
+h1 .dot { color: var(--accent); }
+
+h2 {
+  font-size: 1.2rem;
+  letter-spacing: -0.01em;
+  margin: 2.5rem 0 0.75rem;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 1rem;
+  letter-spacing: 0;
+  margin: 1.25rem 0 0.4rem;
+  font-weight: 600;
+}
+
+p { margin: 0 0 1rem; }
+p.lede {
+  font-size: 1.08rem;
+  margin: 0.5rem 0 1.25rem;
+}
+.muted, p.muted, .small.muted { color: var(--muted); }
+p.small, .small { font-size: 0.85rem; }
+
+/* Inline links: underlined by default so the affordance survives
+   color-blindness / bright-screen conditions. Half-opacity rule that
+   firms up on hover keeps the look quiet but unambiguous. */
+a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--accent) 45%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  transition: text-decoration-color 120ms ease;
+}
+a:hover { text-decoration-color: var(--accent); }
+
+hr {
+  border: none;
+  border-top: 1px solid var(--rule);
+  margin: 2.5rem 0;
+}
+
+code, pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+code {
+  font-size: 0.92em;
+  background: color-mix(in oklab, var(--fg) 8%, transparent);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--field-bg);
+  border: 1px solid var(--field-edge);
+  border-radius: 8px;
+  padding: 0.85rem 0.9rem;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  margin: 0.4rem 0 0.6rem;
+}
+pre code {
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+}
+
+footer {
+  margin-top: 3rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+/* Footer links: muted by default, no underline (footer text already
+   feels structural). Hover surfaces both color and underline so the
+   affordance still resolves. */
+footer a { color: var(--muted); text-decoration: none; }
+footer a:hover { color: var(--fg); text-decoration: underline; text-decoration-color: var(--fg); }
+
+/* Blinking cursor accent on the home tagline. */
+.blink {
+  display: inline-block;
+  width: 0.55ch;
+  background: var(--accent);
+  animation: blink 1.1s steps(1) infinite;
+  transform: translateY(0.1em);
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* Hero (home page) ------------------------------------------ */
+.hero { margin-top: 1rem; }
+
+/* CTA buttons ----------------------------------------------- */
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1.25rem 0;
+}
+.cta {
+  display: inline-block;
+  font: inherit;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: filter 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  text-decoration: none;
+}
+.cta.primary {
+  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.cta.primary:hover { filter: brightness(1.08); text-decoration: none; }
+.cta.secondary {
+  color: var(--fg);
+  background: transparent;
+  border-color: var(--field-edge);
+}
+.cta.secondary:hover { border-color: var(--accent); color: var(--accent); }
+button.ghost {
+  font: inherit;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--field-edge);
+  padding: 0.45rem 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+button.ghost:hover { color: var(--fg); border-color: var(--fg); }
+
+/* Subscribe form -------------------------------------------- */
+.subscribe { margin: 2rem 0 1rem; }
+.subscribe p.note {
+  color: var(--muted);
+  font-size: 0.88rem;
+  margin: 0.6rem 0 0;
+}
+.subscribe-form {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 0.4rem 0 0;
+}
+.subscribe-form input[type="email"],
+.subscribe-form input[type="text"] {
+  flex: 1 1 14rem;
+  min-width: 0;
+  font: inherit;
+  color: var(--fg);
+  background: var(--field-bg);
+  border: 1px solid var(--field-edge);
+  border-radius: 6px;
+  padding: 0.65rem 0.75rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.subscribe-form input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-edge);
+}
+.subscribe-form button {
+  font: inherit;
+  color: var(--bg);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 0.65rem 1.1rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: filter 0.15s ease;
+}
+.subscribe-form button:hover { filter: brightness(1.08); }
+.subscribe-form button:active { filter: brightness(0.95); }
+
+/* Status line under forms. */
+.status {
+  font-size: 0.92rem;
+  margin: 0.6rem 0 0;
+  min-height: 1.2em;
+}
+.status[data-kind="ok"]      { color: var(--accent); }
+.status[data-kind="error"]   { color: #ff8585; }
+.status[data-kind="pending"] { color: var(--muted); }
+
+/* Visually-hidden helper for accessibility labels. */
+.vh {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0);
+  white-space: nowrap; border: 0;
+}
+
+/* Honeypot: hidden from humans (off-screen + no pointer events + no tab
+   stop). Bots that auto-fill every named input populate it; the server
+   silently drops those submissions. Not display:none — some bots skip
+   that as a tell. */
+.honeypot {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Agents section (home) ------------------------------------- */
+.agents-section { margin-top: 1rem; }
+ul.agent-grid {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 32rem) {
+  ul.agent-grid { grid-template-columns: 1fr 1fr; }
+  ul.agent-grid li:first-child { grid-column: 1 / -1; }
+}
+ul.agent-grid li {
+  background: var(--card-bg);
+  border: 1px solid var(--card-edge);
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+}
+ul.agent-grid li h3 { margin-top: 0; }
+ul.agent-grid li p { margin: 0.2rem 0 0.5rem; color: var(--muted); }
+ul.agent-grid li pre { margin-top: 0.5rem; }
+
+/* Account dashboard ----------------------------------------- */
+.account-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+.account-head h2 { margin: 0 0 0.1rem; }
+
+.profile-form {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0.5rem 0 0;
+}
+.profile-form > label,
+.profile-form fieldset > label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+.profile-form input[type="text"],
+.profile-form input[type="email"] {
+  font: inherit;
+  color: var(--fg);
+  background: var(--field-bg);
+  border: 1px solid var(--field-edge);
+  border-radius: 6px;
+  padding: 0.55rem 0.7rem;
+  outline: none;
+}
+.profile-form input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-edge);
+}
+.profile-form fieldset.agent-fieldset {
+  border: 1px solid var(--field-edge);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  display: grid;
+  gap: 0.7rem;
+  margin: 0;
+}
+.profile-form fieldset.agent-fieldset legend {
+  padding: 0 0.4rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+.check-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--fg);
+}
+
+details.agent-help {
+  margin-top: 1.5rem;
+  border: 1px solid var(--field-edge);
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  background: var(--card-bg);
+}
+details.agent-help summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+details.agent-help[open] summary { color: var(--fg); }
+details.agent-help pre { margin: 0.6rem 0; }
+
+/* Blog index post list -------------------------------------- */
+ul.posts {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+ul.posts li {
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--rule);
+}
+ul.posts li:last-child { border-bottom: 1px solid var(--rule); }
+ul.posts a.post-title {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--accent) 40%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+ul.posts a.post-title:hover { text-decoration-color: var(--accent); }
+ul.posts a.read-more {
+  display: inline-block;
+  margin-top: 0.6rem;
+  color: var(--accent);
+  font-size: 0.92rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+ul.posts a.read-more .arrow {
+  display: inline-block;
+  margin-left: 0.2em;
+  transition: transform 150ms ease;
+}
+ul.posts a.read-more:hover .arrow { transform: translateX(3px); }
+ul.posts time {
+  display: block;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 0.35rem;
+  font-variant-numeric: tabular-nums;
+}
+ul.posts p {
+  margin: 0.4rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* Honeypot — kept around in case any future form uses it. */
+.hp-field {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
