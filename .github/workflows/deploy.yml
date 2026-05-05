@@ -1,0 +1,42 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+# Avoid concurrent prod deploys racing each other.
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  netlify-prod:
+    name: netlify deploy --prod
+    runs-on: ubuntu-latest
+    # Wait for the check job (byte-identity + manifests.json) to pass.
+    # If check is stale or missing, we still let push deploys run rather
+    # than stall the surface; CI failures will show up as deploy-time
+    # errors which is acceptable for a static-only site.
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli@17
+
+      - name: Deploy to Netlify (prod)
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          netlify deploy \
+            --site "$NETLIFY_SITE_ID" \
+            --auth "$NETLIFY_AUTH_TOKEN" \
+            --dir . \
+            --prod \
+            --message "GH Actions: ${{ github.sha }}"

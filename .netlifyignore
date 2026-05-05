@@ -1,0 +1,6 @@
+# Don't ship CI / local-tooling files to the CDN.
+.github/
+scripts/
+README.md
+.gitattributes
+_bootstrap_msg.txt
