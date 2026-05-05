@@ -27,7 +27,9 @@ SITE_ROOT = Path(__file__).resolve().parent.parent
 # (relative path under spec, relative path under site)
 FILES_TO_SYNC: list[tuple[str, str]] = [
     ("schema/install-manifest-v0.1.json", "schemas/install-manifest-v0.1.json"),
+    ("schema/install-manifest-v0.2.json", "schemas/install-manifest-v0.2.json"),
     ("examples/gmail.json", "examples/gmail.json"),
+    ("examples/gmail.v0.2.json", "examples/gmail.v0.2.json"),
 ]
 
 

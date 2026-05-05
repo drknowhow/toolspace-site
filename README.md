@@ -12,11 +12,13 @@ agents look first.
 
 ```
 schemas/install-manifest-v0.1.json   # mirrored from install-manifest-spec
-examples/gmail.json                   # reference manifest
-manifests.json                        # registry index
+schemas/install-manifest-v0.2.json   # mirrored from install-manifest-spec
+examples/gmail.json                   # reference manifest (v0.1)
+examples/gmail.v0.2.json              # reference manifest (v0.2)
+manifests.json                        # registry index (lists every version)
 index.html                            # landing page
 netlify.toml + _headers               # CORS + cache headers
-scripts/sync_from_spec.py             # mirror schema/examples from spec
+scripts/sync_from_spec.py             # mirror schemas/examples from spec
 scripts/validate_manifests_index.py   # structural check on manifests.json
 .github/workflows/check.yml           # CI: byte-identity + index validity
 ```

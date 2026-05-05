@@ -104,18 +104,28 @@
     <h2>For agents</h2>
 
     <div class="surface">
+      <h3>Schema (v0.2 &mdash; latest)</h3>
+      <p><a href="/schemas/install-manifest-v0.2.json"><code>/schemas/install-manifest-v0.2.json</code></a> &mdash; CORS-enabled, cached. Adds the structured <code>actions[]</code> catalog so agents can invoke each operation a tool exposes with typed inputs, output schemas, and side-effects classification.</p>
+    </div>
+
+    <div class="surface">
       <h3>Schema (v0.1)</h3>
-      <p><a href="/schemas/install-manifest-v0.1.json"><code>/schemas/install-manifest-v0.1.json</code></a> &mdash; CORS-enabled, cached. Validate any manifest against this.</p>
+      <p><a href="/schemas/install-manifest-v0.1.json"><code>/schemas/install-manifest-v0.1.json</code></a> &mdash; the original MCP-shaped manifest format. Still supported; new manifests should target v0.2.</p>
     </div>
 
     <div class="surface">
       <h3>Manifest index</h3>
-      <p><a href="/manifests.json"><code>/manifests.json</code></a> &mdash; list of curated manifests with capability tags.</p>
+      <p><a href="/manifests.json"><code>/manifests.json</code></a> &mdash; list of curated manifests with capability tags. The optional <code>versions[]</code> array lists every supported schema version.</p>
     </div>
 
     <div class="surface">
-      <h3>Example: gmail</h3>
-      <p><a href="/examples/gmail.json"><code>/examples/gmail.json</code></a> &mdash; reference manifest installing a Gmail tool with OAuth.</p>
+      <h3>Example: gmail (v0.2)</h3>
+      <p><a href="/examples/gmail.v0.2.json"><code>/examples/gmail.v0.2.json</code></a> &mdash; reference v0.2 manifest with five Gmail actions (whoami, search, send, label_thread, unlabel_thread), each with typed input/output and side-effects classification.</p>
+    </div>
+
+    <div class="surface">
+      <h3>Example: gmail (v0.1)</h3>
+      <p><a href="/examples/gmail.json"><code>/examples/gmail.json</code></a> &mdash; legacy v0.1 reference manifest. Useful when authoring tools that still target the original format.</p>
     </div>
 
     <h2>For humans</h2>
