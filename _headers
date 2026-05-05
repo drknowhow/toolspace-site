@@ -1,0 +1,18 @@
+# Fallback / static-headers for Netlify (mirrored from netlify.toml).
+# netlify.toml takes precedence; this file exists for clarity and
+# for anyone deploying without netlify.toml processing.
+
+/schemas/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+  Content-Type: application/json; charset=utf-8
+
+/manifests.json
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=300, stale-while-revalidate=3600
+  Content-Type: application/json; charset=utf-8
+
+/examples/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+  Content-Type: application/json; charset=utf-8

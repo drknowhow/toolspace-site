@@ -1,0 +1,16 @@
+# Schema + example JSON must match install-manifest-spec byte-for-byte.
+# Force LF on checkout so the byte-identity check passes on Windows too.
+schemas/*.json text eol=lf
+examples/*.json text eol=lf
+manifests.json text eol=lf
+
+# Python scripts: LF for cross-platform predictability.
+*.py text eol=lf
+
+# Workflow YAML: LF (GitHub Actions runs on Linux).
+.github/**/*.yml text eol=lf
+
+# Netlify config: LF.
+netlify.toml text eol=lf
+_headers text eol=lf
+_redirects text eol=lf

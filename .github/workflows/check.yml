@@ -1,0 +1,46 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  byte-identity:
+    name: schema + examples match install-manifest-spec
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout toolspace-site
+        uses: actions/checkout@v4
+        with:
+          path: toolspace-site
+
+      - name: Checkout install-manifest-spec
+        uses: actions/checkout@v4
+        with:
+          repository: drknowhow/install-manifest-spec
+          path: install-manifest-spec
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify byte-identity
+        working-directory: toolspace-site
+        run: python scripts/sync_from_spec.py --check --spec-path ../install-manifest-spec
+
+  validate-manifests-json:
+    name: manifests.json structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate manifests.json
+        run: python scripts/validate_manifests_index.py

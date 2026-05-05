@@ -1,0 +1,31 @@
+[build]
+  publish = "."
+  command = ""
+
+# Cache + CORS for the schema. Agents fetch this at install time;
+# we want it long-cached but immutable (versioned by filename), with
+# permissive CORS so any agent runtime can fetch.
+[[headers]]
+  for = "/schemas/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
+    Content-Type = "application/json; charset=utf-8"
+
+# Manifest index changes more often than the schema; shorter cache,
+# still CORS-open.
+[[headers]]
+  for = "/manifests.json"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=300, stale-while-revalidate=3600"
+    Content-Type = "application/json; charset=utf-8"
+
+# Example manifests follow the same shape as the live ones agents
+# would consume.
+[[headers]]
+  for = "/examples/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=3600, stale-while-revalidate=86400"
+    Content-Type = "application/json; charset=utf-8"

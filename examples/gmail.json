@@ -1,0 +1,123 @@
+{
+  "manifest_version": "0.1",
+
+  "tool": {
+    "id": "gmail-yep",
+    "version": "1.0.0",
+    "name": "Yep Gmail",
+    "summary": "Read, search, label, and send Gmail on the user's behalf via the Gmail API. MCP-stdio server, OAuth refresh-token auth, no inbox-content stored server-side.",
+    "description": "Exposes a small MCP toolset over the Gmail API: search_threads, get_thread, create_draft, label_thread, unlabel_thread, list_drafts, list_labels, create_label. Designed for autonomous agents that need to triage, draft replies, and organize a user's inbox without a human in the loop. Authenticates via standard Google OAuth installed-app flow; the user grants once, the refresh token is stored locally by the host, and the tool exchanges it for short-lived access tokens at runtime.\n\nNo message bodies are persisted by the tool itself. All API calls flow user → tool → Google → tool → user.",
+    "homepage": "https://github.com/drknowhow/Yep/tree/main/src/mcp/gmail",
+    "author": {
+      "name": "Dimitri Tselenchuk",
+      "email": "dtselenc@gmail.com",
+      "url": "https://yepgent.com"
+    },
+    "license": "MIT",
+    "tags": ["email", "gmail", "google", "messaging", "mcp"]
+  },
+
+  "runtime": {
+    "kind": "mcp-stdio",
+    "install": {
+      "method": "pip",
+      "package": "yep-gmail-tool",
+      "version_spec": "==1.0.0"
+    },
+    "entrypoint": {
+      "command": ["python", "-m", "yep_gmail_tool.server"]
+    }
+  },
+
+  "env": [
+    {
+      "name": "GOOGLE_CLIENT_ID",
+      "prompt": "Your Google OAuth 2.0 Client ID for the project that has the Gmail API enabled. Looks like '123456789012-abc...apps.googleusercontent.com'. Found in Google Cloud Console > APIs & Services > Credentials.",
+      "secret": false,
+      "required": true,
+      "validation_regex": "^[0-9]+-[a-z0-9]+\\.apps\\.googleusercontent\\.com$",
+      "obtain_url": "https://console.cloud.google.com/apis/credentials"
+    },
+    {
+      "name": "GOOGLE_CLIENT_SECRET",
+      "prompt": "Your Google OAuth 2.0 Client Secret, paired with the Client ID above. Treat as a password.",
+      "secret": true,
+      "required": true,
+      "validation_regex": "^GOCSPX-[A-Za-z0-9_-]{20,}$",
+      "obtain_url": "https://console.cloud.google.com/apis/credentials"
+    },
+    {
+      "name": "GOOGLE_REFRESH_TOKEN",
+      "prompt": "Long-lived OAuth refresh token for the Gmail account this tool will operate on. Run `python -m yep_gmail_tool.authorize` once to obtain — follow the URL, paste the consent code, and the token prints. The host stores it in your secret backend.",
+      "secret": true,
+      "required": true,
+      "obtain_url": "https://github.com/drknowhow/Yep/blob/main/docs/gmail-tool-install.md#one-time-oauth-bootstrap"
+    },
+    {
+      "name": "GMAIL_DEFAULT_LABEL",
+      "prompt": "Optional default Gmail label this tool will apply to messages it processes. Leave blank to skip auto-labeling. Useful for distinguishing agent-touched threads from human-touched ones in your inbox.",
+      "secret": false,
+      "required": false,
+      "default": "Yep/processed",
+      "validation_regex": "^[A-Za-z0-9 _/\\-]{0,128}$"
+    }
+  ],
+
+  "scopes": [
+    {
+      "resource": "gmail.messages",
+      "actions": ["read"],
+      "rationale": "Required to search the user's inbox, fetch threads, and read message bodies for context when drafting replies or triaging.",
+      "provider_scope": "https://www.googleapis.com/auth/gmail.readonly"
+    },
+    {
+      "resource": "gmail.drafts",
+      "actions": ["read", "write"],
+      "rationale": "Creates draft replies for the user to review and send; lists existing drafts to avoid duplicates. Drafts are never auto-sent by this tool.",
+      "provider_scope": "https://www.googleapis.com/auth/gmail.compose"
+    },
+    {
+      "resource": "gmail.labels",
+      "actions": ["read", "write"],
+      "rationale": "Applies and removes labels on threads to mark agent-processed messages and to support user-defined organization schemes. Cannot read message contents under this scope alone — works alongside gmail.messages:read.",
+      "provider_scope": "https://www.googleapis.com/auth/gmail.modify"
+    },
+    {
+      "resource": "net.outbound",
+      "actions": ["read"],
+      "rationale": "Tool calls api.googleapis.com for all Gmail operations. No other outbound destinations.",
+      "provider_scope": "googleapis.com"
+    }
+  ],
+
+  "smoke": {
+    "kind": "mcp-tool-call",
+    "tool_name": "health",
+    "arguments": {},
+    "timeout_seconds": 15,
+    "success": {
+      "no_error_field": true,
+      "json_pointer_equals": {
+        "/status": "ok",
+        "/auth": "valid"
+      }
+    }
+  },
+
+  "kill_switch": {
+    "kind": "shell",
+    "command": ["python", "-m", "yep_gmail_tool.revoke", "--scope", "all"]
+  },
+
+  "cost": {
+    "install_fee_cents": 0,
+    "monthly_fee_cents": 0,
+    "usage_model": "external"
+  },
+
+  "support": {
+    "issues_url": "https://github.com/drknowhow/Yep/issues",
+    "security_email": "dtselenc@gmail.com",
+    "docs_url": "https://github.com/drknowhow/Yep/blob/main/docs/gmail-tool-install.md"
+  }
+}

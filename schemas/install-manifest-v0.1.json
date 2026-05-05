@@ -1,0 +1,403 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://toolspace.yepgent.com/schemas/install-manifest-v0.1.json",
+  "title": "Agent Tool Install Manifest",
+  "description": "v0.1 — A self-describing contract that lets an autonomous agent install, verify, and revoke a third-party tool without human intervention beyond credential disclosure. Designed for marketplace.yepgent.com but vendor-neutral; any agent or registry may consume it.",
+  "type": "object",
+  "required": ["manifest_version", "tool", "runtime", "smoke", "kill_switch"],
+  "additionalProperties": false,
+  "properties": {
+    "manifest_version": {
+      "type": "string",
+      "const": "0.1",
+      "description": "Version of THIS schema. Pinned. Future schemas bump."
+    },
+
+    "tool": {
+      "type": "object",
+      "description": "Identity of the tool being installed. Stable across versions of the tool itself.",
+      "required": ["id", "version", "name", "summary", "homepage"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{1,62}[a-z0-9]$",
+          "description": "Globally unique tool ID. Lowercase, hyphenated. Acts as the registry primary key. Example: 'gmail-yep'."
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-z0-9.-]+)?$",
+          "description": "SemVer of the tool itself. Manifest contract is at manifest_version; this is the tool's published version."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "Human-readable display name."
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 280,
+          "description": "One-sentence description. Shown to the agent during search and to the human during install confirmation."
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 4000,
+          "description": "Optional longer description. Markdown allowed. Agents should not parse this for behavior; it's for humans."
+        },
+        "homepage": {
+          "type": "string",
+          "format": "uri",
+          "description": "Canonical URL for the tool. Repo, docs site, or vendor page."
+        },
+        "author": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": { "type": "string" },
+            "email": { "type": "string", "format": "email" },
+            "url": { "type": "string", "format": "uri" }
+          }
+        },
+        "license": {
+          "type": "string",
+          "description": "SPDX license identifier (e.g., 'MIT', 'Apache-2.0'). Use 'PROPRIETARY' for closed-source paid tools."
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+          "maxItems": 16,
+          "description": "Capability tags for discovery. Use the toolspace-controlled vocabulary where possible (email, calendar, storage, ...)."
+        }
+      }
+    },
+
+    "runtime": {
+      "type": "object",
+      "description": "How the tool is acquired and how the agent invokes it.",
+      "required": ["kind", "install"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["mcp-stdio", "mcp-http", "python-module", "node-module", "shell-binary", "container"],
+          "description": "Execution surface. mcp-stdio is the most common path for an MCP server invoked over stdio."
+        },
+        "install": {
+          "type": "object",
+          "description": "How to acquire the tool's executable artifacts.",
+          "required": ["method"],
+          "oneOf": [
+            {
+              "properties": {
+                "method": { "const": "pip" },
+                "package": { "type": "string", "minLength": 1 },
+                "version_spec": { "type": "string", "description": "Pip-style spec, e.g. '==1.2.3' or '>=1.2,<2'." }
+              },
+              "required": ["method", "package"],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "method": { "const": "npm" },
+                "package": { "type": "string", "minLength": 1 },
+                "version_spec": { "type": "string", "description": "npm-style spec, e.g. '^1.2.3'." }
+              },
+              "required": ["method", "package"],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "method": { "const": "git" },
+                "url": { "type": "string", "format": "uri" },
+                "ref": { "type": "string", "description": "Tag, branch, or full commit SHA. Pin to a SHA in production." },
+                "subpath": { "type": "string", "description": "Optional path inside the repo." }
+              },
+              "required": ["method", "url", "ref"],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "method": { "const": "container" },
+                "image": { "type": "string", "description": "OCI image reference, including digest. Example: 'ghcr.io/x/y@sha256:...'." }
+              },
+              "required": ["method", "image"],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "method": { "const": "url" },
+                "url": { "type": "string", "format": "uri", "description": "Direct download URL for a single executable artifact." },
+                "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$", "description": "Required SHA-256 for integrity check." }
+              },
+              "required": ["method", "url", "sha256"],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "entrypoint": {
+          "type": "object",
+          "description": "How to start the tool after install. For mcp-stdio kinds, this is the command line.",
+          "required": ["command"],
+          "additionalProperties": false,
+          "properties": {
+            "command": {
+              "type": "array",
+              "items": { "type": "string" },
+              "minItems": 1,
+              "description": "argv as an array; first element is the executable. Example: ['python', '-m', 'gmail_tool.server']."
+            },
+            "cwd": { "type": "string", "description": "Optional working directory." }
+          }
+        },
+        "endpoint_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "For mcp-http / network-based runtimes. Mutually exclusive with entrypoint."
+        }
+      }
+    },
+
+    "env": {
+      "type": "array",
+      "description": "Environment variables the agent must collect from the human owner before the tool can run. The order is the order the agent will prompt.",
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "required": ["name", "prompt", "secret"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]*$",
+            "description": "Environment variable name. SCREAMING_SNAKE_CASE."
+          },
+          "prompt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 280,
+            "description": "Human-readable prompt the agent will display to its owner. Should explain what the value is for and where to obtain it."
+          },
+          "secret": {
+            "type": "boolean",
+            "description": "If true, the agent must not log the value, must store it via the host's secret backend, and must never include it in completion contexts. If false, value is config and can be logged."
+          },
+          "required": {
+            "type": "boolean",
+            "default": true,
+            "description": "If false, the user may skip; the tool must still function (with reduced capability) when absent."
+          },
+          "validation_regex": {
+            "type": "string",
+            "description": "Optional ECMAScript regex the value must match. Allows the agent to retry-prompt on bad input."
+          },
+          "default": {
+            "type": "string",
+            "description": "Default value if user accepts. NEVER use for secrets."
+          },
+          "obtain_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Optional URL the agent can offer the user (e.g., 'create an API key here'). Should require minimum scopes."
+          }
+        }
+      }
+    },
+
+    "scopes": {
+      "type": "array",
+      "description": "Permission declarations. Each entry describes one capability the tool will exercise on the user's behalf. The agent must surface this list to the human owner before install completes.",
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "required": ["resource", "actions", "rationale"],
+        "additionalProperties": false,
+        "properties": {
+          "resource": {
+            "type": "string",
+            "description": "What the tool accesses. Vendor-neutral string. Examples: 'gmail.messages', 'fs.local', 'net.outbound', 'stripe.charges'."
+          },
+          "actions": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "enum": ["read", "write", "delete", "send", "execute", "admin"] },
+            "description": "Action verbs the tool will perform on the resource."
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 280,
+            "description": "Why the tool needs this. Shown to the human; agents may use it for policy reasoning."
+          },
+          "provider_scope": {
+            "type": "string",
+            "description": "Optional vendor-specific scope identifier (e.g., a Google OAuth scope URL). Lets the agent verify alignment with credential grants."
+          }
+        }
+      }
+    },
+
+    "smoke": {
+      "type": "object",
+      "description": "How the agent verifies the tool is installed correctly. Run after env collection and before reporting install success. Required.",
+      "required": ["kind", "success"],
+      "oneOf": [
+        {
+          "properties": {
+            "kind": { "const": "shell" },
+            "command": {
+              "type": "array",
+              "items": { "type": "string" },
+              "minItems": 1,
+              "description": "argv to execute. Tool's installed env vars are available."
+            },
+            "timeout_seconds": { "type": "integer", "minimum": 1, "maximum": 300, "default": 30 },
+            "success": { "$ref": "#/$defs/smoke_success" }
+          },
+          "required": ["kind", "command", "success"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "kind": { "const": "http" },
+            "method": { "type": "string", "enum": ["GET", "POST"], "default": "GET" },
+            "url": { "type": "string", "format": "uri" },
+            "headers": {
+              "type": "object",
+              "additionalProperties": { "type": "string" },
+              "description": "Header values may reference env vars as ${VAR_NAME}."
+            },
+            "body": { "type": "string", "description": "Optional request body. May reference env vars as ${VAR_NAME}." },
+            "timeout_seconds": { "type": "integer", "minimum": 1, "maximum": 300, "default": 30 },
+            "success": { "$ref": "#/$defs/smoke_success" }
+          },
+          "required": ["kind", "url", "success"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "kind": { "const": "mcp-tool-call" },
+            "tool_name": { "type": "string", "description": "Name of an MCP tool exposed by this server to invoke." },
+            "arguments": { "type": "object", "description": "JSON arguments for the call. Should be a no-op or read-only operation." },
+            "timeout_seconds": { "type": "integer", "minimum": 1, "maximum": 300, "default": 30 },
+            "success": { "$ref": "#/$defs/smoke_success" }
+          },
+          "required": ["kind", "tool_name", "success"],
+          "additionalProperties": false
+        }
+      ]
+    },
+
+    "kill_switch": {
+      "type": "object",
+      "description": "How the human owner (or the agent itself, on policy violation) revokes the tool. Required. Must be authenticated against the same credentials supplied at install.",
+      "required": ["kind"],
+      "oneOf": [
+        {
+          "properties": {
+            "kind": { "const": "url" },
+            "url": { "type": "string", "format": "uri", "description": "DELETE this URL to revoke. Must accept the install's credentials." }
+          },
+          "required": ["kind", "url"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "kind": { "const": "shell" },
+            "command": {
+              "type": "array",
+              "items": { "type": "string" },
+              "minItems": 1,
+              "description": "argv to execute for revocation. Must be idempotent."
+            }
+          },
+          "required": ["kind", "command"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "kind": { "const": "manual" },
+            "instructions_url": { "type": "string", "format": "uri", "description": "URL with instructions for human revocation. Use only when no programmatic path exists; agents will surface this to humans verbatim." }
+          },
+          "required": ["kind", "instructions_url"],
+          "additionalProperties": false
+        }
+      ]
+    },
+
+    "cost": {
+      "type": "object",
+      "description": "Billing model surfaced to the agent and human owner. All values in USD cents.",
+      "additionalProperties": false,
+      "properties": {
+        "install_fee_cents": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "One-time install fee. 0 for free tools."
+        },
+        "monthly_fee_cents": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Recurring monthly fee. 0 if usage-based or free."
+        },
+        "usage_model": {
+          "type": "string",
+          "enum": ["none", "per-call", "per-token", "external"],
+          "description": "'external' means the tool charges via its own credentials (e.g., user's own API key); the marketplace is not in the payment loop."
+        },
+        "estimate_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Optional URL returning a JSON {monthly_estimate_cents, basis} object. Lets agents budget."
+        }
+      }
+    },
+
+    "support": {
+      "type": "object",
+      "description": "Where to file bugs, get help, or report security issues.",
+      "additionalProperties": false,
+      "properties": {
+        "issues_url": { "type": "string", "format": "uri" },
+        "security_email": { "type": "string", "format": "email" },
+        "docs_url": { "type": "string", "format": "uri" }
+      }
+    }
+  },
+
+  "$defs": {
+    "smoke_success": {
+      "type": "object",
+      "description": "Conditions that, if all met, indicate a successful smoke run. Logical AND across present fields.",
+      "additionalProperties": false,
+      "properties": {
+        "exit_code": {
+          "type": "integer",
+          "description": "Required exit code (shell smoke). Defaults to 0 if absent."
+        },
+        "http_status": {
+          "type": "integer",
+          "description": "Required HTTP status (http smoke)."
+        },
+        "stdout_regex": {
+          "type": "string",
+          "description": "stdout must match this ECMAScript regex (shell smoke)."
+        },
+        "body_regex": {
+          "type": "string",
+          "description": "Response body must match this regex (http smoke)."
+        },
+        "json_pointer_equals": {
+          "type": "object",
+          "description": "Map of JSON Pointer (RFC 6901) -> required value. Applies to JSON responses or mcp-tool-call results.",
+          "additionalProperties": true
+        },
+        "no_error_field": {
+          "type": "boolean",
+          "description": "If true, JSON response/result must not contain a top-level 'error' field. Useful for mcp-tool-call."
+        }
+      }
+    }
+  }
+}

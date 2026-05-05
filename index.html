@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>toolspace — agent install manifests</title>
+  <meta name="description" content="A registry of install manifests for autonomous agents. Built on the install-manifest-spec.">
+  <style>
+    :root {
+      --fg: #1a1a1a;
+      --muted: #5c5c5c;
+      --bg: #fafaf7;
+      --accent: #2d5a8a;
+      --code-bg: #f0eee8;
+      --border: #d8d4cc;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--fg);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem;
+    }
+    header { margin-bottom: 3rem; }
+    h1 {
+      font-size: 2.25rem;
+      margin: 0 0 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    .tag {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin: 0;
+    }
+    h2 {
+      font-size: 1.25rem;
+      margin-top: 2.5rem;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.01em;
+    }
+    p, li { font-size: 1rem; }
+    ul { padding-left: 1.25rem; }
+    a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+    a:hover { text-decoration-color: currentColor; }
+    code {
+      background: var(--code-bg);
+      padding: 0.1em 0.4em;
+      border-radius: 3px;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.92em;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem;
+      overflow-x: auto;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+    .surface {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin: 0.75rem 0;
+      background: white;
+    }
+    .surface h3 {
+      margin: 0 0 0.25rem;
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+    .surface p { margin: 0.25rem 0 0; color: var(--muted); font-size: 0.95rem; }
+    footer {
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>toolspace</h1>
+      <p class="tag">A registry of install manifests for autonomous agents.</p>
+    </header>
+
+    <p>
+      Toolspace hosts <a href="https://github.com/drknowhow/install-manifest-spec">install-manifest-spec</a>
+      manifests &mdash; signed JSON descriptions of what an agent needs to set up a tool: env vars, prompts,
+      verification, revocation. Agents can install from this registry, from raw GitHub URLs, or from any
+      mirror &mdash; <strong>the spec is the moat, not the registry</strong>.
+    </p>
+
+    <h2>For agents</h2>
+
+    <div class="surface">
+      <h3>Schema (v0.1)</h3>
+      <p><a href="/schemas/install-manifest-v0.1.json"><code>/schemas/install-manifest-v0.1.json</code></a> &mdash; CORS-enabled, cached. Validate any manifest against this.</p>
+    </div>
+
+    <div class="surface">
+      <h3>Manifest index</h3>
+      <p><a href="/manifests.json"><code>/manifests.json</code></a> &mdash; list of curated manifests with capability tags.</p>
+    </div>
+
+    <div class="surface">
+      <h3>Example: gmail</h3>
+      <p><a href="/examples/gmail.json"><code>/examples/gmail.json</code></a> &mdash; reference manifest installing a Gmail tool with OAuth.</p>
+    </div>
+
+    <h2>For humans</h2>
+
+    <p>
+      You're welcome to read along. The <a href="https://github.com/drknowhow/install-manifest-spec">spec</a>
+      is open and the registry is public. If you build agents and want yours discoverable here,
+      open a PR on <a href="https://github.com/drknowhow/toolspace-site">toolspace-site</a> with your
+      manifest URL added to <code>manifests.json</code>.
+    </p>
+
+    <h2>CLI</h2>
+
+    <pre>pip install install-manifest
+install-manifest validate &lt;url-or-path&gt;
+install-manifest install &lt;url-or-path&gt;</pre>
+
+    <p>The <a href="https://github.com/drknowhow/install-manifest-spec/tree/main/cli">install-manifest CLI</a> ships with the schema bundled, so it works offline. Network is only used for the manifest itself.</p>
+
+    <footer>
+      <p>
+        toolspace.yepgent.com &middot;
+        <a href="https://github.com/drknowhow/toolspace-site">source</a> &middot;
+        <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> &middot;
+        <a href="https://yepgent.com">yepgent</a>
+      </p>
+    </footer>
+  </main>
+</body>
+</html>
