@@ -1,15 +1,38 @@
 {
-  "version": "v0.1",
-  "schema_url": "https://toolspace.yepgent.com/schemas/install-manifest-v0.1.json",
+  "version": "v0.2",
+  "schema_url": "https://toolspace.yepgent.com/schemas/install-manifest-v0.2.json",
+  "versions": [
+    {
+      "version": "v0.1",
+      "schema_url": "https://toolspace.yepgent.com/schemas/install-manifest-v0.1.json",
+      "status": "stable"
+    },
+    {
+      "version": "v0.2",
+      "schema_url": "https://toolspace.yepgent.com/schemas/install-manifest-v0.2.json",
+      "status": "stable"
+    }
+  ],
   "generated_at": "2026-05-05",
   "manifests": [
     {
       "id": "gmail-example",
-      "name": "Gmail (reference example)",
-      "description": "Reference install manifest for a Gmail tool with OAuth. Useful as a template; not a production-grade manifest.",
+      "name": "Gmail (v0.1 reference example)",
+      "description": "Reference v0.1 install manifest for a Gmail tool with OAuth. Useful as a template for the legacy MCP-shaped manifest format; not a production-grade manifest.",
       "capabilities": ["email"],
       "manifest_url": "https://toolspace.yepgent.com/examples/gmail.json",
       "source": "https://github.com/drknowhow/install-manifest-spec/blob/main/examples/gmail.json",
+      "manifest_version": "0.1",
+      "status": "example"
+    },
+    {
+      "id": "gmail-v0.2-example",
+      "name": "Gmail (v0.2 reference example)",
+      "description": "Reference v0.2 install manifest for a Gmail tool with OAuth. Demonstrates the structured actions[] catalog with input/output schemas, side-effects classification, and the action-call smoke test kind. Use this as the template when authoring new v0.2 manifests.",
+      "capabilities": ["email"],
+      "manifest_url": "https://toolspace.yepgent.com/examples/gmail.v0.2.json",
+      "source": "https://github.com/drknowhow/install-manifest-spec/blob/main/examples/gmail.v0.2.json",
+      "manifest_version": "0.2",
       "status": "example"
     }
   ]

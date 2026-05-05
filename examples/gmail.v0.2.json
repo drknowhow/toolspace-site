@@ -1,0 +1,310 @@
+{
+  "manifest_version": "0.2",
+
+  "tool": {
+    "id": "yep-gmail",
+    "version": "0.1.0",
+    "name": "Yep Gmail",
+    "summary": "Send, search, label, and inspect Gmail on the user's behalf via the Gmail API. Python module with a structured action catalog; OAuth refresh-token auth; no inbox content stored server-side.",
+    "description": "A standalone Python capability that exposes a small set of Gmail operations to autonomous agents through the install-manifest v0.2 actions[] catalog. Unlike its v0.1 sibling — which assumed the agent would speak MCP-stdio — this manifest declares every operation the agent may invoke (send, search, whoami, label, unlabel) along with structured input schemas, output schemas, and side-effect classifications. Authenticates via standard Google OAuth installed-app flow; the user grants once, the refresh token is stored in the host's secret backend, and the tool exchanges it for short-lived access tokens at runtime. No message bodies are persisted by the tool itself.",
+    "homepage": "https://github.com/drknowhow/Yep/tree/main/src/mcp/gmail",
+    "author": {
+      "name": "Dimitri Tselenchuk",
+      "email": "dtselenc@gmail.com",
+      "url": "https://yepgent.com"
+    },
+    "license": "MIT",
+    "tags": ["email", "gmail", "google", "messaging"]
+  },
+
+  "runtime": {
+    "kind": "python-module",
+    "install": {
+      "method": "pip",
+      "package": "yep-gmail-tool",
+      "version_spec": "==0.1.0"
+    },
+    "entrypoint": {
+      "command": ["python", "-m", "yep_gmail_tool"]
+    }
+  },
+
+  "env": [
+    {
+      "name": "GOOGLE_CLIENT_ID",
+      "prompt": "Your Google OAuth 2.0 Client ID for the project that has the Gmail API enabled. Looks like '123456789012-abc...apps.googleusercontent.com'. Found in Google Cloud Console > APIs & Services > Credentials.",
+      "secret": false,
+      "required": true,
+      "validation_regex": "^[0-9]+-[a-z0-9]+\\.apps\\.googleusercontent\\.com$",
+      "obtain_url": "https://console.cloud.google.com/apis/credentials"
+    },
+    {
+      "name": "GOOGLE_CLIENT_SECRET",
+      "prompt": "Your Google OAuth 2.0 Client Secret, paired with the Client ID above. Treat as a password.",
+      "secret": true,
+      "required": true,
+      "validation_regex": "^GOCSPX-[A-Za-z0-9_-]{20,}$",
+      "obtain_url": "https://console.cloud.google.com/apis/credentials"
+    },
+    {
+      "name": "GOOGLE_REFRESH_TOKEN",
+      "prompt": "Long-lived OAuth refresh token for the Gmail account this tool will operate on. Run `python -m yep_gmail_tool authorize` once to obtain — follow the URL, paste the consent code, and the token prints. The host stores it in your secret backend; never paste this value into argv or shell history.",
+      "secret": true,
+      "required": true,
+      "obtain_url": "https://github.com/drknowhow/Yep/blob/main/docs/gmail-tool-install.md#one-time-oauth-bootstrap"
+    },
+    {
+      "name": "GOOGLE_USER_EMAIL",
+      "prompt": "Email address of the Gmail account this tool operates on. Used by the smoke test to verify auth resolves to the expected mailbox; not required for any non-smoke action.",
+      "secret": false,
+      "required": false,
+      "validation_regex": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"
+    },
+    {
+      "name": "GMAIL_DEFAULT_LABEL",
+      "prompt": "Optional default Gmail label this tool will apply to messages it processes. Leave blank to skip auto-labeling. Useful for distinguishing agent-touched threads from human-touched ones in your inbox.",
+      "secret": false,
+      "required": false,
+      "default": "Yep/processed",
+      "validation_regex": "^[A-Za-z0-9 _/\\-]{0,128}$"
+    }
+  ],
+
+  "scopes": [
+    {
+      "resource": "gmail.messages",
+      "actions": ["read", "send"],
+      "rationale": "Required to search the user's inbox, fetch message bodies for context, and send outbound mail on the user's behalf.",
+      "provider_scope": "https://www.googleapis.com/auth/gmail.modify"
+    },
+    {
+      "resource": "gmail.labels",
+      "actions": ["read", "write"],
+      "rationale": "Applies and removes labels on threads to mark agent-processed messages and to support user-defined organization schemes.",
+      "provider_scope": "https://www.googleapis.com/auth/gmail.labels"
+    },
+    {
+      "resource": "net.outbound",
+      "actions": ["read"],
+      "rationale": "Tool calls api.googleapis.com for all Gmail operations. No other outbound destinations.",
+      "provider_scope": "googleapis.com"
+    }
+  ],
+
+  "actions": [
+    {
+      "name": "whoami",
+      "summary": "Verify auth and return the operating mailbox.",
+      "description": "Read-only health check. Calls `Users.getProfile` against the Gmail API and returns the email of the resolved user. Cheap; safe to invoke as the smoke test.",
+      "invocation": {
+        "kind": "subcommand",
+        "argv_template": ["whoami"]
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "required": ["email"],
+          "properties": {
+            "email": { "type": "string", "format": "email" },
+            "messages_total": { "type": "integer", "minimum": 0 },
+            "threads_total": { "type": "integer", "minimum": 0 }
+          }
+        }
+      },
+      "side_effects": "read",
+      "idempotent": true,
+      "scopes_used": ["gmail.messages"],
+      "error_envelope": "standard",
+      "examples": [
+        {
+          "description": "Healthy auth.",
+          "input": {},
+          "output": { "email": "alice@example.com", "messages_total": 12345, "threads_total": 4567 }
+        }
+      ]
+    },
+    {
+      "name": "search",
+      "summary": "Search the mailbox by Gmail query syntax. Returns thread IDs and snippets.",
+      "description": "Wraps `Users.threads.list` with a `q=` filter. Same query syntax as the Gmail search bar (`from:`, `to:`, `subject:`, `is:unread`, ...). Read-only.",
+      "invocation": {
+        "kind": "subcommand",
+        "argv_template": ["search", "--query", "${input.query}", "--limit", "${input.limit}"]
+      },
+      "input": {
+        "type": "object",
+        "required": ["query"],
+        "additionalProperties": false,
+        "properties": {
+          "query": { "type": "string", "minLength": 1, "maxLength": 512 },
+          "limit": { "type": "integer", "minimum": 1, "maximum": 100, "default": 25 }
+        }
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "required": ["threads"],
+          "properties": {
+            "threads": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["thread_id", "snippet"],
+                "properties": {
+                  "thread_id": { "type": "string" },
+                  "snippet": { "type": "string" },
+                  "subject": { "type": "string" },
+                  "from": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "side_effects": "read",
+      "idempotent": true,
+      "scopes_used": ["gmail.messages"],
+      "error_envelope": "standard"
+    },
+    {
+      "name": "send",
+      "summary": "Send an email from the authenticated mailbox.",
+      "description": "Sends MIME mail via `Users.messages.send`. Body may contain large content (attachments encoded as base64) — invocation uses stdin-json to bypass argv-size limits and shell-quoting hazards. Destructive: cannot be unsent. Agents SHOULD require human confirmation by default.",
+      "invocation": {
+        "kind": "stdin-json",
+        "argv_template": ["send"]
+      },
+      "input": {
+        "type": "object",
+        "required": ["to", "subject", "body"],
+        "additionalProperties": false,
+        "properties": {
+          "to": { "type": "string", "format": "email" },
+          "cc": { "type": "array", "items": { "type": "string", "format": "email" }, "maxItems": 32 },
+          "bcc": { "type": "array", "items": { "type": "string", "format": "email" }, "maxItems": 32 },
+          "subject": { "type": "string", "minLength": 1, "maxLength": 998 },
+          "body": { "type": "string", "minLength": 1 },
+          "body_format": { "type": "string", "enum": ["plain", "html"], "default": "plain" }
+        }
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "required": ["message_id", "thread_id"],
+          "properties": {
+            "message_id": { "type": "string" },
+            "thread_id": { "type": "string" }
+          }
+        }
+      },
+      "side_effects": "destructive",
+      "idempotent": false,
+      "scopes_used": ["gmail.messages", "net.outbound"],
+      "error_envelope": "standard",
+      "examples": [
+        {
+          "description": "Send a one-line plain-text note.",
+          "input": { "to": "alice@example.com", "subject": "Hi", "body": "Just checking in." },
+          "output": { "message_id": "187a4f...", "thread_id": "187a4f..." }
+        }
+      ]
+    },
+    {
+      "name": "label_thread",
+      "summary": "Add one or more labels to an existing thread.",
+      "invocation": {
+        "kind": "stdin-json",
+        "argv_template": ["label-thread"]
+      },
+      "input": {
+        "type": "object",
+        "required": ["thread_id", "labels"],
+        "additionalProperties": false,
+        "properties": {
+          "thread_id": { "type": "string", "minLength": 1 },
+          "labels": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1, "maxItems": 16 }
+        }
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "required": ["thread_id", "label_ids"],
+          "properties": {
+            "thread_id": { "type": "string" },
+            "label_ids": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      },
+      "side_effects": "write",
+      "idempotent": true,
+      "scopes_used": ["gmail.labels"],
+      "error_envelope": "standard"
+    },
+    {
+      "name": "unlabel_thread",
+      "summary": "Remove one or more labels from an existing thread.",
+      "invocation": {
+        "kind": "stdin-json",
+        "argv_template": ["unlabel-thread"]
+      },
+      "input": {
+        "type": "object",
+        "required": ["thread_id", "labels"],
+        "additionalProperties": false,
+        "properties": {
+          "thread_id": { "type": "string", "minLength": 1 },
+          "labels": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1, "maxItems": 16 }
+        }
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "required": ["thread_id", "label_ids"],
+          "properties": {
+            "thread_id": { "type": "string" },
+            "label_ids": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      },
+      "side_effects": "write",
+      "idempotent": true,
+      "scopes_used": ["gmail.labels"],
+      "error_envelope": "standard"
+    }
+  ],
+
+  "smoke": {
+    "kind": "action-call",
+    "action": "whoami",
+    "arguments": {},
+    "timeout_seconds": 15,
+    "success": {
+      "no_error_field": true,
+      "json_pointer_equals": {
+        "/email": "${GOOGLE_USER_EMAIL}"
+      }
+    }
+  },
+
+  "kill_switch": {
+    "kind": "shell",
+    "command": ["python", "-m", "yep_gmail_tool", "revoke", "--all"]
+  },
+
+  "cost": {
+    "install_fee_cents": 0,
+    "monthly_fee_cents": 0,
+    "usage_model": "external"
+  },
+
+  "support": {
+    "issues_url": "https://github.com/drknowhow/Yep/issues",
+    "security_email": "dtselenc@gmail.com",
+    "docs_url": "https://github.com/drknowhow/Yep/blob/main/docs/gmail-tool-install.md"
+  }
+}

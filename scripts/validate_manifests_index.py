@@ -20,6 +20,9 @@ INDEX_PATH = SITE_ROOT / "manifests.json"
 REQUIRED_TOP_KEYS = {"version", "schema_url", "manifests"}
 REQUIRED_ENTRY_KEYS = {"id", "name", "description", "capabilities", "manifest_url", "status"}
 ALLOWED_STATUS = {"example", "stable", "preview", "deprecated"}
+REQUIRED_VERSION_KEYS = {"version", "schema_url", "status"}
+ALLOWED_VERSION_STATUS = {"stable", "preview", "deprecated"}
+KNOWN_MANIFEST_VERSIONS = {"0.1", "0.2"}
 
 
 def _is_https_url(s: str) -> bool:
@@ -49,6 +52,38 @@ def main() -> int:
 
     if not _is_https_url(data.get("schema_url", "")):
         errors.append(f"schema_url must be https URL, got: {data.get('schema_url')!r}")
+
+    # Optional `versions` array: per-version schema URLs (added in 2026-05-05).
+    # Backward-compatible — older indexes without this field still validate.
+    versions = data.get("versions")
+    if versions is not None:
+        if not isinstance(versions, list) or not versions:
+            errors.append("versions must be a non-empty array if present")
+        else:
+            seen_v: set[str] = set()
+            for j, ver in enumerate(versions):
+                vprefix = f"versions[{j}]"
+                if not isinstance(ver, dict):
+                    errors.append(f"{vprefix}: must be object")
+                    continue
+                miss_v = REQUIRED_VERSION_KEYS - set(ver.keys())
+                if miss_v:
+                    errors.append(f"{vprefix}: missing keys {sorted(miss_v)}")
+                v = ver.get("version")
+                if not isinstance(v, str) or not v:
+                    errors.append(f"{vprefix}: version must be non-empty string")
+                elif v in seen_v:
+                    errors.append(f"{vprefix}: duplicate version {v!r}")
+                else:
+                    seen_v.add(v)
+                if not _is_https_url(ver.get("schema_url", "")):
+                    errors.append(f"{vprefix}: schema_url must be https URL")
+                vstatus = ver.get("status")
+                if vstatus not in ALLOWED_VERSION_STATUS:
+                    errors.append(
+                        f"{vprefix}: status must be one of {sorted(ALLOWED_VERSION_STATUS)}, "
+                        f"got {vstatus!r}"
+                    )
 
     manifests = data.get("manifests")
     if not isinstance(manifests, list):
@@ -80,6 +115,13 @@ def main() -> int:
         if status not in ALLOWED_STATUS:
             errors.append(
                 f"{prefix}: status must be one of {sorted(ALLOWED_STATUS)}, got {status!r}"
+            )
+        # Optional manifest_version field — if present, must match a known schema.
+        mv = entry.get("manifest_version")
+        if mv is not None and mv not in KNOWN_MANIFEST_VERSIONS:
+            errors.append(
+                f"{prefix}: manifest_version must be one of "
+                f"{sorted(KNOWN_MANIFEST_VERSIONS)}, got {mv!r}"
             )
 
     if errors:
