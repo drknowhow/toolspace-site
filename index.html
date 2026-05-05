@@ -3,16 +3,38 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>toolspace — agent install manifests</title>
+  <title>toolspace &mdash; agent install manifests</title>
   <meta name="description" content="A registry of install manifests for autonomous agents. Built on the install-manifest-spec.">
   <style>
     :root {
       --fg: #1a1a1a;
       --muted: #5c5c5c;
       --bg: #fafaf7;
+      --surface: #ffffff;
       --accent: #2d5a8a;
+      --accent-soft: #ecf1f7;
       --code-bg: #f0eee8;
       --border: #d8d4cc;
+      --pill-stable-fg: #1f5e3a;
+      --pill-stable-bg: #e6f1ea;
+      --pill-legacy-fg: #6b5410;
+      --pill-legacy-bg: #f3edd6;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --fg: #ececec;
+        --muted: #9c9c98;
+        --bg: #14140f;
+        --surface: #1c1c17;
+        --accent: #87aedb;
+        --accent-soft: #1d2734;
+        --code-bg: #21201a;
+        --border: #2f2d27;
+        --pill-stable-fg: #9ad9b2;
+        --pill-stable-bg: #1a2e22;
+        --pill-legacy-fg: #d6c485;
+        --pill-legacy-bg: #2c2716;
+      }
     }
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
@@ -27,23 +49,33 @@
       margin: 0 auto;
       padding: 4rem 1.5rem;
     }
-    header { margin-bottom: 3rem; }
+    .hero {
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+      margin-bottom: 0.4rem;
+    }
+    .hero svg { flex-shrink: 0; color: var(--fg); }
     h1 {
       font-size: 2.25rem;
-      margin: 0 0 0.5rem;
+      margin: 0;
       letter-spacing: -0.02em;
     }
     .tag {
       color: var(--muted);
       font-size: 1.05rem;
-      margin: 0;
+      margin: 0 0 2rem;
     }
     h2 {
       font-size: 1.25rem;
-      margin-top: 2.5rem;
+      margin-top: 2.75rem;
       margin-bottom: 0.75rem;
       letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
     }
+    h2 svg { color: var(--muted); flex-shrink: 0; }
     p, li { font-size: 1rem; }
     ul { padding-left: 1.25rem; }
     a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
@@ -70,14 +102,57 @@
       border-radius: 4px;
       padding: 1rem 1.25rem;
       margin: 0.75rem 0;
-      background: white;
+      background: var(--surface);
     }
     .surface h3 {
-      margin: 0 0 0.25rem;
+      margin: 0 0 0.4rem;
       font-size: 1.05rem;
       font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      flex-wrap: wrap;
     }
-    .surface p { margin: 0.25rem 0 0; color: var(--muted); font-size: 0.95rem; }
+    .surface p { margin: 0.4rem 0 0; color: var(--muted); font-size: 0.95rem; }
+    .surface p + p { margin-top: 0.55rem; }
+    .pill {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.18em 0.6em;
+      border-radius: 999px;
+      vertical-align: middle;
+    }
+    .pill.stable { color: var(--pill-stable-fg); background: var(--pill-stable-bg); }
+    .pill.legacy { color: var(--pill-legacy-fg); background: var(--pill-legacy-bg); }
+    .quickstart {
+      background: var(--accent-soft);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin: 1.75rem 0 0.5rem;
+    }
+    .quickstart-label {
+      margin: 0 0 0.55rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .quickstart pre {
+      margin: 0;
+      background: var(--surface);
+    }
+    .flow {
+      display: block;
+      width: 100%;
+      max-width: 480px;
+      margin: 1.5rem auto 0;
+      color: var(--muted);
+    }
     footer {
       margin-top: 4rem;
       padding-top: 1.5rem;
@@ -89,10 +164,21 @@
 </head>
 <body>
   <main>
-    <header>
+    <div class="hero">
+      <!-- Hero glyph: a manifest document with a verification seal. -->
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 5h22l10 10v36H12z"/>
+        <path d="M34 5v10h10"/>
+        <line x1="18" y1="22" x2="38" y2="22"/>
+        <line x1="18" y1="28" x2="38" y2="28"/>
+        <line x1="18" y1="34" x2="32" y2="34"/>
+        <circle cx="40" cy="42" r="9" style="fill: var(--bg)"/>
+        <circle cx="40" cy="42" r="9"/>
+        <path d="M36 42.5l3 3 6-6.5"/>
+      </svg>
       <h1>toolspace</h1>
-      <p class="tag">A registry of install manifests for autonomous agents.</p>
-    </header>
+    </div>
+    <p class="tag">A registry of install manifests for autonomous agents.</p>
 
     <p>
       Toolspace hosts <a href="https://github.com/drknowhow/install-manifest-spec">install-manifest-spec</a>
@@ -101,34 +187,108 @@
       mirror &mdash; <strong>the spec is the moat, not the registry</strong>.
     </p>
 
-    <h2>For agents</h2>
+    <!-- Flow illustration: agent fetches a manifest, installs a tool. -->
+    <svg class="flow" viewBox="0 0 480 110" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <!-- agent (rounded chip) -->
+      <rect x="14" y="38" width="100" height="40" rx="6"/>
+      <text x="64" y="63" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="13" text-anchor="middle" stroke="none" fill="currentColor">agent</text>
+      <!-- arrow 1 -->
+      <line x1="118" y1="58" x2="178" y2="58"/>
+      <path d="M173 53l5 5-5 5"/>
+      <!-- manifest doc -->
+      <path d="M196 30h62l14 14v44h-76z"/>
+      <path d="M258 30v14h14"/>
+      <line x1="206" y1="56" x2="266" y2="56"/>
+      <line x1="206" y1="64" x2="266" y2="64"/>
+      <line x1="206" y1="72" x2="246" y2="72"/>
+      <text x="234" y="103" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" text-anchor="middle" stroke="none" fill="currentColor">manifest</text>
+      <!-- arrow 2 -->
+      <line x1="290" y1="58" x2="350" y2="58"/>
+      <path d="M345 53l5 5-5 5"/>
+      <!-- tool (rounded chip with little gear hint) -->
+      <rect x="358" y="38" width="106" height="40" rx="6"/>
+      <text x="411" y="63" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="13" text-anchor="middle" stroke="none" fill="currentColor">tool</text>
+    </svg>
 
-    <div class="surface">
-      <h3>Schema (v0.2 &mdash; latest)</h3>
-      <p><a href="/schemas/install-manifest-v0.2.json"><code>/schemas/install-manifest-v0.2.json</code></a> &mdash; CORS-enabled, cached. Adds the structured <code>actions[]</code> catalog so agents can invoke each operation a tool exposes with typed inputs, output schemas, and side-effects classification.</p>
+    <div class="quickstart">
+      <p class="quickstart-label">Get started</p>
+      <pre>pip install install-manifest
+install-manifest install &lt;url-or-path&gt;</pre>
     </div>
 
+    <h2>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M9 4c-2 0-3 1-3 3v3c0 1-1 2-2 2 1 0 2 1 2 2v3c0 2 1 3 3 3"/>
+        <path d="M15 4c2 0 3 1 3 3v3c0 1 1 2 2 2-1 0-2 1-2 2v3c0 2-1 3-3 3"/>
+      </svg>
+      What a manifest looks like
+    </h2>
+
+    <pre>{
+  "schema_version": "0.2",
+  "name": "gmail",
+  "version": "1.0.0",
+  "description": "Send and search a Gmail mailbox.",
+  "auth":    { "kind": "oauth2", "...": "..." },
+  "actions": [
+    { "name": "send", "input_schema": { "...": "..." }, "side_effects": "external" }
+  ]
+}</pre>
+    <p>
+      Full reference: <a href="/examples/gmail.v0.2.json"><code>/examples/gmail.v0.2.json</code></a>.
+      Every field is documented in the
+      <a href="/schemas/install-manifest-v0.2.json"><code>v0.2 schema</code></a>.
+    </p>
+
+    <h2>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="6" y="6" width="12" height="12" rx="2"/>
+        <rect x="9.5" y="9.5" width="5" height="5"/>
+        <line x1="3" y1="10" x2="6" y2="10"/>
+        <line x1="3" y1="14" x2="6" y2="14"/>
+        <line x1="18" y1="10" x2="21" y2="10"/>
+        <line x1="18" y1="14" x2="21" y2="14"/>
+        <line x1="10" y1="3" x2="10" y2="6"/>
+        <line x1="14" y1="3" x2="14" y2="6"/>
+        <line x1="10" y1="18" x2="10" y2="21"/>
+        <line x1="14" y1="18" x2="14" y2="21"/>
+      </svg>
+      For agents
+    </h2>
+
     <div class="surface">
-      <h3>Schema (v0.1)</h3>
-      <p><a href="/schemas/install-manifest-v0.1.json"><code>/schemas/install-manifest-v0.1.json</code></a> &mdash; the original MCP-shaped manifest format. Still supported; new manifests should target v0.2.</p>
+      <h3>Schema <span class="pill stable">v0.2 &middot; stable</span> <span class="pill legacy">v0.1 &middot; legacy</span></h3>
+      <p>
+        Current: <a href="/schemas/install-manifest-v0.2.json"><code>install-manifest-v0.2.json</code></a> &mdash;
+        adds the structured <code>actions[]</code> catalog so agents can invoke each operation a tool exposes
+        with typed input/output and side-effects classification. CORS-enabled, cached.
+      </p>
+      <p>
+        Legacy <a href="/schemas/install-manifest-v0.1.json"><code>install-manifest-v0.1.json</code></a> remains
+        served unchanged for tools targeting the original MCP-shaped format. New manifests should target v0.2.
+      </p>
     </div>
 
     <div class="surface">
       <h3>Manifest index</h3>
-      <p><a href="/manifests.json"><code>/manifests.json</code></a> &mdash; list of curated manifests with capability tags. The optional <code>versions[]</code> array lists every supported schema version.</p>
+      <p><a href="/manifests.json"><code>/manifests.json</code></a> &mdash; list of curated manifests with capability tags. The <code>versions[]</code> array lists every supported schema version.</p>
     </div>
 
     <div class="surface">
-      <h3>Example: gmail (v0.2)</h3>
-      <p><a href="/examples/gmail.v0.2.json"><code>/examples/gmail.v0.2.json</code></a> &mdash; reference v0.2 manifest with five Gmail actions (whoami, search, send, label_thread, unlabel_thread), each with typed input/output and side-effects classification.</p>
+      <h3>Example manifest</h3>
+      <p><a href="/examples/gmail.v0.2.json"><code>/examples/gmail.v0.2.json</code></a> &mdash; reference v0.2 manifest with five Gmail actions (whoami, search, send, label_thread, unlabel_thread), each with typed input/output and side-effects classification. Use this as the template when authoring new manifests.</p>
+      <p>A v0.1 example is also <a href="/examples/gmail.json">available</a> for tools still targeting the legacy format.</p>
     </div>
 
-    <div class="surface">
-      <h3>Example: gmail (v0.1)</h3>
-      <p><a href="/examples/gmail.json"><code>/examples/gmail.json</code></a> &mdash; legacy v0.1 reference manifest. Useful when authoring tools that still target the original format.</p>
-    </div>
-
-    <h2>For humans</h2>
+    <h2>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="9" cy="8" r="3"/>
+        <path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5"/>
+        <circle cx="17" cy="9" r="2.5"/>
+        <path d="M14.5 20c0-2.2 2-4 4.5-4"/>
+      </svg>
+      For humans
+    </h2>
 
     <p>
       You're welcome to read along. The <a href="https://github.com/drknowhow/install-manifest-spec">spec</a>
@@ -137,7 +297,14 @@
       manifest URL added to <code>manifests.json</code>.
     </p>
 
-    <h2>CLI</h2>
+    <h2>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="16" rx="2"/>
+        <path d="M7 9l3 3-3 3"/>
+        <line x1="13" y1="15" x2="17" y2="15"/>
+      </svg>
+      CLI
+    </h2>
 
     <pre>pip install install-manifest
 install-manifest validate &lt;url-or-path&gt;
