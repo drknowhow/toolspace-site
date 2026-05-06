@@ -28,8 +28,10 @@ SITE_ROOT = Path(__file__).resolve().parent.parent
 FILES_TO_SYNC: list[tuple[str, str]] = [
     ("schema/install-manifest-v0.1.json", "schemas/install-manifest-v0.1.json"),
     ("schema/install-manifest-v0.2.json", "schemas/install-manifest-v0.2.json"),
+    ("schema/install-manifest-v0.3.json", "schemas/install-manifest-v0.3.json"),
     ("examples/gmail.json", "examples/gmail.json"),
     ("examples/gmail.v0.2.json", "examples/gmail.v0.2.json"),
+    ("examples/gmail.v0.3.json", "examples/gmail.v0.3.json"),
 ]
 
 

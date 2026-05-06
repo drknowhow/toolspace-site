@@ -13,8 +13,10 @@ agents look first.
 ```
 schemas/install-manifest-v0.1.json   # mirrored from install-manifest-spec
 schemas/install-manifest-v0.2.json   # mirrored from install-manifest-spec
+schemas/install-manifest-v0.3.json   # mirrored from install-manifest-spec (current)
 examples/gmail.json                   # reference manifest (v0.1)
 examples/gmail.v0.2.json              # reference manifest (v0.2)
+examples/gmail.v0.3.json              # reference manifest (v0.3, current)
 manifests.json                        # registry index (lists every version)
 index.html                            # landing page
 netlify.toml + _headers               # CORS + cache headers
