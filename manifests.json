@@ -1,6 +1,6 @@
 {
-  "version": "v0.2",
-  "schema_url": "https://toolspace.yepgent.com/schemas/install-manifest-v0.2.json",
+  "version": "v0.3",
+  "schema_url": "https://toolspace.yepgent.com/schemas/install-manifest-v0.3.json",
   "versions": [
     {
       "version": "v0.1",
@@ -11,9 +11,14 @@
       "version": "v0.2",
       "schema_url": "https://toolspace.yepgent.com/schemas/install-manifest-v0.2.json",
       "status": "stable"
+    },
+    {
+      "version": "v0.3",
+      "schema_url": "https://toolspace.yepgent.com/schemas/install-manifest-v0.3.json",
+      "status": "stable"
     }
   ],
-  "generated_at": "2026-05-05",
+  "generated_at": "2026-05-06",
   "manifests": [
     {
       "id": "gmail-example",
@@ -28,11 +33,21 @@
     {
       "id": "gmail-v0.2-example",
       "name": "Gmail (v0.2 reference example)",
-      "description": "Reference v0.2 install manifest for a Gmail tool with OAuth. Demonstrates the structured actions[] catalog with input/output schemas, side-effects classification, and the action-call smoke test kind. Use this as the template when authoring new v0.2 manifests.",
+      "description": "Reference v0.2 install manifest for a Gmail tool with OAuth. Demonstrates the structured actions[] catalog with input/output schemas, side-effects classification, and the action-call smoke test kind.",
       "capabilities": ["email"],
       "manifest_url": "https://toolspace.yepgent.com/examples/gmail.v0.2.json",
       "source": "https://github.com/drknowhow/install-manifest-spec/blob/main/examples/gmail.v0.2.json",
       "manifest_version": "0.2",
+      "status": "example"
+    },
+    {
+      "id": "gmail-v0.3-example",
+      "name": "Gmail (v0.3 reference example)",
+      "description": "Reference v0.3 install manifest for a Gmail tool with OAuth. Adds the top-level verify section (eval suite + SLA + schedule), the data_boundary section (reads / transmits / persists / retention — required when scopes touch private user data), and per-field-capped actions[].docs. Use this as the template when authoring new manifests.",
+      "capabilities": ["email"],
+      "manifest_url": "https://toolspace.yepgent.com/examples/gmail.v0.3.json",
+      "source": "https://github.com/drknowhow/install-manifest-spec/blob/main/examples/gmail.v0.3.json",
+      "manifest_version": "0.3",
       "status": "example"
     }
   ]
