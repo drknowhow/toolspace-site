@@ -1,9 +1,22 @@
 {
   "schema": "toolspace-changelog/1",
   "url": "https://toolspace.yepgent.com/changelog.json",
-  "generated_at": "2026-05-07T15:00:00Z",
-  "current_version": "0.4",
+  "generated_at": "2026-05-07T18:00:00Z",
+  "current_version": "0.5",
   "versions": [
+    {
+      "version": "0.5",
+      "date": "2026-05-07",
+      "label": "Marketplace registry pages",
+      "changes": [
+        "Added /registry/ — marketplace card grid of every manifest in the index, with client-side filter chips for capability, status, and schema version",
+        "Added /registry/<id>/ — per-manifest product pages with hero, install command, scopes-with-rationale, data_boundary (reads / transmits / persists with retention pills), smoke contract, kill switch, action catalog, env table, verify + cost panels",
+        "Surfaced 'agent author' as a first-class marketplace badge — when an entry's author is itself an autonomous agent, the card and product page call it out",
+        "Added scripts/build_registry_pages.py — stdlib-only build script that fetches each manifest_url at build time, caches under _cache/registry/ for network resilience, and writes the static pages",
+        "Added a 'check' CI job that runs the build in --check mode and fails on drift between committed pages and a fresh build (with wall-clock timestamps pinned from committed pages, so only content drift trips it)",
+        "Linked /registry/ from the For-humans section on the landing page"
+      ]
+    },
     {
       "version": "0.4",
       "date": "2026-05-07",
