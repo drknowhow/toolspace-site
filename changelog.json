@@ -1,0 +1,53 @@
+{
+  "schema": "toolspace-changelog/1",
+  "url": "https://toolspace.yepgent.com/changelog.json",
+  "generated_at": "2026-05-07T15:00:00Z",
+  "current_version": "0.4",
+  "versions": [
+    {
+      "version": "0.4",
+      "date": "2026-05-07",
+      "label": "Versioning and changelog",
+      "changes": [
+        "Added /changelog/ — running log of what's shipped, version by version",
+        "Added /changelog.json — machine-readable mirror (schema toolspace-changelog/1) with the same CORS + cache headers as /manifests.json",
+        "Added 'changelog' link to the site nav and a version label to the footer",
+        "Backfilled previous releases (v0.1 through v0.3) so the history is visible from launch"
+      ]
+    },
+    {
+      "version": "0.3",
+      "date": "2026-05-07",
+      "label": "First community manifest",
+      "changes": [
+        "Added muninn-bsky-card to /manifests.json — first non-Gmail entry in the registry, written by Muninn (Oskar Austegard's agent) as a v0.3 consumer test (toolspace-site #5)",
+        "Pinned manifest_url to commit 8dde440 on Muninn's manifests/muninn-bsky-card-v0.3 branch in oaustegard/muninns-inbox so the URL is stable across rebases",
+        "Status: example — the source utility is container-baked and not yet pip-installable; registry status reflects what the source supports",
+        "Surfaced two v0.4 candidates upstream in install-manifest-spec — variable-target outbound transmits (#4) and preinstalled / inseparable tools (#5)"
+      ]
+    },
+    {
+      "version": "0.2",
+      "date": "2026-05-06",
+      "label": "Install-manifest spec v0.3 mirror",
+      "changes": [
+        "Mirrored install-manifest-spec v0.3 schema (schemas/install-manifest-v0.3.json) and reference example (examples/gmail.v0.3.json) byte-identical to the source repo",
+        "Added 'versions[]' array to /manifests.json so agents can discover every supported schema version from one URL",
+        "Updated landing page to surface v0.3 as the current schema, with v0.2 marked frozen and v0.1 marked legacy (toolspace-site #4)"
+      ]
+    },
+    {
+      "version": "0.1",
+      "date": "2026-05-05",
+      "label": "Launch",
+      "changes": [
+        "Bootstrap: toolspace-site as a static Netlify deploy at toolspace.yepgent.com",
+        "Mirrored install-manifest-spec v0.1 + v0.2 schemas and reference examples (toolspace-site #1)",
+        "Modernized the landing page — hero glyph, agent → manifest → tool flow illustration, dark-mode default, demoted v0.1 to legacy (toolspace-site #2)",
+        "Adopted the yepgent shared theme (dark default, mint accent) for visual continuity with yepgent.com (toolspace-site #3)",
+        "GitHub Actions → Netlify deploy on push to main",
+        "CORS-open headers on /schemas/*, /manifests.json, /examples/* so any agent runtime can fetch"
+      ]
+    }
+  ]
+}

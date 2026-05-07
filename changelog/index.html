@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>changelog &middot; toolspace</title>
+  <meta name="description" content="A running log of what's shipped on toolspace.yepgent.com — version by version." />
+  <meta name="color-scheme" content="dark light" />
+
+  <!-- Machine-readable version of this page. -->
+  <link rel="alternate" type="application/json" href="/changelog.json" title="toolspace changelog JSON" />
+
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    .version-block {
+      border-left: 3px solid var(--accent, #7cf5c4);
+      padding: 0 0 0 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+    .version-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .version-tag {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent, #7cf5c4);
+    }
+    .version-label {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .version-date {
+      font-size: 0.82rem;
+      opacity: 0.55;
+      margin-left: auto;
+      font-variant-numeric: tabular-nums;
+    }
+    .version-changes {
+      margin: 0.5rem 0 0;
+      padding-left: 1.2rem;
+      font-size: 0.93rem;
+      line-height: 1.7;
+    }
+    .version-changes li {
+      margin-bottom: 0.25rem;
+    }
+    .json-note {
+      font-size: 0.82rem;
+      opacity: 0.55;
+      margin-top: 2.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-nav">
+    <a class="brand" href="/">
+      <svg class="brand-glyph" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 6h22l10 10v34H14z" stroke="var(--accent)"/>
+        <path d="M36 6v10h10" stroke="var(--accent)"/>
+        <circle cx="40" cy="42" r="9" fill="var(--bg)" stroke="var(--accent)"/>
+        <path d="M36 42.5l3 3 6-6.5" stroke="var(--accent)"/>
+      </svg>
+      <span>toolspace<span class="dot">.</span></span>
+    </a>
+    <nav>
+      <a href="/">registry</a>
+      <a href="/changelog/">changelog</a>
+      <a href="https://github.com/drknowhow/install-manifest-spec">spec</a>
+      <a href="https://yepgent.com/">yepgent</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Changelog</h1>
+    <p class="lede">A running log of what's shipped on toolspace.yepgent.com. Newest first.</p>
+
+    <hr />
+
+    <div class="version-block">
+      <div class="version-header">
+        <span class="version-tag">v0.4</span>
+        <span class="version-label">Versioning and changelog</span>
+        <span class="version-date">2026-05-07</span>
+      </div>
+      <ul class="version-changes">
+        <li>Added this page and <a href="/changelog.json">changelog.json</a> (schema <code>toolspace-changelog/1</code>) so site updates are visible to humans and machines without reading git log.</li>
+        <li>Added a <em>changelog</em> link to the site nav and a version label to the footer.</li>
+        <li>Backfilled previous releases (v0.1 through v0.3) so history is visible from launch.</li>
+      </ul>
+    </div>
+
+    <div class="version-block">
+      <div class="version-header">
+        <span class="version-tag">v0.3</span>
+        <span class="version-label">First community manifest</span>
+        <span class="version-date">2026-05-07</span>
+      </div>
+      <ul class="version-changes">
+        <li>Added <code>muninn-bsky-card</code> to <a href="/manifests.json">/manifests.json</a> &mdash; first non-Gmail entry in the registry, written by Muninn (Oskar Austegard's agent) as a v0.3 consumer test (<a href="https://github.com/drknowhow/toolspace-site/pull/5">toolspace-site #5</a>).</li>
+        <li>Pinned <code>manifest_url</code> to commit <code>8dde440</code> on Muninn's <code>manifests/muninn-bsky-card-v0.3</code> branch in <a href="https://github.com/oaustegard/muninns-inbox/pull/2">oaustegard/muninns-inbox#2</a> so the URL is stable across rebases.</li>
+        <li>Status: <em>example</em> &mdash; the source utility is container-baked and not yet pip-installable; registry status reflects what the source supports.</li>
+        <li>Surfaced two v0.4 candidates upstream in install-manifest-spec &mdash; <a href="https://github.com/drknowhow/install-manifest-spec/issues/4">variable-target outbound transmits (#4)</a> and <a href="https://github.com/drknowhow/install-manifest-spec/issues/5">preinstalled / inseparable tools (#5)</a>.</li>
+      </ul>
+    </div>
+
+    <div class="version-block">
+      <div class="version-header">
+        <span class="version-tag">v0.2</span>
+        <span class="version-label">Install-manifest spec v0.3 mirror</span>
+        <span class="version-date">2026-05-06</span>
+      </div>
+      <ul class="version-changes">
+        <li>Mirrored install-manifest-spec v0.3 schema (<a href="/schemas/install-manifest-v0.3.json"><code>schemas/install-manifest-v0.3.json</code></a>) and reference example (<a href="/examples/gmail.v0.3.json"><code>examples/gmail.v0.3.json</code></a>) byte-identical to the source repo.</li>
+        <li>Added <code>versions[]</code> array to <a href="/manifests.json">/manifests.json</a> so agents can discover every supported schema version from one URL.</li>
+        <li>Updated landing page to surface v0.3 as the current schema, with v0.2 marked <em>frozen</em> and v0.1 marked <em>legacy</em> (<a href="https://github.com/drknowhow/toolspace-site/pull/4">toolspace-site #4</a>).</li>
+      </ul>
+    </div>
+
+    <div class="version-block">
+      <div class="version-header">
+        <span class="version-tag">v0.1</span>
+        <span class="version-label">Launch</span>
+        <span class="version-date">2026-05-05</span>
+      </div>
+      <ul class="version-changes">
+        <li>Bootstrap: toolspace-site as a static Netlify deploy at toolspace.yepgent.com.</li>
+        <li>Mirrored install-manifest-spec v0.1 + v0.2 schemas and reference examples (<a href="https://github.com/drknowhow/toolspace-site/pull/1">toolspace-site #1</a>).</li>
+        <li>Modernized the landing page &mdash; hero glyph, agent &rarr; manifest &rarr; tool flow illustration, dark-mode default, demoted v0.1 to legacy (<a href="https://github.com/drknowhow/toolspace-site/pull/2">toolspace-site #2</a>).</li>
+        <li>Adopted the yepgent shared theme (dark default, mint accent) for visual continuity with yepgent.com (<a href="https://github.com/drknowhow/toolspace-site/pull/3">toolspace-site #3</a>).</li>
+        <li>GitHub Actions &rarr; Netlify deploy on push to <code>main</code>.</li>
+        <li>CORS-open headers on <code>/schemas/*</code>, <code>/manifests.json</code>, <code>/examples/*</code> so any agent runtime can fetch.</li>
+      </ul>
+    </div>
+
+    <p class="json-note">Machine-readable: <a href="/changelog.json">changelog.json</a></p>
+
+    <footer>
+      <p>
+        toolspace.yepgent.com &middot;
+        <span class="muted">v0.4</span> &middot;
+        <a href="/changelog/">changelog</a> &middot;
+        <a href="https://github.com/drknowhow/toolspace-site">source</a> &middot;
+        <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> &middot;
+        <a href="https://yepgent.com">yepgent</a>
+      </p>
+    </footer>
+  </main>
+</body>
+</html>
