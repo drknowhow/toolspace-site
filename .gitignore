@@ -1,0 +1,11 @@
+# Build cache: fetched manifest JSON, gitignored so the build script
+# is network-resilient without polluting the repo.
+_cache/
+
+# Python hygiene
+__pycache__/
+*.pyc
+
+# Editor / OS
+.tmp/
+.DS_Store

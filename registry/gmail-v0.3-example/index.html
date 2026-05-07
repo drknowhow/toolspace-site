@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yep Gmail &middot; toolspace</title>
+  <meta name="description" content="Send, search, label, and inspect Gmail on the user&#x27;s behalf via the Gmail API. Python module with a structured action catalog; OAuth refresh-token auth; no inbo" />
+  <meta name="color-scheme" content="dark light" />
+
+  <link rel="alternate" type="application/json" href="https://toolspace.yepgent.com/examples/gmail.v0.3.json" title="install manifest JSON" />
+
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    /* Marketplace surface — used on /registry/ and /registry/<id>/. */
+
+    main.wide { max-width: 56rem; }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.8rem;
+      align-items: center;
+      margin: 1rem 0 1.25rem;
+      padding: 0.6rem 0.8rem;
+      background: var(--card-bg);
+      border: 1px solid var(--card-edge);
+      border-radius: 10px;
+    }
+    .filter-group { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
+    .filter-group .label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-right: 0.3rem;
+    }
+    .chip {
+      display: inline-block;
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      padding: 0.25em 0.7em;
+      border-radius: 999px;
+      cursor: pointer;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--field-edge);
+      transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+      user-select: none;
+    }
+    .chip:hover { color: var(--fg); border-color: var(--accent-edge); }
+    .chip[aria-pressed="true"] {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .chip-clear {
+      font-size: 0.78rem;
+      color: var(--muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      text-decoration: underline;
+      text-decoration-color: color-mix(in oklab, var(--muted) 40%, transparent);
+      padding: 0.2em 0.4em;
+    }
+    .chip-clear:hover { color: var(--fg); }
+
+    /* Card grid */
+    ul.tool-grid {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: 0.9rem;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 38rem) {
+      ul.tool-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (min-width: 60rem) {
+      ul.tool-grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
+    li.tool-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-edge);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+    li.tool-card:hover { border-color: var(--accent-edge); }
+    li.tool-card.hidden { display: none; }
+    .tool-card .head {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+    .tool-glyph {
+      flex: 0 0 auto;
+      width: 40px;
+      height: 40px;
+      border-radius: 9px;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-edge);
+      color: var(--accent);
+      display: grid;
+      place-items: center;
+      font: 600 0.92rem ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      letter-spacing: 0.04em;
+    }
+    .tool-card h3 {
+      margin: 0;
+      font-size: 1.02rem;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+    .tool-card h3 a { color: var(--fg); text-decoration: none; }
+    .tool-card h3 a:hover { color: var(--accent); }
+    .tool-card .author {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin: 0;
+    }
+    .tool-card .summary {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.5;
+    }
+    .tool-card .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem 0.4rem;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 0.3rem;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.18em 0.55em;
+      border-radius: 999px;
+      border: 1px solid var(--field-edge);
+      color: var(--muted);
+    }
+    .badge.cap {
+      color: var(--fg);
+      background: color-mix(in oklab, var(--fg) 6%, transparent);
+      border-color: var(--card-edge);
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 500;
+      font-size: 0.74rem;
+    }
+    .badge.status-stable     { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+    .badge.status-example    { color: var(--muted); }
+    .badge.status-preview    { color: #f0b85a; border-color: #f0b85a; background: rgba(240, 184, 90, 0.10); }
+    .badge.status-deprecated { color: #ff8585; border-color: #ff8585; background: rgba(255, 133, 133, 0.08); }
+    .badge.agent-author {
+      color: var(--accent);
+      border-color: var(--accent-edge);
+      background: var(--accent-soft);
+    }
+
+    /* Empty state */
+    .grid-empty {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      color: var(--muted);
+      border: 1px dashed var(--card-edge);
+      border-radius: 10px;
+    }
+
+    /* ----- Product page (per-manifest) ----- */
+
+    .crumb { font-size: 0.85rem; color: var(--muted); margin: 1rem 0 0.5rem; }
+    .crumb a { color: var(--muted); text-decoration: underline; text-decoration-color: color-mix(in oklab, var(--muted) 40%, transparent); }
+    .crumb a:hover { color: var(--fg); }
+
+    .hero-block {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      margin: 0 0 1rem;
+    }
+    .hero-block .tool-glyph { width: 56px; height: 56px; font-size: 1.15rem; border-radius: 11px; }
+    .hero-block .meta-line {
+      display: flex; flex-wrap: wrap; gap: 0.4rem;
+      margin: 0.3rem 0 0;
+    }
+    .hero-block h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 4.4vw, 2.25rem);
+      letter-spacing: -0.015em;
+      line-height: 1.18;
+    }
+    .author-line {
+      margin: 0.35rem 0 0;
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+    .summary-line {
+      margin: 0.6rem 0 0.4rem;
+      font-size: 1.02rem;
+      line-height: 1.55;
+    }
+
+    .install-card {
+      background: var(--card-bg);
+      border: 1px solid var(--accent-edge);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      margin: 1rem 0 1.2rem;
+    }
+    .install-card .label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 0.4rem;
+    }
+    .install-card pre { margin: 0; }
+    .install-card .links { margin: 0.5rem 0 0; font-size: 0.85rem; }
+    .install-card .links a { margin-right: 0.7rem; }
+
+    section.panel {
+      margin: 1.6rem 0;
+      padding: 1rem 1.1rem;
+      background: var(--card-bg);
+      border: 1px solid var(--card-edge);
+      border-radius: 11px;
+    }
+    section.panel.security { border-color: var(--accent-edge); }
+    section.panel h2 {
+      margin: 0 0 0.6rem;
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    section.panel h2 .glyph {
+      width: 16px; height: 16px;
+      color: var(--muted);
+    }
+    section.panel.security h2 .glyph { color: var(--accent); }
+
+    table.kv {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      margin: 0.4rem 0;
+    }
+    table.kv th, table.kv td {
+      text-align: left;
+      vertical-align: top;
+      padding: 0.45em 0.5em 0.45em 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    table.kv th {
+      color: var(--muted);
+      font-weight: 500;
+      width: 12rem;
+      white-space: nowrap;
+    }
+    table.kv td p { margin: 0; }
+    table.kv tr:last-child th, table.kv tr:last-child td { border-bottom: none; }
+
+    ul.scope-list, ul.action-list, ul.transmit-list, ul.reads-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    ul.scope-list li, ul.action-list li, ul.transmit-list li, ul.reads-list li {
+      padding: 0.6em 0;
+      border-bottom: 1px solid var(--rule);
+    }
+    ul.scope-list li:last-child, ul.action-list li:last-child,
+    ul.transmit-list li:last-child, ul.reads-list li:last-child { border-bottom: none; }
+    .scope-head, .action-head, .transmit-head {
+      display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: baseline;
+      margin-bottom: 0.2em;
+    }
+    .scope-head code { font-size: 0.92em; }
+    .scope-actions { color: var(--muted); font-size: 0.85rem; }
+    .scope-rationale, .action-summary, .transmit-purpose {
+      color: var(--muted); font-size: 0.92rem; margin: 0.2rem 0 0; line-height: 1.55;
+    }
+
+    .action-name { font-weight: 600; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.95rem; color: var(--fg); }
+    .action-side {
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .action-side.write, .action-side.destructive { color: #f0b85a; }
+    .action-docs { margin: 0.4em 0 0; }
+    .action-docs dt {
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-top: 0.4em;
+    }
+    .action-docs dd {
+      margin: 0.1em 0 0;
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+    .action-docs dd code { font-size: 0.86em; }
+
+    .transmit-target {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-weight: 600;
+      color: var(--fg);
+    }
+    .transmit-fields {
+      margin: 0.35rem 0 0;
+      padding-left: 1.1rem;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+    .retention {
+      font-size: 0.74rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0.18em 0.55em;
+      border-radius: 999px;
+      border: 1px solid var(--field-edge);
+      color: var(--muted);
+    }
+    .retention.persistent { color: #f0b85a; border-color: #f0b85a; background: rgba(240, 184, 90, 0.08); }
+    .retention.session    { color: var(--muted); }
+    .retention.none       { color: var(--accent); border-color: var(--accent-edge); background: var(--accent-soft); }
+
+    .smoke-block, .kill-block { font-size: 0.92rem; }
+    .smoke-block code, .kill-block code { font-size: 0.88em; }
+    .kill-block .url-target { word-break: break-all; }
+
+    .freshness {
+      margin-top: 1.5rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .freshness .stale { color: #f0b85a; }
+  </style>
+</head>
+<body>
+  <header class="site-nav">
+    <a class="brand" href="/">
+      <svg class="brand-glyph" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 6h22l10 10v34H14z" stroke="var(--accent)"/>
+        <path d="M36 6v10h10" stroke="var(--accent)"/>
+        <circle cx="40" cy="42" r="9" fill="var(--bg)" stroke="var(--accent)"/>
+        <path d="M36 42.5l3 3 6-6.5" stroke="var(--accent)"/>
+      </svg>
+      <span>toolspace<span class="dot">.</span></span>
+    </a>
+    <nav>
+      <a href="/registry/">registry</a>
+      <a href="/changelog/">changelog</a>
+      <a href="https://github.com/drknowhow/install-manifest-spec">spec</a>
+      <a href="https://yepgent.com/">yepgent</a>
+    </nav>
+  </header>
+  <main class="wide">
+    <p class="crumb"><a href="/">toolspace</a> &rsaquo; <a href="/registry/">registry</a> &rsaquo; Yep Gmail</p>
+
+    <div class="hero-block">
+      <div class="tool-glyph" aria-hidden="true">YG</div>
+      <div>
+        <h1>Yep Gmail</h1>
+        <p class="author-line">by <a href="https://yepgent.com" rel="noopener noreferrer">Dimitri Tselenchuk</a></p>
+        <div class="meta-line">
+          <span class="badge status-example">example</span>
+          <span class="badge">v0.3</span>
+          <span class="badge cap">email</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="summary-line">Send, search, label, and inspect Gmail on the user&#x27;s behalf via the Gmail API. Python module with a structured action catalog; OAuth refresh-token auth; no inbox content stored server-side.</p>
+
+    <section class="install-card">
+      <p class="label">Install</p>
+<pre><code>install-manifest install https://toolspace.yepgent.com/examples/gmail.v0.3.json</code></pre>
+      <p class="links">
+        <a href="https://toolspace.yepgent.com/examples/gmail.v0.3.json" rel="noopener noreferrer">manifest JSON</a>
+        &middot; <a href="https://github.com/drknowhow/install-manifest-spec/blob/main/examples/gmail.v0.3.json" rel="noopener noreferrer">source</a>
+        &middot; <a href="https://github.com/drknowhow/Yep/blob/main/docs/gmail-tool-install.md" rel="noopener noreferrer">docs</a> &middot; <a href="https://github.com/drknowhow/Yep/issues" rel="noopener noreferrer">issues</a> &middot; <a href="https://github.com/drknowhow/Yep/tree/main/src/mcp/gmail" rel="noopener noreferrer">homepage</a>
+      </p>
+    </section>
+
+<section class="panel security">
+      <h2>
+        <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 4l8 4v6a8 8 0 01-8 6 8 8 0 01-8-6V8z"/>
+        </svg>
+        Security
+      </h2>
+      <table class="kv">
+        <tr><th>Kill switch</th><td><span class="badge">shell</span> <p class="kill-block">Programmatic: <code>[&#x27;python&#x27;, &#x27;-m&#x27;, &#x27;yep_gmail_tool&#x27;, &#x27;revoke&#x27;, &#x27;--all&#x27;]</code></p></td></tr>
+        <tr><th>Smoke contract</th><td><p class="smoke-block"><span class="badge">action-call</span> action <code>whoami</code> &middot; timeout 15s &middot; <code>/email</code> = <code>${GOOGLE_USER_EMAIL}</code></p></td></tr>
+      </table>
+      <h3 style="margin-top:1.2rem;">Scopes</h3>
+      <ul class="scope-list">
+        <li>
+          <div class="scope-head">
+            <code>gmail.messages</code>
+            <span class="scope-actions">read, send</span>
+            <span class="badge cap" title="provider scope">https://www.googleapis.com/auth/gmail.modify</span>
+          </div>
+          <p class="scope-rationale">Required to search the user&#x27;s inbox, fetch message bodies for context, and send outbound mail on the user&#x27;s behalf.</p>
+        </li>
+        <li>
+          <div class="scope-head">
+            <code>gmail.labels</code>
+            <span class="scope-actions">read, write</span>
+            <span class="badge cap" title="provider scope">https://www.googleapis.com/auth/gmail.labels</span>
+          </div>
+          <p class="scope-rationale">Applies and removes labels on threads to mark agent-processed messages and to support user-defined organization schemes.</p>
+        </li>
+        <li>
+          <div class="scope-head">
+            <code>net.outbound</code>
+            <span class="scope-actions">read</span>
+            <span class="badge cap" title="provider scope">googleapis.com</span>
+          </div>
+          <p class="scope-rationale">Tool calls api.googleapis.com for all Gmail operations. No other outbound destinations.</p>
+        </li>
+      </ul>
+<h3 style="margin-top:1.2rem;">Data boundary</h3><h4 style="margin-top:0.8rem;font-size:0.86rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Reads</h4><ul class="reads-list"><li><code>gmail.messages</code> <span class="scope-actions">sensitivity: high</span></li><li><code>gmail.labels</code> <span class="scope-actions">sensitivity: low</span></li></ul><h4 style="margin-top:0.8rem;font-size:0.86rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Persists</h4><ul class="reads-list"><li><code>—</code></li></ul><p class="small muted">Tool-local retention: 90 day(s).</p></section>
+    <section class="panel">
+      <h2>
+        <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="16" rx="2"/>
+          <path d="M7 9l3 3-3 3"/>
+          <line x1="13" y1="15" x2="17" y2="15"/>
+        </svg>
+        Actions
+      </h2>
+      <ul class="action-list">
+        <li>
+          <div class="action-head">
+            <span class="action-name">whoami</span>
+            <span class="action-side read">read</span>
+             <span class="action-side">idempotent</span>
+          </div>
+          <p class="action-summary">Verify auth and return the operating mailbox. &middot; <code>gmail.messages</code></p>
+          <dl class="action-docs">
+            <dt>Goal</dt>            <dd>Verify Gmail auth and return the resolved mailbox email and totals.</dd>
+            <dt>Inputs</dt>          <dd><code>(none)</code></dd>
+            <dt>Outputs</dt>         <dd><code>{email, messages_total, threads_total}</code></dd>
+            <dt>Errors</dt>          <dd><code>auth_expired, auth_invalid, network_unreachable</code></dd>
+            <dt>Example</dt>         <dd><code>whoami</code></dd>
+          </dl>
+        </li>
+        <li>
+          <div class="action-head">
+            <span class="action-name">search</span>
+            <span class="action-side read">read</span>
+             <span class="action-side">idempotent</span>
+          </div>
+          <p class="action-summary">Search the mailbox by Gmail query syntax. Returns thread IDs and snippets. &middot; <code>gmail.messages</code></p>
+          <dl class="action-docs">
+            <dt>Goal</dt>            <dd>Search the mailbox via Gmail query syntax and return thread IDs with snippets.</dd>
+            <dt>Inputs</dt>          <dd><code>query (Gmail q-syntax, ≤512 chars), limit (1..100, default 25)</code></dd>
+            <dt>Outputs</dt>         <dd><code>{threads: [{thread_id, snippet, subject?, from?}]}</code></dd>
+            <dt>Errors</dt>          <dd><code>invalid_query, rate_limited, auth_expired</code></dd>
+            <dt>Example</dt>         <dd><code>search query=&#x27;is:unread from:alice@x.com&#x27; limit=10</code></dd>
+          </dl>
+        </li>
+        <li>
+          <div class="action-head">
+            <span class="action-name">send</span>
+            <span class="action-side destructive">destructive</span>
+            
+          </div>
+          <p class="action-summary">Send an email from the authenticated mailbox. &middot; <code>gmail.messages</code> <code>net.outbound</code></p>
+          <dl class="action-docs">
+            <dt>Goal</dt>            <dd>Send an email message via the authenticated Gmail mailbox.</dd>
+            <dt>Inputs</dt>          <dd><code>to (email), cc[]/bcc[] (≤32), subject (≤998), body (text), body_format (plain|html)</code></dd>
+            <dt>Outputs</dt>         <dd><code>{message_id, thread_id}</code></dd>
+            <dt>Errors</dt>          <dd><code>invalid_recipient, rate_limited, auth_expired, payload_too_large</code></dd>
+            <dt>Example</dt>         <dd><code>send to=alice@x.com subject=&#x27;Hi&#x27; body=&#x27;Just checking in.&#x27;</code></dd>
+          </dl>
+        </li>
+        <li>
+          <div class="action-head">
+            <span class="action-name">label_thread</span>
+            <span class="action-side write">write</span>
+             <span class="action-side">idempotent</span>
+          </div>
+          <p class="action-summary">Add one or more labels to an existing thread. &middot; <code>gmail.labels</code></p>
+          <dl class="action-docs">
+            <dt>Goal</dt>            <dd>Apply labels to a Gmail thread to mark it for downstream workflows.</dd>
+            <dt>Inputs</dt>          <dd><code>thread_id (string), labels (1..16 strings)</code></dd>
+            <dt>Outputs</dt>         <dd><code>{thread_id, label_ids}</code></dd>
+            <dt>Errors</dt>          <dd><code>thread_not_found, label_unknown, auth_expired</code></dd>
+            <dt>Example</dt>         <dd><code>label-thread thread_id=187a4f... labels=[&#x27;Yep/processed&#x27;]</code></dd>
+          </dl>
+        </li>
+        <li>
+          <div class="action-head">
+            <span class="action-name">unlabel_thread</span>
+            <span class="action-side write">write</span>
+             <span class="action-side">idempotent</span>
+          </div>
+          <p class="action-summary">Remove one or more labels from an existing thread. &middot; <code>gmail.labels</code></p>
+          <dl class="action-docs">
+            <dt>Goal</dt>            <dd>Remove labels from a Gmail thread.</dd>
+            <dt>Inputs</dt>          <dd><code>thread_id (string), labels (1..16 strings)</code></dd>
+            <dt>Outputs</dt>         <dd><code>{thread_id, label_ids}</code></dd>
+            <dt>Errors</dt>          <dd><code>thread_not_found, label_unknown, auth_expired</code></dd>
+            <dt>Example</dt>         <dd><code>unlabel-thread thread_id=187a4f... labels=[&#x27;Yep/processed&#x27;]</code></dd>
+          </dl>
+        </li>
+      </ul>
+    </section>
+    <section class="panel">
+      <h2>
+        <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="4" y="6" width="16" height="12" rx="2"/>
+          <line x1="8" y1="10" x2="16" y2="10"/>
+          <line x1="8" y1="14" x2="13" y2="14"/>
+        </svg>
+        Environment
+      </h2>
+      <table class="kv">
+        <tr>
+          <th><code>GOOGLE_CLIENT_ID</code></th>
+          <td>
+            <p>Your Google OAuth 2.0 Client ID for the project that has the Gmail API enabled. Looks like &#x27;123456789012-abc...apps.googleusercontent.com&#x27;. Found in Google Cloud Console &gt; APIs &amp; Services &gt; Credentials.</p>
+            <p class="small muted">required &middot; secret: no &middot; <a href="https://console.cloud.google.com/apis/credentials" rel="noopener noreferrer">obtain</a></p>
+          </td>
+        </tr>
+        <tr>
+          <th><code>GOOGLE_CLIENT_SECRET</code></th>
+          <td>
+            <p>Your Google OAuth 2.0 Client Secret, paired with the Client ID above. Treat as a password.</p>
+            <p class="small muted">required &middot; secret: yes &middot; <a href="https://console.cloud.google.com/apis/credentials" rel="noopener noreferrer">obtain</a></p>
+          </td>
+        </tr>
+        <tr>
+          <th><code>GOOGLE_REFRESH_TOKEN</code></th>
+          <td>
+            <p>Long-lived OAuth refresh token for the Gmail account this tool will operate on. Run `python -m yep_gmail_tool authorize` once to obtain. The host stores it in your secret backend; never paste this value into argv or shell history.</p>
+            <p class="small muted">required &middot; secret: yes &middot; <a href="https://github.com/drknowhow/Yep/blob/main/docs/gmail-tool-install.md#one-time-oauth-bootstrap" rel="noopener noreferrer">obtain</a></p>
+          </td>
+        </tr>
+        <tr>
+          <th><code>GOOGLE_USER_EMAIL</code></th>
+          <td>
+            <p>Email address of the Gmail account this tool operates on. Used by the smoke test to verify auth resolves to the expected mailbox; not required for any non-smoke action.</p>
+            <p class="small muted">optional &middot; secret: no</p>
+          </td>
+        </tr>
+        <tr>
+          <th><code>GMAIL_DEFAULT_LABEL</code></th>
+          <td>
+            <p>Optional default Gmail label this tool will apply to messages it processes. Leave blank to skip auto-labeling.</p>
+            <p class="small muted">optional &middot; secret: no <span class="small muted">(default <code>Yep/processed</code>)</span></p>
+          </td>
+        </tr>
+      </table>
+    </section>
+    <section class="panel">
+      <h2>
+        <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12l5 5 9-11"/>
+        </svg>
+        Verify &amp; cost
+      </h2>
+      <table class="kv">
+        <tr><th>Verify suite</th><td><code>./eval/suite.jsonl</code> &middot; 12 cases &middot; pass &ge; 0.92</td></tr>
+        <tr><th>SLA</th><td>p50 400 ms &middot; p95 1500 ms &middot; max error rate 0.02</td></tr>
+        <tr><th>Schedule</th><td>cadence: daily &middot; on install: yes</td></tr>
+        <tr><th>Install fee</th><td>0&cent;</td></tr>
+        <tr><th>Monthly fee</th><td>0&cent;</td></tr>
+        <tr><th>Usage model</th><td>external</td></tr>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>
+        <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 7v5l3 3"/>
+        </svg>
+        Runtime
+      </h2>
+      <p class="small muted">runtime: <code>python-module</code> &middot; install method: <code>pip</code> &middot; entrypoint: <code>python -m yep_gmail_tool</code></p>
+      <p>A standalone Python capability that exposes a small set of Gmail operations to autonomous agents through the install-manifest v0.3 actions[] catalog. Authenticates via standard Google OAuth installed-app flow; the user grants once, the refresh token is held in the host&#x27;s secret backend, and the tool exchanges it for short-lived access tokens at runtime. No message bodies are persisted by the tool itself. v0.3 adds a verify suite, an SLA contract, and an explicit data_boundary declaration showing this tool talks ONLY to the Gmail API — no third-party model or vendor sees mailbox content.</p>
+      <p class="small muted">Tags: <span class="badge cap">email</span><span class="badge cap">gmail</span><span class="badge cap">google</span><span class="badge cap">messaging</span></p>
+      <p class="small muted">License: MIT</p>
+      <p><span class="freshness">Last fetched 2026-05-07T14:55:28Z (live)</span></p>
+    </section>
+
+    <footer>
+      <p>
+        toolspace.yepgent.com &middot;
+        <span class="muted">v0.5</span> &middot;
+        <a href="/registry/">registry</a> &middot;
+        <a href="/changelog/">changelog</a> &middot;
+        <a href="https://github.com/drknowhow/toolspace-site">source</a> &middot;
+        <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> &middot;
+        <a href="https://yepgent.com">yepgent</a>
+      </p>
+      <p class="small muted">Pages generated 2026-05-07T14:55:27Z &middot; <a href="/manifests.json">manifests.json</a> &middot; <a href="/changelog.json">changelog.json</a></p>
+    </footer>
+  </main>
+</body>
+</html>

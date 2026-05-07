@@ -44,3 +44,17 @@ jobs:
 
       - name: Validate manifests.json
         run: python scripts/validate_manifests_index.py
+
+  registry-pages-fresh:
+    name: registry pages match a fresh build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify registry/ matches a fresh build
+        run: python scripts/build_registry_pages.py --check
