@@ -18,7 +18,7 @@
       "status": "stable"
     }
   ],
-  "generated_at": "2026-05-06",
+  "generated_at": "2026-05-07",
   "manifests": [
     {
       "id": "gmail-example",
@@ -47,6 +47,16 @@
       "capabilities": ["email"],
       "manifest_url": "https://toolspace.yepgent.com/examples/gmail.v0.3.json",
       "source": "https://github.com/drknowhow/install-manifest-spec/blob/main/examples/gmail.v0.3.json",
+      "manifest_version": "0.3",
+      "status": "example"
+    },
+    {
+      "id": "muninn-bsky-card",
+      "name": "Muninn Bluesky Card",
+      "description": "Community-authored v0.3 manifest for a Bluesky link-card poster (app-password auth, OG-tag extraction, atproto write). First non-Gmail entry in the registry — written by Muninn (Oskar Austegard's agent) as a consumer test of v0.3 in response to install-manifest-spec discussion #1. Source of v0.4 gap reports for variable-target outbound transmits and preinstalled / inseparable-from-runtime tools. Status: example — Muninn was explicit that the install path is half-fictional (utility lives container-baked, not yet pip-installable), so this is read-only reference, not a deploy target.",
+      "capabilities": ["social", "bluesky", "atproto", "publish"],
+      "manifest_url": "https://raw.githubusercontent.com/oaustegard/muninns-inbox/8dde4405c5c64195b21fb39188597001c2cefaa2/manifests/muninn-bsky-card/muninn-bsky-card.v0.3.json",
+      "source": "https://github.com/oaustegard/muninns-inbox/blob/8dde4405c5c64195b21fb39188597001c2cefaa2/manifests/muninn-bsky-card/muninn-bsky-card.v0.3.json",
       "manifest_version": "0.3",
       "status": "example"
     }
