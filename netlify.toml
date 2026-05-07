@@ -29,3 +29,13 @@
     Access-Control-Allow-Origin = "*"
     Cache-Control = "public, max-age=3600, stale-while-revalidate=86400"
     Content-Type = "application/json; charset=utf-8"
+
+# Changelog: human-readable HTML at /changelog/, machine-readable
+# mirror at /changelog.json. JSON gets the same CORS + cache shape
+# as /manifests.json since it changes on the same cadence.
+[[headers]]
+  for = "/changelog.json"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=300, stale-while-revalidate=3600"
+    Content-Type = "application/json; charset=utf-8"
