@@ -53,15 +53,41 @@ def _fetch(url: str) -> bytes:
         return resp.read()
 
 
+SELF_ORIGIN = "https://toolspace.yepgent.com/"
+
+
+def _resolve_self_hosted(url: str) -> Path | None:
+    """If the manifest URL is hosted on this site, return the local path.
+
+    Without this, manifests served from /examples/ get fetched from the
+    deployed site — which lags this branch by one CI/deploy cycle, so a
+    PR that updates examples/*.json would build with the still-deployed
+    (stale) author/etc. and lose the change. Self-hosted URLs MUST
+    resolve to the local file so the build is a function of the working
+    tree.
+    """
+    if not url.startswith(SELF_ORIGIN):
+        return None
+    rel = url[len(SELF_ORIGIN):].lstrip("/")
+    candidate = SITE_ROOT / rel
+    return candidate if candidate.is_file() else None
+
+
 def _load_manifest(entry: dict) -> tuple[dict, str]:
     """Return (manifest_json, source_label).
 
-    Tries the live URL first, falls back to the on-disk cache. Raises if
-    both fail.
+    Resolution order:
+      1. local file (if manifest_url is self-hosted on this site)
+      2. live fetch
+      3. on-disk cache fallback
     """
     eid = entry["id"]
     cache_path = CACHE_DIR / f"{eid}.json"
     url = entry["manifest_url"]
+
+    local = _resolve_self_hosted(url)
+    if local is not None:
+        return json.loads(local.read_text(encoding="utf-8")), "local"
 
     try:
         raw = _fetch(url)
@@ -1219,8 +1245,12 @@ def build(out_root: Path) -> int:
         if eid in pinned_fetched:
             fetched_at = pinned_fetched[eid]
             source_label = pinned_source.get(eid, source_label)
+        elif source_label == "live":
+            fetched_at = _now_utc_iso()
+        elif source_label == "local":
+            fetched_at = "(working tree)"
         else:
-            fetched_at = _now_utc_iso() if source_label == "live" else "(cache)"
+            fetched_at = "(cache)"
         page = render_product_page(
             entry, manifest, fetched_at, source_label, generated_at,
         )
