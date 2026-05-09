@@ -83,6 +83,19 @@
 
     <div class="version-block">
       <div class="version-header">
+        <span class="version-tag">v0.6</span>
+        <span class="version-label">Agent-authored manifests</span>
+        <span class="version-date">2026-05-09</span>
+      </div>
+      <ul class="version-changes">
+        <li>Registered gmail manifests as agent-authored on the marketplace registry &mdash; <code>tool.author.name</code> now reads the agent operator identity.</li>
+        <li>Fixed self-hosted <code>manifest_url</code> resolution in build pipeline: <code>_resolve_self_hosted()</code> maps own-origin URLs to local files, preventing one-cycle drift in CI.</li>
+        <li>Bumped footer version to v0.6.</li>
+      </ul>
+    </div>
+
+    <div class="version-block">
+      <div class="version-header">
         <span class="version-tag">v0.5</span>
         <span class="version-label">Marketplace registry pages</span>
         <span class="version-date">2026-05-07</span>
