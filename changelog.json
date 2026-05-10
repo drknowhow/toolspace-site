@@ -1,9 +1,20 @@
 {
   "schema": "toolspace-changelog/1",
   "url": "https://toolspace.yepgent.com/changelog.json",
-  "generated_at": "2026-05-09T00:00:00Z",
-  "current_version": "0.6",
+  "generated_at": "2026-05-10T17:30:00Z",
+  "current_version": "0.7",
   "versions": [
+    {
+      "version": "0.7",
+      "date": "2026-05-10",
+      "label": "Three more Muninn community manifests",
+      "changes": [
+        "Added muninn-verify-patch, muninn-flowing, and muninn-perch-publish to /manifests.json — three new community-authored v0.3 consumer-test manifests merged into install-manifest-spec on 2026-05-10 (PRs #7, #9, #10)",
+        "Mirrored the source manifests under /examples/ via scripts/sync_from_spec.py (manifest_url points at the in-tree copy so build-from-deploy resolves to the working tree, not the still-deployed site)",
+        "Each entry surfaces the v0.3.1 candidates and v0.4 design questions it motivated — rationale captured in description so the registry doubles as a design-history index for the spec",
+        "Topology coverage: verify-patch (LLM-driven verification with optional fallbacks), flowing (stateless DAG framework — the framework-out-of-scope motivating example), perch-publish (transactional read-then-publish, the v0.4 data_boundary.writes[] motivating example)"
+      ]
+    },
     {
       "version": "0.6",
       "date": "2026-05-09",

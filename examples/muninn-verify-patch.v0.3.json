@@ -1,0 +1,321 @@
+{
+  "manifest_version": "0.3",
+
+  "tool": {
+    "id": "muninn-verify-patch",
+    "version": "0.1.0",
+    "name": "Muninn verify_patch",
+    "summary": "Semi-formal patch verification. Python module; sends a diff plus context to Claude and parses a structured VERDICT/CONFIDENCE/SUMMARY footer. Optional tracking writes to a Turso DB for post-merge calibration via review/stamp actions.",
+    "description": "Wraps a fixed semi-formal-reasoning prompt around a model invocation. Inputs are a unified diff (or before/after pair), optional surrounding code as context, and a description of what the patch should do. The model is asked to identify which function definitions are actually invoked, trace before/after execution, check regressions on touched paths, and emit a three-line VERDICT/CONFIDENCE/SUMMARY footer that the tool parses. Three actions: verify (the analysis), review (read past tracking memories for calibration), stamp (record the actual post-merge outcome of a prior verify call). Written as a consumer test of install-manifest-spec v0.3 — the second after muninn-bsky-card. Stresses: tool-to-tool dependency on a memory store, conditional-credential semantics (TURSO_* required only when track=true), variable-input cost, smoke tests that themselves cost money, and stateless tools whose only kill switch is 'rotate the API key out of band'. Findings filed in the muninns-inbox discussion thread linked below.",
+    "homepage": "https://github.com/oaustegard/muninn-utilities/blob/main/muninn_utils/verify_patch.py",
+    "author": {
+      "name": "Muninn (raven of memory; agent operating on behalf of Oskar Austegard)",
+      "url": "https://muninn.austegard.com"
+    },
+    "license": "MIT",
+    "tags": ["code-review", "verification", "llm-as-judge", "patch-analysis", "diff", "anthropic"]
+  },
+
+  "runtime": {
+    "kind": "python-module",
+    "install": {
+      "method": "git",
+      "url": "https://github.com/oaustegard/muninn-utilities",
+      "ref": "71f39312f46be77967545ef404bfcb88698bf986",
+      "subpath": "muninn_utils"
+    },
+    "entrypoint": {
+      "command": ["python", "-m", "muninn_utils.verify_patch"]
+    }
+  },
+
+  "env": [
+    {
+      "name": "ANTHROPIC_API_KEY",
+      "prompt": "Anthropic API key (sk-ant-...). The tool issues one chat-completion call per verify action against api.anthropic.com (or a Cloudflare AI Gateway proxy if CF_* are set). The key is a coarse credential — anything you grant here can use any model on the account, not just the one this tool defaults to. Treat as a password.",
+      "secret": true,
+      "required": true,
+      "validation_regex": "^sk-ant-[A-Za-z0-9_-]+$",
+      "obtain_url": "https://console.anthropic.com/settings/keys"
+    },
+    {
+      "name": "CF_ACCOUNT_ID",
+      "prompt": "Optional Cloudflare account ID for routing Anthropic API calls through a Cloudflare AI Gateway (for caching, observability, or rate-limit pooling). Leave blank to call api.anthropic.com directly. If set, CF_GATEWAY_ID and CF_API_TOKEN must also be set.",
+      "secret": false,
+      "required": false,
+      "validation_regex": "^[a-f0-9]{32}$"
+    },
+    {
+      "name": "CF_GATEWAY_ID",
+      "prompt": "Optional Cloudflare AI Gateway ID, paired with CF_ACCOUNT_ID. Free-form slug you chose when creating the gateway in the Cloudflare dashboard.",
+      "secret": false,
+      "required": false
+    },
+    {
+      "name": "CF_API_TOKEN",
+      "prompt": "Optional Cloudflare API token scoped to AI Gateway access. Required if CF_ACCOUNT_ID and CF_GATEWAY_ID are set. Treat as a secret.",
+      "secret": true,
+      "required": false
+    },
+    {
+      "name": "TURSO_TOKEN",
+      "prompt": "Conditional: Turso database auth token used by the tracking layer. Required ONLY if you call verify with track=true (the default) or use the review/stamp actions; leave blank for stateless verify-only usage. The spec has no native way to express 'required given an input flag', so this is declared optional and the tool surfaces a runtime error if you set track=true without it. The token grants read+write on the tracking database.",
+      "secret": true,
+      "required": false,
+      "obtain_url": "https://app.turso.tech/"
+    },
+    {
+      "name": "TURSO_URL",
+      "prompt": "Conditional: hostname of the Turso libSQL database (e.g. 'mydb-username.turso.io'). Same conditional rule as TURSO_TOKEN. Tracking records are written via the libSQL HTTP pipeline endpoint.",
+      "secret": false,
+      "required": false,
+      "validation_regex": "^[a-z0-9-]+\\.[a-z0-9-]+\\.turso\\.io$"
+    }
+  ],
+
+  "scopes": [
+    {
+      "resource": "compute.llm-inference",
+      "actions": ["read", "write"],
+      "rationale": "Each verify call sends the supplied patch and context to Anthropic's chat-completion API and consumes tokens against the user's account. Cost is variable in the size of the patch and context; the user is paying per call.",
+      "provider_scope": "anthropic-api-key (coarse; full account access)"
+    },
+    {
+      "resource": "net.outbound",
+      "actions": ["read", "write"],
+      "rationale": "Tool talks to api.anthropic.com (or gateway.ai.cloudflare.com if CF_* are set) for inference. Optionally talks to the configured Turso libSQL host for tracking writes. No other outbound destinations.",
+      "provider_scope": "api.anthropic.com, gateway.ai.cloudflare.com (optional), *.turso.io (optional)"
+    },
+    {
+      "resource": "memory.tracking",
+      "actions": ["read", "write"],
+      "rationale": "When track=true (default), verify writes a 'pending-review' decision memory to the configured Turso DB so that the review/stamp actions can later compute calibration stats. The DB is the user's own infrastructure, not a third party.",
+      "provider_scope": "turso-libsql-token (coarse; full DB access)"
+    }
+  ],
+
+  "actions": [
+    {
+      "name": "verify",
+      "summary": "Run semi-formal verification on a code patch and return a structured verdict.",
+      "description": "Synchronously calls the configured Claude model with a fixed prompt template that asks for premise extraction, function-resolution tracing, before/after execution, regression check on touched paths, and edge cases. Parses the model's three-line footer (VERDICT/CONFIDENCE/SUMMARY). Default model is claude-sonnet-4-6 at temperature 0; max_tokens 3000. Cost is variable in patch+context size; budget ~$0.003 per call at the default model for a small diff. SECONDARY EFFECT: when track=true (default), writes a memory row to the Turso DB tagged 'verify-patch-tracking' / 'pending-review'. The spec models actions[].side_effects as a single enum so this secondary effect is not visible in the catalog — flagged in findings.",
+      "docs": {
+        "goal": "Get a structured verdict on whether a code diff fixes what it claims without breaking what it preserves.",
+        "inputs_brief": "patch (req), context, description, model (default claude-sonnet-4-6), repo, pr_num, track (default true)",
+        "outputs_brief": "{verdict: CORRECT|LIKELY_CORRECT|CONCERNS|BUGGY|PARSE_FAIL, confidence, summary, analysis, elapsed_s, model, tracking_id}",
+        "errors_brief": "auth_invalid, rate_limited, payload_too_large, tracking_failed (non-fatal), parse_fail",
+        "example": "verify patch='-x = 1\\n+x = 2' description='off-by-one fix'"
+      },
+      "invocation": {
+        "kind": "stdin-json",
+        "argv_template": ["verify"]
+      },
+      "input": {
+        "type": "object",
+        "required": ["patch"],
+        "additionalProperties": false,
+        "properties": {
+          "patch": { "type": "string", "minLength": 1 },
+          "context": { "type": "string", "default": "" },
+          "description": { "type": "string", "default": "" },
+          "model": { "type": "string", "default": "claude-sonnet-4-6" },
+          "repo": { "type": "string", "default": "" },
+          "pr_num": { "type": ["integer", "null"], "default": null },
+          "track": { "type": "boolean", "default": true }
+        }
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "required": ["verdict", "confidence", "summary", "analysis", "elapsed_s", "model"],
+          "properties": {
+            "verdict": { "type": "string", "enum": ["CORRECT", "LIKELY_CORRECT", "CONCERNS", "BUGGY", "PARSE_FAIL"] },
+            "confidence": { "type": "string", "enum": ["high", "medium", "low", "unknown"] },
+            "summary": { "type": "string" },
+            "analysis": { "type": "string" },
+            "elapsed_s": { "type": "number" },
+            "model": { "type": "string" },
+            "tracking_id": { "type": ["string", "null"] }
+          }
+        }
+      },
+      "side_effects": "read",
+      "idempotent": false,
+      "scopes_used": ["compute.llm-inference", "net.outbound", "memory.tracking"],
+      "error_envelope": "standard",
+      "examples": [
+        {
+          "description": "Trivial off-by-one fix.",
+          "input": {
+            "patch": "- for i in range(n):\n+ for i in range(n + 1):",
+            "description": "Loop was missing the final element",
+            "track": false
+          },
+          "output": {
+            "verdict": "LIKELY_CORRECT",
+            "confidence": "medium",
+            "summary": "Range now covers indices 0..n inclusive; verify call sites expect that semantic.",
+            "analysis": "(full model response elided in example)",
+            "elapsed_s": 4.2,
+            "model": "claude-sonnet-4-6",
+            "tracking_id": null
+          }
+        }
+      ],
+      "runtime_telemetry": {}
+    },
+    {
+      "name": "review",
+      "summary": "Compute calibration stats from past verify tracking memories.",
+      "description": "Queries the Turso DB for memories tagged 'verify-patch-tracking', tallies them by outcome (caught_bug / useful / correct_pass / false_alarm / waste / pending), and returns the stats plus the list of pending records that have not yet been stamped. Read-only; cannot run without TURSO_TOKEN+TURSO_URL.",
+      "docs": {
+        "goal": "Look at how well past verify calls predicted real outcomes.",
+        "inputs_brief": "n (int, default 20, max records to scan)",
+        "outputs_brief": "{stats: {total, pending, useful, waste, caught_bug, false_alarm, correct_pass}, pending: [tracking_record...]}",
+        "errors_brief": "tracking_unconfigured (TURSO_* not set), tracking_unreachable (Turso 5xx)",
+        "example": "review n=50"
+      },
+      "invocation": {
+        "kind": "subcommand",
+        "argv_template": ["review", "--n", "${input.n}"]
+      },
+      "input": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "n": { "type": "integer", "minimum": 1, "maximum": 200, "default": 20 }
+        }
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "required": ["stats", "pending"],
+          "properties": {
+            "stats": {
+              "type": "object",
+              "properties": {
+                "total": { "type": "integer" },
+                "pending": { "type": "integer" },
+                "useful": { "type": "integer" },
+                "waste": { "type": "integer" },
+                "caught_bug": { "type": "integer" },
+                "false_alarm": { "type": "integer" },
+                "correct_pass": { "type": "integer" }
+              }
+            },
+            "pending": { "type": "array" }
+          }
+        }
+      },
+      "side_effects": "read",
+      "idempotent": true,
+      "scopes_used": ["memory.tracking"],
+      "error_envelope": "standard",
+      "runtime_telemetry": {}
+    },
+    {
+      "name": "stamp",
+      "summary": "Record the actual outcome of a past verify call (post-merge ground truth).",
+      "description": "Updates a tracking memory in place — supersedes the prior 'pending-review' record with the same body but OUTCOME: <enum> in the summary line, and adjusts confidence per a fixed map (CAUGHT_BUG=0.95, USEFUL=0.85, CORRECT_PASS=0.7, FALSE_ALARM=0.3, WASTE=0.2). Use after the patch has actually merged and you know whether the verify call's verdict matched reality.",
+      "docs": {
+        "goal": "Close the calibration loop: turn 'pending' verify tracking records into ground-truth outcomes.",
+        "inputs_brief": "tracking_id (string from a prior verify call), outcome (enum: CAUGHT_BUG|USEFUL|CORRECT_PASS|FALSE_ALARM|WASTE), note (string, optional)",
+        "outputs_brief": "{status: string} ('Stamped <id>: <outcome>' or 'Tracking ID <id> not found')",
+        "errors_brief": "tracking_unconfigured, tracking_not_found, tracking_unreachable",
+        "example": "stamp tracking_id=abc123 outcome=CAUGHT_BUG note='caught the off-by-one before merge'"
+      },
+      "invocation": {
+        "kind": "stdin-json",
+        "argv_template": ["stamp"]
+      },
+      "input": {
+        "type": "object",
+        "required": ["tracking_id", "outcome"],
+        "additionalProperties": false,
+        "properties": {
+          "tracking_id": { "type": "string", "minLength": 1 },
+          "outcome": { "type": "string", "enum": ["CAUGHT_BUG", "USEFUL", "CORRECT_PASS", "FALSE_ALARM", "WASTE"] },
+          "note": { "type": "string", "maxLength": 500, "default": "" }
+        }
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": { "type": "string" }
+          }
+        }
+      },
+      "side_effects": "write",
+      "idempotent": true,
+      "scopes_used": ["memory.tracking"],
+      "error_envelope": "standard",
+      "runtime_telemetry": {}
+    }
+  ],
+
+  "data_boundary": {
+    "reads": [
+      { "resource": "compute.llm-inference", "sensitivity": "medium" }
+    ],
+    "transmits": [
+      {
+        "to": "api.anthropic.com",
+        "fields": ["input.patch", "input.context", "input.description"],
+        "purpose": "model-inference",
+        "third_party_retention": "unknown",
+        "vendor_tos_url": "https://www.anthropic.com/legal/commercial-terms"
+      },
+      {
+        "to": "gateway.ai.cloudflare.com",
+        "fields": ["input.patch", "input.context", "input.description"],
+        "purpose": "model-inference (proxied through Cloudflare AI Gateway when CF_* are set; identical payload as direct-to-Anthropic but Cloudflare also sees it)",
+        "third_party_retention": "unknown",
+        "vendor_tos_url": "https://www.cloudflare.com/service-specific-terms-application-services/#ai-gateway"
+      }
+    ],
+    "persists": [
+      { "where": "tool_local", "fields": ["verdict", "confidence", "summary", "model", "elapsed_s", "repo", "pr_num"] }
+    ],
+    "retention": {
+      "tool_local_days": 365
+    }
+  },
+
+  "smoke": {
+    "kind": "action-call",
+    "action": "verify",
+    "arguments": {
+      "patch": "- print('hello')\n+ print('hello world')",
+      "description": "Smoke test: trivial string change",
+      "track": false
+    },
+    "timeout_seconds": 30,
+    "success": {
+      "no_error_field": true,
+      "json_pointer_equals": {
+        "/verdict": "CORRECT"
+      }
+    }
+  },
+
+  "kill_switch": {
+    "kind": "manual",
+    "instructions_url": "https://github.com/drknowhow/install-manifest-spec/blob/main/examples/muninn-verify-patch.REVOKE.md"
+  },
+
+  "cost": {
+    "install_fee_cents": 0,
+    "monthly_fee_cents": 0,
+    "usage_model": "external"
+  },
+
+  "support": {
+    "issues_url": "https://github.com/oaustegard/muninn-utilities/issues",
+    "docs_url": "https://github.com/oaustegard/muninn-utilities/blob/main/muninn_utils/verify_patch.py"
+  }
+}

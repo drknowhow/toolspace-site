@@ -1,0 +1,169 @@
+{
+  "manifest_version": "0.3",
+
+  "tool": {
+    "id": "muninn-flowing",
+    "version": "1.2.1",
+    "name": "Muninn flowing",
+    "summary": "DAG workflow runner. Encode a procedure as Python @task functions with depends_on/when/validate/retry_until; the runner owns control flow (branching, retries, validation, propagation) and the consumer's tasks supply the leaves. A framework, not a transactional tool.",
+    "description": "Pure-compute Python framework. Consumer authors @task-decorated functions, wires them with depends_on=, attaches gates (when=, validate=, retry_until=, retry=, timeout_s=), and runs Flow(terminal).run(). The runner topo-sorts the DAG, executes layers in parallel, propagates SKIPPED through dependents, and never runs a body whose validator raised. Detached side-effect tasks run after main flow completes. Resume() re-executes only failed/skipped/notrun nodes. Written as a deliberate stress-test of install-manifest-spec v0.3 — third in the consumer-test series after muninn-bsky-card and muninn-verify-patch. The manifest is honest fiction in several places (entrypoint, actions[], invocation.kind) because v0.3 assumes a tool exposes a fixed action catalog while flowing's capability surface IS user-extensible — every consumer's @task functions become its operations. Findings filed in muninns-inbox discussion #1.",
+    "homepage": "https://github.com/oaustegard/claude-skills/tree/main/flowing",
+    "author": {
+      "name": "Muninn (raven of memory; agent operating on behalf of Oskar Austegard)",
+      "url": "https://muninn.austegard.com"
+    },
+    "license": "MIT",
+    "tags": ["workflow", "dag", "framework", "python", "control-flow", "task-runner"]
+  },
+
+  "runtime": {
+    "kind": "python-module",
+    "install": {
+      "method": "git",
+      "url": "https://github.com/oaustegard/claude-skills",
+      "ref": "a2adb7ee36791d92dd9a37f4e57a6b34f9d2b7e8",
+      "subpath": "flowing/scripts"
+    },
+    "entrypoint": {
+      "command": ["python", "-m", "flowing.cli"]
+    }
+  },
+
+  "scopes": [
+    {
+      "resource": "compute.local",
+      "actions": ["read", "write"],
+      "rationale": "Framework executes whatever Python callables the consumer registers as @task. Framework itself does no I/O; the side-effect surface is the union of consumer task bodies, which the manifest cannot enumerate. Downstream consumers' manifests cover real data scopes."
+    }
+  ],
+
+  "actions": [
+    {
+      "name": "validate",
+      "summary": "Statically validate a Python module declaring a Flow — load it, build the topology, check for cycles and dangling deps, render the layers without running anything.",
+      "description": "Hypothetical CLI surface (does not exist in flowing 1.2.1; manifest is honest fiction). Imports the named module, locates the Flow object, calls _build_layers(), and returns a JSON description of the DAG: tasks per layer, parallel-eligibility, validators-attached, gates-attached. Does not execute task bodies. Read-only. Useful as a smoke check after install.",
+      "docs": {
+        "goal": "Validate a Flow module's topology without running task bodies.",
+        "inputs_brief": "module (importable, e.g. 'mypkg.pipelines.publish'), terminal (attribute name, e.g. 'final_task')",
+        "outputs_brief": "{layers: [[task_name,...],...], total_tasks, detached_count, has_validators, has_gates}",
+        "errors_brief": "module_not_importable, terminal_not_found, cycle_detected, missing_dep",
+        "example": "validate module=mypkg.publish terminal=final_step"
+      },
+      "invocation": {
+        "kind": "subcommand",
+        "argv_template": ["validate", "--module", "${input.module}", "--terminal", "${input.terminal}"]
+      },
+      "input": {
+        "type": "object",
+        "required": ["module", "terminal"],
+        "additionalProperties": false,
+        "properties": {
+          "module": { "type": "string", "minLength": 1, "pattern": "^[a-zA-Z_][a-zA-Z0-9_.]*$" },
+          "terminal": { "type": "string", "minLength": 1, "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$" }
+        }
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "required": ["layers", "total_tasks"],
+          "properties": {
+            "layers": { "type": "array", "items": { "type": "array", "items": { "type": "string" } } },
+            "total_tasks": { "type": "integer", "minimum": 1 },
+            "detached_count": { "type": "integer", "minimum": 0 },
+            "has_validators": { "type": "boolean" },
+            "has_gates": { "type": "boolean" }
+          }
+        }
+      },
+      "side_effects": "read",
+      "idempotent": true,
+      "scopes_used": ["compute.local"],
+      "error_envelope": "standard",
+      "runtime_telemetry": {}
+    },
+    {
+      "name": "run",
+      "summary": "Execute a Flow declared in a Python module. The framework's side-effects are zero; the consumer's task bodies determine the actual blast radius.",
+      "description": "Hypothetical CLI surface (does not exist in flowing 1.2.1). Imports the named module, locates the Flow object, calls Flow.run() (or Flow.resume() if resume=true). Returns per-task state and value summaries. CRITICAL: side_effects declared here is 'none' for the framework itself, but the consumer's task bodies can have ANY side-effect class — destructive, network, write. The spec has no shape for 'union over user-supplied callables.' See findings.",
+      "docs": {
+        "goal": "Run (or resume) a user-defined Flow.",
+        "inputs_brief": "module (importable), terminal (attribute name), resume (bool, default false), max_workers (int, override)",
+        "outputs_brief": "{results: [{name, state, value_repr, error, attempts, ms},...], summary}",
+        "errors_brief": "module_not_importable, terminal_not_found, task_failed (envelope wraps user task error), validator_failed",
+        "example": "run module=mypkg.publish terminal=publish_post"
+      },
+      "invocation": {
+        "kind": "subcommand",
+        "argv_template": ["run", "--module", "${input.module}", "--terminal", "${input.terminal}"]
+      },
+      "input": {
+        "type": "object",
+        "required": ["module", "terminal"],
+        "additionalProperties": false,
+        "properties": {
+          "module": { "type": "string", "minLength": 1, "pattern": "^[a-zA-Z_][a-zA-Z0-9_.]*$" },
+          "terminal": { "type": "string", "minLength": 1, "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$" },
+          "resume": { "type": "boolean", "default": false },
+          "max_workers": { "type": "integer", "minimum": 1, "maximum": 64 }
+        }
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "required": ["results", "summary"],
+          "properties": {
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name", "state"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "state": { "type": "string", "enum": ["NOT_RUN", "RUNNING", "SUCCEEDED", "FAILED", "SKIPPED"] },
+                  "value_repr": { "type": "string" },
+                  "error": { "type": "string" },
+                  "attempts": { "type": "integer", "minimum": 0 },
+                  "ms": { "type": "integer", "minimum": 0 }
+                }
+              }
+            },
+            "summary": { "type": "string" }
+          }
+        }
+      },
+      "side_effects": "read",
+      "idempotent": false,
+      "scopes_used": ["compute.local"],
+      "error_envelope": "standard",
+      "runtime_telemetry": {}
+    }
+  ],
+
+  "smoke": {
+    "kind": "shell",
+    "command": ["python", "-c", "from flowing import task, Flow\n@task\ndef ping():\n    return 'ok'\nresults = Flow(ping).run()\nprint(results['ping'].state.name)\n"],
+    "timeout_seconds": 5,
+    "success": {
+      "exit_code": 0,
+      "stdout_regex": "SUCCEEDED"
+    }
+  },
+
+  "kill_switch": {
+    "kind": "manual",
+    "instructions_url": "https://github.com/drknowhow/install-manifest-spec/blob/main/examples/muninn-flowing.REVOKE.md"
+  },
+
+  "cost": {
+    "install_fee_cents": 0,
+    "monthly_fee_cents": 0,
+    "usage_model": "external"
+  },
+
+  "support": {
+    "issues_url": "https://github.com/oaustegard/claude-skills/issues",
+    "docs_url": "https://github.com/oaustegard/claude-skills/blob/main/flowing/SKILL.md"
+  }
+}

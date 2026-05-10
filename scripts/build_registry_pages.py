@@ -37,7 +37,7 @@ SITE_ROOT = Path(__file__).resolve().parent.parent
 INDEX_PATH = SITE_ROOT / "manifests.json"
 REGISTRY_DIR = SITE_ROOT / "registry"
 CACHE_DIR = SITE_ROOT / "_cache" / "registry"
-SITE_VERSION = "0.5"
+SITE_VERSION = "0.7"
 
 USER_AGENT = "toolspace-build/0.1 (+https://toolspace.yepgent.com/)"
 FETCH_TIMEOUT = 10  # seconds
