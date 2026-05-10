@@ -32,6 +32,9 @@ FILES_TO_SYNC: list[tuple[str, str]] = [
     ("examples/gmail.json", "examples/gmail.json"),
     ("examples/gmail.v0.2.json", "examples/gmail.v0.2.json"),
     ("examples/gmail.v0.3.json", "examples/gmail.v0.3.json"),
+    ("examples/muninn-verify-patch.v0.3.json", "examples/muninn-verify-patch.v0.3.json"),
+    ("examples/muninn-flowing.v0.3.json", "examples/muninn-flowing.v0.3.json"),
+    ("examples/muninn-perch-publish.v0.3.json", "examples/muninn-perch-publish.v0.3.json"),
 ]
 
 

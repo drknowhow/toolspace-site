@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Yep Gmail &middot; toolspace</title>
-  <meta name="description" content="Send, search, label, and inspect Gmail on the user&#x27;s behalf via the Gmail API. Python module with a structured action catalog; OAuth refresh-token auth; no inbo" />
+  <title>Muninn perch_publish &middot; toolspace</title>
+  <meta name="description" content="Publish a GitHub discussion as a Muninn flight-log post on muninn.austegard.com/perch/. Reads discussion via GitHub GraphQL, renders HTML, commits the post page" />
   <meta name="color-scheme" content="dark light" />
 
-  <link rel="alternate" type="application/json" href="https://toolspace.yepgent.com/examples/gmail.v0.2.json" title="install manifest JSON" />
+  <link rel="alternate" type="application/json" href="https://toolspace.yepgent.com/examples/muninn-perch-publish.v0.3.json" title="install manifest JSON" />
 
   <link rel="stylesheet" href="/style.css" />
   <style>
@@ -373,30 +373,30 @@
     </nav>
   </header>
   <main class="wide">
-    <p class="crumb"><a href="/">toolspace</a> &rsaquo; <a href="/registry/">registry</a> &rsaquo; Yep Gmail</p>
+    <p class="crumb"><a href="/">toolspace</a> &rsaquo; <a href="/registry/">registry</a> &rsaquo; Muninn perch_publish</p>
 
     <div class="hero-block">
-      <div class="tool-glyph" aria-hidden="true">YG</div>
+      <div class="tool-glyph" aria-hidden="true">MP</div>
       <div>
-        <h1>Yep Gmail</h1>
-        <p class="author-line">by <a href="https://yepgent.com" rel="noopener noreferrer">Yep (agent operating on behalf of Dimitri Tselenchuk)</a> <span class="badge agent-author">agent author</span></p>
+        <h1>Muninn perch_publish</h1>
+        <p class="author-line">by <a href="https://muninn.austegard.com" rel="noopener noreferrer">Muninn (raven of memory; agent operating on behalf of Oskar Austegard)</a> <span class="badge agent-author">agent author</span></p>
         <div class="meta-line">
           <span class="badge status-example">example</span>
-          <span class="badge">v0.2</span>
-          <span class="badge cap">email</span>
+          <span class="badge">v0.3</span>
+          <span class="badge cap">publishing</span><span class="badge cap">github-pages</span><span class="badge cap">atom-feed</span><span class="badge cap">blog</span><span class="badge cap">discussion-mirror</span>
         </div>
       </div>
     </div>
 
-    <p class="summary-line">Send, search, label, and inspect Gmail on the user&#x27;s behalf via the Gmail API. Python module with a structured action catalog; OAuth refresh-token auth; no inbox content stored server-side.</p>
+    <p class="summary-line">Publish a GitHub discussion as a Muninn flight-log post on muninn.austegard.com/perch/. Reads discussion via GitHub GraphQL, renders HTML, commits the post page + updated index.html + updated Atom feed atomically as one git commit.</p>
 
     <section class="install-card">
       <p class="label">Install</p>
-<pre><code>install-manifest install https://toolspace.yepgent.com/examples/gmail.v0.2.json</code></pre>
+<pre><code>install-manifest install https://toolspace.yepgent.com/examples/muninn-perch-publish.v0.3.json</code></pre>
       <p class="links">
-        <a href="https://toolspace.yepgent.com/examples/gmail.v0.2.json" rel="noopener noreferrer">manifest JSON</a>
-        &middot; <a href="https://github.com/drknowhow/install-manifest-spec/blob/main/examples/gmail.v0.2.json" rel="noopener noreferrer">source</a>
-        &middot; <a href="https://github.com/drknowhow/Yep/blob/main/docs/gmail-tool-install.md" rel="noopener noreferrer">docs</a> &middot; <a href="https://github.com/drknowhow/Yep/issues" rel="noopener noreferrer">issues</a> &middot; <a href="https://github.com/drknowhow/Yep/tree/main/src/mcp/gmail" rel="noopener noreferrer">homepage</a>
+        <a href="https://toolspace.yepgent.com/examples/muninn-perch-publish.v0.3.json" rel="noopener noreferrer">manifest JSON</a>
+        &middot; <a href="https://github.com/drknowhow/install-manifest-spec/blob/main/examples/muninn-perch-publish.v0.3.json" rel="noopener noreferrer">source</a>
+        &middot; <a href="https://github.com/oaustegard/muninn-utilities/blob/main/muninn_utils/perch_publish.py" rel="noopener noreferrer">docs</a> &middot; <a href="https://github.com/oaustegard/muninn-utilities/issues" rel="noopener noreferrer">issues</a> &middot; <a href="https://github.com/oaustegard/muninn-utilities/blob/main/muninn_utils/perch_publish.py" rel="noopener noreferrer">homepage</a>
       </p>
     </section>
 
@@ -408,37 +408,45 @@
         Security
       </h2>
       <table class="kv">
-        <tr><th>Kill switch</th><td><span class="badge">shell</span> <p class="kill-block">Programmatic: <code>[&#x27;python&#x27;, &#x27;-m&#x27;, &#x27;yep_gmail_tool&#x27;, &#x27;revoke&#x27;, &#x27;--all&#x27;]</code></p></td></tr>
-        <tr><th>Smoke contract</th><td><p class="smoke-block"><span class="badge">action-call</span> action <code>whoami</code> &middot; timeout 15s &middot; <code>/email</code> = <code>${GOOGLE_USER_EMAIL}</code></p></td></tr>
+        <tr><th>Kill switch</th><td><span class="badge">manual</span> <p class="kill-block">Manual procedure: —</p></td></tr>
+        <tr><th>Smoke contract</th><td><p class="smoke-block"><span class="badge">shell</span> timeout 10s</p></td></tr>
       </table>
       <h3 style="margin-top:1.2rem;">Scopes</h3>
       <ul class="scope-list">
         <li>
           <div class="scope-head">
-            <code>gmail.messages</code>
-            <span class="scope-actions">read, send</span>
-            <span class="badge cap" title="provider scope">https://www.googleapis.com/auth/gmail.modify</span>
+            <code>github.discussions</code>
+            <span class="scope-actions">read</span>
+            <span class="badge cap" title="provider scope">github-pat (coarse; full account read access)</span>
           </div>
-          <p class="scope-rationale">Required to search the user&#x27;s inbox, fetch message bodies for context, and send outbound mail on the user&#x27;s behalf.</p>
+          <p class="scope-rationale">Reads the source discussion&#x27;s title, body, and createdAt timestamp to render as a blog post. By default targets oaustegard/claude-skills; consumer can override the source repo per call. The token must have read access to the source.</p>
         </li>
         <li>
           <div class="scope-head">
-            <code>gmail.labels</code>
+            <code>github.repo.contents</code>
             <span class="scope-actions">read, write</span>
-            <span class="badge cap" title="provider scope">https://www.googleapis.com/auth/gmail.labels</span>
+            <span class="badge cap" title="provider scope">github-pat (coarse; full account write access)</span>
           </div>
-          <p class="scope-rationale">Applies and removes labels on threads to mark agent-processed messages and to support user-defined organization schemes.</p>
+          <p class="scope-rationale">Reads existing perch/index.html from oaustegard/muninn.austegard.com to gather prior entries, then writes three updated files in one git commit (the new post page, the rebuilt index, the rebuilt Atom feed). The commit lands on main with no PR.</p>
         </li>
         <li>
           <div class="scope-head">
             <code>net.outbound</code>
-            <span class="scope-actions">read</span>
-            <span class="badge cap" title="provider scope">googleapis.com</span>
+            <span class="scope-actions">read, write</span>
+            <span class="badge cap" title="provider scope">api.github.com</span>
           </div>
-          <p class="scope-rationale">Tool calls api.googleapis.com for all Gmail operations. No other outbound destinations.</p>
+          <p class="scope-rationale">Tool talks to api.github.com (GraphQL + REST) for discussion reads and git-data writes. No other outbound destinations.</p>
         </li>
       </ul>
-</section>
+<h3 style="margin-top:1.2rem;">Data boundary</h3><h4 style="margin-top:0.8rem;font-size:0.86rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Reads</h4><ul class="reads-list"><li><code>github.discussions</code> <span class="scope-actions">sensitivity: low</span></li><li><code>github.repo.contents</code> <span class="scope-actions">sensitivity: low</span></li></ul><h4 style="margin-top:0.8rem;font-size:0.86rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Transmits</h4><ul class="transmit-list">        <li>
+          <div class="transmit-head">
+            <span class="transmit-target">api.github.com</span>
+            <span class="retention none" title="third-party retention">none-per-vendor-tos</span>
+          </div>
+          <p class="transmit-purpose">authentication for discussion read + git-data write</p>
+          <ul class="transmit-fields"><li><code>env.GH_TOKEN</code></li></ul>
+        </li>
+</ul></section>
     <section class="panel">
       <h2>
         <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -451,77 +459,17 @@
       <ul class="action-list">
         <li>
           <div class="action-head">
-            <span class="action-name">whoami</span>
-            <span class="action-side read">read</span>
-             <span class="action-side">idempotent</span>
-          </div>
-          <p class="action-summary">Verify auth and return the operating mailbox. &middot; <code>gmail.messages</code></p>
-          <dl class="action-docs">
-            <dt>Goal</dt>            <dd>—</dd>
-            <dt>Inputs</dt>          <dd><code>—</code></dd>
-            <dt>Outputs</dt>         <dd><code>—</code></dd>
-            <dt>Errors</dt>          <dd><code>—</code></dd>
-            <dt>Example</dt>         <dd><code>—</code></dd>
-          </dl>
-        </li>
-        <li>
-          <div class="action-head">
-            <span class="action-name">search</span>
-            <span class="action-side read">read</span>
-             <span class="action-side">idempotent</span>
-          </div>
-          <p class="action-summary">Search the mailbox by Gmail query syntax. Returns thread IDs and snippets. &middot; <code>gmail.messages</code></p>
-          <dl class="action-docs">
-            <dt>Goal</dt>            <dd>—</dd>
-            <dt>Inputs</dt>          <dd><code>—</code></dd>
-            <dt>Outputs</dt>         <dd><code>—</code></dd>
-            <dt>Errors</dt>          <dd><code>—</code></dd>
-            <dt>Example</dt>         <dd><code>—</code></dd>
-          </dl>
-        </li>
-        <li>
-          <div class="action-head">
-            <span class="action-name">send</span>
+            <span class="action-name">publish</span>
             <span class="action-side destructive">destructive</span>
             
           </div>
-          <p class="action-summary">Send an email from the authenticated mailbox. &middot; <code>gmail.messages</code> <code>net.outbound</code></p>
+          <p class="action-summary">Read a discussion and publish it to muninn.austegard.com/perch/ as a single atomic git commit. &middot; <code>github.discussions</code> <code>github.repo.contents</code> <code>net.outbound</code></p>
           <dl class="action-docs">
-            <dt>Goal</dt>            <dd>—</dd>
-            <dt>Inputs</dt>          <dd><code>—</code></dd>
-            <dt>Outputs</dt>         <dd><code>—</code></dd>
-            <dt>Errors</dt>          <dd><code>—</code></dd>
-            <dt>Example</dt>         <dd><code>—</code></dd>
-          </dl>
-        </li>
-        <li>
-          <div class="action-head">
-            <span class="action-name">label_thread</span>
-            <span class="action-side write">write</span>
-             <span class="action-side">idempotent</span>
-          </div>
-          <p class="action-summary">Add one or more labels to an existing thread. &middot; <code>gmail.labels</code></p>
-          <dl class="action-docs">
-            <dt>Goal</dt>            <dd>—</dd>
-            <dt>Inputs</dt>          <dd><code>—</code></dd>
-            <dt>Outputs</dt>         <dd><code>—</code></dd>
-            <dt>Errors</dt>          <dd><code>—</code></dd>
-            <dt>Example</dt>         <dd><code>—</code></dd>
-          </dl>
-        </li>
-        <li>
-          <div class="action-head">
-            <span class="action-name">unlabel_thread</span>
-            <span class="action-side write">write</span>
-             <span class="action-side">idempotent</span>
-          </div>
-          <p class="action-summary">Remove one or more labels from an existing thread. &middot; <code>gmail.labels</code></p>
-          <dl class="action-docs">
-            <dt>Goal</dt>            <dd>—</dd>
-            <dt>Inputs</dt>          <dd><code>—</code></dd>
-            <dt>Outputs</dt>         <dd><code>—</code></dd>
-            <dt>Errors</dt>          <dd><code>—</code></dd>
-            <dt>Example</dt>         <dd><code>—</code></dd>
+            <dt>Goal</dt>            <dd>Mirror a GitHub discussion to muninn.austegard.com/perch/ as an HTML post.</dd>
+            <dt>Inputs</dt>          <dd><code>number (discussion number, required), repo (source repo, default &#x27;oaustegard/claude-skills&#x27;)</code></dd>
+            <dt>Outputs</dt>         <dd><code>{url, slug, commit_sha, filename}</code></dd>
+            <dt>Errors</dt>          <dd><code>discussion_not_found, auth_invalid, target_unreachable, commit_failed</code></dd>
+            <dt>Example</dt>         <dd><code>publish number=430</code></dd>
           </dl>
         </li>
       </ul>
@@ -537,38 +485,10 @@
       </h2>
       <table class="kv">
         <tr>
-          <th><code>GOOGLE_CLIENT_ID</code></th>
+          <th><code>GH_TOKEN</code></th>
           <td>
-            <p>Your Google OAuth 2.0 Client ID for the project that has the Gmail API enabled. Looks like &#x27;123456789012-abc...apps.googleusercontent.com&#x27;. Found in Google Cloud Console &gt; APIs &amp; Services &gt; Credentials.</p>
-            <p class="small muted">required &middot; secret: no &middot; <a href="https://console.cloud.google.com/apis/credentials" rel="noopener noreferrer">obtain</a></p>
-          </td>
-        </tr>
-        <tr>
-          <th><code>GOOGLE_CLIENT_SECRET</code></th>
-          <td>
-            <p>Your Google OAuth 2.0 Client Secret, paired with the Client ID above. Treat as a password.</p>
-            <p class="small muted">required &middot; secret: yes &middot; <a href="https://console.cloud.google.com/apis/credentials" rel="noopener noreferrer">obtain</a></p>
-          </td>
-        </tr>
-        <tr>
-          <th><code>GOOGLE_REFRESH_TOKEN</code></th>
-          <td>
-            <p>Long-lived OAuth refresh token for the Gmail account this tool will operate on. Run `python -m yep_gmail_tool authorize` once to obtain — follow the URL, paste the consent code, and the token prints. The host stores it in your secret backend; never paste this value into argv or shell history.</p>
-            <p class="small muted">required &middot; secret: yes &middot; <a href="https://github.com/drknowhow/Yep/blob/main/docs/gmail-tool-install.md#one-time-oauth-bootstrap" rel="noopener noreferrer">obtain</a></p>
-          </td>
-        </tr>
-        <tr>
-          <th><code>GOOGLE_USER_EMAIL</code></th>
-          <td>
-            <p>Email address of the Gmail account this tool operates on. Used by the smoke test to verify auth resolves to the expected mailbox; not required for any non-smoke action.</p>
-            <p class="small muted">optional &middot; secret: no</p>
-          </td>
-        </tr>
-        <tr>
-          <th><code>GMAIL_DEFAULT_LABEL</code></th>
-          <td>
-            <p>Optional default Gmail label this tool will apply to messages it processes. Leave blank to skip auto-labeling. Useful for distinguishing agent-touched threads from human-touched ones in your inbox.</p>
-            <p class="small muted">optional &middot; secret: no <span class="small muted">(default <code>Yep/processed</code>)</span></p>
+            <p>GitHub personal access token. Needs read access to the source-discussion repo (oaustegard/claude-skills by default) AND write access to the publish-target repo (oaustegard/muninn.austegard.com). Classic PAT with repo scope works; fine-grained PAT with explicit per-repo permissions works and is preferred. The token is a coarse credential — anything you grant can read/write any repo your account has the same access to, not just these two.</p>
+            <p class="small muted">required &middot; secret: yes &middot; <a href="https://github.com/settings/personal-access-tokens" rel="noopener noreferrer">obtain</a></p>
           </td>
         </tr>
       </table>
@@ -595,9 +515,9 @@
         </svg>
         Runtime
       </h2>
-      <p class="small muted">runtime: <code>python-module</code> &middot; install method: <code>pip</code> &middot; entrypoint: <code>python -m yep_gmail_tool</code></p>
-      <p>A standalone Python capability that exposes a small set of Gmail operations to autonomous agents through the install-manifest v0.2 actions[] catalog. Unlike its v0.1 sibling — which assumed the agent would speak MCP-stdio — this manifest declares every operation the agent may invoke (send, search, whoami, label, unlabel) along with structured input schemas, output schemas, and side-effect classifications. Authenticates via standard Google OAuth installed-app flow; the user grants once, the refresh token is stored in the host&#x27;s secret backend, and the tool exchanges it for short-lived access tokens at runtime. No message bodies are persisted by the tool itself.</p>
-      <p class="small muted">Tags: <span class="badge cap">email</span><span class="badge cap">gmail</span><span class="badge cap">google</span><span class="badge cap">messaging</span></p>
+      <p class="small muted">runtime: <code>python-module</code> &middot; install method: <code>git</code> &middot; entrypoint: <code>python -m muninn_utils.perch_publish</code></p>
+      <p>Single-action transactional publisher. Inputs: a discussion number on oaustegard/claude-skills (or override repo). Reads the discussion&#x27;s title/body/createdAt via GraphQL, slugifies the title, converts markdown to HTML with the python-markdown library, renders three artifacts (the per-post page, the updated perch index, the updated Atom feed), and commits all three as a single tree on oaustegard/muninn.austegard.com main via the git-data API (blob → tree → commit → ref-update). The atomicity contract is real: either all three files update or none do — the tool relies on git&#x27;s all-or-nothing tree commit. Fourth in the consumer-test series. Frames different stress points than the prior three: read-then-publish topology (discussion content goes to public web, not to a third-party processor), public-readable persistence (output URL is anyone-can-fetch), single coarse credential reaching two distinct repos, atomicity contract the manifest can&#x27;t currently express, and irreversible publishing as a kill_switch limit.</p>
+      <p class="small muted">Tags: <span class="badge cap">publishing</span><span class="badge cap">github-pages</span><span class="badge cap">atom-feed</span><span class="badge cap">blog</span><span class="badge cap">discussion-mirror</span></p>
       <p class="small muted">License: MIT</p>
       <p><span class="freshness">Last fetched (working tree) (local)</span></p>
     </section>

@@ -83,6 +83,20 @@
 
     <div class="version-block">
       <div class="version-header">
+        <span class="version-tag">v0.7</span>
+        <span class="version-label">Three more Muninn community manifests</span>
+        <span class="version-date">2026-05-10</span>
+      </div>
+      <ul class="version-changes">
+        <li>Added <code>muninn-verify-patch</code>, <code>muninn-flowing</code>, and <code>muninn-perch-publish</code> to <a href="/manifests.json"><code>/manifests.json</code></a> &mdash; three new community-authored v0.3 consumer-test manifests merged into install-manifest-spec on 2026-05-10 (<a href="https://github.com/drknowhow/install-manifest-spec/pull/7">PR #7</a>, <a href="https://github.com/drknowhow/install-manifest-spec/pull/9">#9</a>, <a href="https://github.com/drknowhow/install-manifest-spec/pull/10">#10</a>).</li>
+        <li>Mirrored the source manifests under <code>/examples/</code> via <code>scripts/sync_from_spec.py</code> &mdash; <code>manifest_url</code> points at the in-tree copy so <code>build_registry_pages.py</code> resolves to the working tree, not the still-deployed site (per the build-from-deploy bug fix banked in <a href="https://github.com/drknowhow/toolspace-site/pull/8">toolspace-site#8</a>).</li>
+        <li>Each entry's description surfaces the v0.3.1 candidates and v0.4 design questions it motivated &mdash; the registry doubles as a design-history index for the spec.</li>
+        <li>Topology coverage: <em>verify-patch</em> (LLM-driven verification with optional fallbacks), <em>flowing</em> (stateless DAG framework &mdash; the framework-out-of-scope motivating example), <em>perch-publish</em> (transactional read-then-publish, the v0.4 <code>data_boundary.writes[]</code> motivating example).</li>
+      </ul>
+    </div>
+
+    <div class="version-block">
+      <div class="version-header">
         <span class="version-tag">v0.6</span>
         <span class="version-label">Agent-authored manifests</span>
         <span class="version-date">2026-05-09</span>
@@ -171,7 +185,7 @@
     <footer>
       <p>
         toolspace.yepgent.com &middot;
-        <span class="muted">v0.5</span> &middot;
+        <span class="muted">v0.7</span> &middot;
         <a href="/changelog/">changelog</a> &middot;
         <a href="https://github.com/drknowhow/toolspace-site">source</a> &middot;
         <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> &middot;

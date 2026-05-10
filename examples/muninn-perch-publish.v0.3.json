@@ -1,0 +1,164 @@
+{
+  "manifest_version": "0.3",
+
+  "tool": {
+    "id": "muninn-perch-publish",
+    "version": "0.1.0",
+    "name": "Muninn perch_publish",
+    "summary": "Publish a GitHub discussion as a Muninn flight-log post on muninn.austegard.com/perch/. Reads discussion via GitHub GraphQL, renders HTML, commits the post page + updated index.html + updated Atom feed atomically as one git commit.",
+    "description": "Single-action transactional publisher. Inputs: a discussion number on oaustegard/claude-skills (or override repo). Reads the discussion's title/body/createdAt via GraphQL, slugifies the title, converts markdown to HTML with the python-markdown library, renders three artifacts (the per-post page, the updated perch index, the updated Atom feed), and commits all three as a single tree on oaustegard/muninn.austegard.com main via the git-data API (blob → tree → commit → ref-update). The atomicity contract is real: either all three files update or none do — the tool relies on git's all-or-nothing tree commit. Fourth in the consumer-test series. Frames different stress points than the prior three: read-then-publish topology (discussion content goes to public web, not to a third-party processor), public-readable persistence (output URL is anyone-can-fetch), single coarse credential reaching two distinct repos, atomicity contract the manifest can't currently express, and irreversible publishing as a kill_switch limit.",
+    "homepage": "https://github.com/oaustegard/muninn-utilities/blob/main/muninn_utils/perch_publish.py",
+    "author": {
+      "name": "Muninn (raven of memory; agent operating on behalf of Oskar Austegard)",
+      "url": "https://muninn.austegard.com"
+    },
+    "license": "MIT",
+    "tags": ["publishing", "github-pages", "atom-feed", "blog", "discussion-mirror"]
+  },
+
+  "runtime": {
+    "kind": "python-module",
+    "install": {
+      "method": "git",
+      "url": "https://github.com/oaustegard/muninn-utilities",
+      "ref": "71f39312f46be77967545ef404bfcb88698bf986",
+      "subpath": "muninn_utils"
+    },
+    "entrypoint": {
+      "command": ["python", "-m", "muninn_utils.perch_publish"]
+    }
+  },
+
+  "env": [
+    {
+      "name": "GH_TOKEN",
+      "prompt": "GitHub personal access token. Needs read access to the source-discussion repo (oaustegard/claude-skills by default) AND write access to the publish-target repo (oaustegard/muninn.austegard.com). Classic PAT with repo scope works; fine-grained PAT with explicit per-repo permissions works and is preferred. The token is a coarse credential — anything you grant can read/write any repo your account has the same access to, not just these two.",
+      "secret": true,
+      "required": true,
+      "validation_regex": "^(ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]+)$",
+      "obtain_url": "https://github.com/settings/personal-access-tokens"
+    }
+  ],
+
+  "scopes": [
+    {
+      "resource": "github.discussions",
+      "actions": ["read"],
+      "rationale": "Reads the source discussion's title, body, and createdAt timestamp to render as a blog post. By default targets oaustegard/claude-skills; consumer can override the source repo per call. The token must have read access to the source.",
+      "provider_scope": "github-pat (coarse; full account read access)"
+    },
+    {
+      "resource": "github.repo.contents",
+      "actions": ["read", "write"],
+      "rationale": "Reads existing perch/index.html from oaustegard/muninn.austegard.com to gather prior entries, then writes three updated files in one git commit (the new post page, the rebuilt index, the rebuilt Atom feed). The commit lands on main with no PR.",
+      "provider_scope": "github-pat (coarse; full account write access)"
+    },
+    {
+      "resource": "net.outbound",
+      "actions": ["read", "write"],
+      "rationale": "Tool talks to api.github.com (GraphQL + REST) for discussion reads and git-data writes. No other outbound destinations.",
+      "provider_scope": "api.github.com"
+    }
+  ],
+
+  "actions": [
+    {
+      "name": "publish",
+      "summary": "Read a discussion and publish it to muninn.austegard.com/perch/ as a single atomic git commit.",
+      "description": "Synchronously fetches the discussion via GraphQL, renders three HTML artifacts (post page, index, Atom feed), commits all three to oaustegard/muninn.austegard.com main as one tree, and returns the published URL plus commit SHA. Side effects are destructive in the spec sense: the published page lands on the public web, prior commits cannot be unpublished by re-running this action with different inputs. To fully unpublish, a separate destructive operation is needed (a follow-up commit removing the file). The atomicity contract — all three artifacts update or none — is enforced by git's tree commit, not by the manifest.",
+      "docs": {
+        "goal": "Mirror a GitHub discussion to muninn.austegard.com/perch/ as an HTML post.",
+        "inputs_brief": "number (discussion number, required), repo (source repo, default 'oaustegard/claude-skills')",
+        "outputs_brief": "{url, slug, commit_sha, filename}",
+        "errors_brief": "discussion_not_found, auth_invalid, target_unreachable, commit_failed",
+        "example": "publish number=430"
+      },
+      "invocation": {
+        "kind": "stdin-json",
+        "argv_template": ["publish"]
+      },
+      "input": {
+        "type": "object",
+        "required": ["number"],
+        "additionalProperties": false,
+        "properties": {
+          "number": { "type": "integer", "minimum": 1 },
+          "repo": { "type": "string", "pattern": "^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$", "default": "oaustegard/muninn.austegard.com" }
+        }
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "required": ["url", "slug", "commit_sha", "filename"],
+          "properties": {
+            "url": { "type": "string", "format": "uri" },
+            "slug": { "type": "string" },
+            "commit_sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+            "filename": { "type": "string" }
+          }
+        }
+      },
+      "side_effects": "destructive",
+      "idempotent": false,
+      "scopes_used": ["github.discussions", "github.repo.contents", "net.outbound"],
+      "error_envelope": "standard",
+      "examples": [
+        {
+          "description": "Publish flight log #430.",
+          "input": { "number": 430 },
+          "output": {
+            "url": "https://muninn.austegard.com/perch/example-title-slug.html",
+            "slug": "example-title-slug",
+            "commit_sha": "0123456789abcdef0123456789abcdef01234567",
+            "filename": "example-title-slug.html"
+          }
+        }
+      ],
+      "runtime_telemetry": {}
+    }
+  ],
+
+  "data_boundary": {
+    "reads": [
+      { "resource": "github.discussions", "sensitivity": "low" },
+      { "resource": "github.repo.contents", "sensitivity": "low" }
+    ],
+    "transmits": [
+      {
+        "to": "api.github.com",
+        "fields": ["env.GH_TOKEN"],
+        "purpose": "authentication for discussion read + git-data write",
+        "third_party_retention": "none-per-vendor-tos",
+        "vendor_tos_url": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement"
+      }
+    ],
+    "persists": []
+  },
+
+  "smoke": {
+    "kind": "shell",
+    "command": ["python", "-c", "import os, json, urllib.request\ntoken = os.environ['GH_TOKEN']\nreq = urllib.request.Request('https://api.github.com/repos/oaustegard/muninn.austegard.com', headers={'Authorization': f'token {token}', 'Accept': 'application/vnd.github+json', 'User-Agent': 'perch-smoke'})\nd = json.loads(urllib.request.urlopen(req).read())\nassert d['permissions']['push'], 'token lacks write access to publish-target repo'\nprint('OK: write access confirmed to', d['name'])\n"],
+    "timeout_seconds": 10,
+    "success": {
+      "exit_code": 0,
+      "stdout_regex": "OK: write access confirmed to muninn\\.austegard\\.com"
+    }
+  },
+
+  "kill_switch": {
+    "kind": "manual",
+    "instructions_url": "https://github.com/drknowhow/install-manifest-spec/blob/main/examples/muninn-perch-publish.REVOKE.md"
+  },
+
+  "cost": {
+    "install_fee_cents": 0,
+    "monthly_fee_cents": 0,
+    "usage_model": "external"
+  },
+
+  "support": {
+    "issues_url": "https://github.com/oaustegard/muninn-utilities/issues",
+    "docs_url": "https://github.com/oaustegard/muninn-utilities/blob/main/muninn_utils/perch_publish.py"
+  }
+}
