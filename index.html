@@ -236,25 +236,31 @@ install-manifest install &lt;url-or-path&gt;</code></pre>
     </h2>
 
     <div class="surface">
-      <h3>Schema <span class="pill stable">v0.3 &middot; stable</span> <span class="pill legacy">v0.2 &middot; frozen</span> <span class="pill legacy">v0.1 &middot; legacy</span></h3>
+      <h3>Schema <span class="pill stable">v0.4 &middot; current</span> <span class="pill legacy">v0.3.1 &middot; superseded</span> <span class="pill legacy">v0.2 &middot; frozen</span> <span class="pill legacy">v0.1 &middot; legacy</span></h3>
       <p>
-        Current: <a href="/schemas/install-manifest-v0.3.json"><code>install-manifest-v0.3.json</code></a> &mdash;
-        adds the optional top-level <code>verify</code> section (eval suite + SLA + schedule),
-        the <code>data_boundary</code> section (reads / transmits / persists / retention &mdash;
-        required when <code>scopes[]</code> touches private user data), and per-field-capped
-        <code>actions[].docs</code> for agent-friendly tool docs. Additive over v0.2 with one
-        narrowing carve-out. CORS-enabled, cached.
+        Current: <a href="/schemas/install-manifest-v0.4.json"><code>install-manifest-v0.4.json</code></a> &mdash;
+        closes two structural gaps surfaced by community consumer tests:
+        <code>runtime.install.method: "preinstalled"</code> with a required <code>locator</code>
+        (kinds: <code>python-module</code> / <code>binary-on-path</code> / <code>mcp-server-id</code>)
+        for tools pre-baked into the agent's runtime image; and
+        <code>data_boundary.transmits[].to_kind: "agent-supplied"</code> plus optional
+        <code>to_constraint</code> for outbound destinations supplied by the calling agent at runtime.
+        All v0.3.1 manifests validate unmodified against v0.4 &mdash; drop-in upgrade.
+        CORS-enabled, cached.
+      </p>
+      <p>
+        Superseded: <a href="/schemas/install-manifest-v0.3.1.json"><code>install-manifest-v0.3.1.json</code></a>
+        and <a href="/schemas/install-manifest-v0.3.json"><code>install-manifest-v0.3.json</code></a>
+        remain served for tools pinned to those versions. Design rationale for both:
+        <a href="https://github.com/drknowhow/install-manifest-spec/tree/main/design">design notes on GitHub</a>.
       </p>
       <p>
         Frozen <a href="/schemas/install-manifest-v0.2.json"><code>install-manifest-v0.2.json</code></a>
         remains served unchanged for tools targeting the v0.2 surface (top-level <code>actions[]</code>
-        catalog, no verification / data-boundary contract). v0.2 manifests stay valid against the
-        v0.2 URL; v0.3 lives at its own URL.
-      </p>
-      <p>
+        catalog, no verification / data-boundary contract).
         Legacy <a href="/schemas/install-manifest-v0.1.json"><code>install-manifest-v0.1.json</code></a>
-        remains served unchanged for tools targeting the original MCP-shaped format.
-        New manifests should target v0.3.
+        remains served for tools targeting the original MCP-shaped format.
+        New manifests should target v0.4.
       </p>
     </div>
 
@@ -313,7 +319,7 @@ install-manifest install &lt;url-or-path&gt;</code></pre>
     <footer>
       <p>
         toolspace.yepgent.com &middot;
-        <span class="muted">v0.7</span> &middot;
+        <span class="muted">v0.8</span> &middot;
         <a href="/changelog/">changelog</a> &middot;
         <a href="https://github.com/drknowhow/toolspace-site">source</a> &middot;
         <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> &middot;

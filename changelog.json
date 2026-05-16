@@ -1,9 +1,21 @@
 {
   "schema": "toolspace-changelog/1",
   "url": "https://toolspace.yepgent.com/changelog.json",
-  "generated_at": "2026-05-10T17:30:00Z",
-  "current_version": "0.7",
+  "generated_at": "2026-05-16T17:00:00Z",
+  "current_version": "0.8",
   "versions": [
+    {
+      "version": "0.8",
+      "date": "2026-05-16",
+      "label": "install-manifest-spec v0.3.1 + v0.4 mirror",
+      "changes": [
+        "Mirrored install-manifest-spec v0.3.1 schema (/schemas/install-manifest-v0.3.1.json) — additive fixes from Muninn consumer tests: kill_switch.kind='none', inline kill_switch.manual.instructions, tool.namespace, runtime.install.layout enum, smoke.success.json_pointer_in/present",
+        "Mirrored install-manifest-spec v0.4 schema (/schemas/install-manifest-v0.4.json) — closes #4 (data_boundary.transmits[].to_kind='agent-supplied' + to_constraint) and #5 (runtime.install.method='preinstalled' + locator)",
+        "Updated landing page schema section: v0.4 shown as current; v0.3.1, v0.3 shown as superseded with GitHub links; v0.2 and v0.1 shown as frozen",
+        "Version pill row updated to v0.4 · current | v0.3.1 · superseded | v0.2 · frozen | v0.1 · legacy",
+        "Bumped footer version to v0.8"
+      ]
+    },
     {
       "version": "0.7",
       "date": "2026-05-10",
