@@ -83,6 +83,20 @@
 
     <div class="version-block">
       <div class="version-header">
+        <span class="version-tag">v0.8</span>
+        <span class="version-label">install-manifest-spec v0.3.1 + v0.4 mirror</span>
+        <span class="version-date">2026-05-16</span>
+      </div>
+      <ul class="version-changes">
+        <li>Mirrored <a href="/schemas/install-manifest-v0.3.1.json"><code>install-manifest-v0.3.1.json</code></a> &mdash; additive fixes from Muninn consumer tests: <code>kill_switch.kind: "none"</code>, inline <code>kill_switch.manual.instructions</code>, optional <code>tool.namespace</code>, <code>runtime.install.layout</code> enum, <code>smoke.success.json_pointer_in</code> / <code>json_pointer_present</code>. All v0.3 manifests validate unmodified (<a href="https://github.com/drknowhow/install-manifest-spec/pull/11">spec PR #11</a>).</li>
+        <li>Mirrored <a href="/schemas/install-manifest-v0.4.json"><code>install-manifest-v0.4.json</code></a> &mdash; closes two structural gaps: <code>runtime.install.method: "preinstalled"</code> with required <code>locator</code> (kinds: python-module / binary-on-path / mcp-server-id) for tools baked into the agent runtime; <code>data_boundary.transmits[].to_kind: "agent-supplied"</code> + optional <code>to_constraint</code> for variable-target outbound. All v0.3.1 manifests validate unmodified (<a href="https://github.com/drknowhow/install-manifest-spec/pull/12">spec PR #12</a>).</li>
+        <li>Updated landing page schema section: v0.4 shown as current; v0.3.1 and v0.3 shown as superseded with GitHub design-notes links; v0.2 frozen; v0.1 legacy. New manifests should target v0.4.</li>
+        <li>Bumped footer version to v0.8.</li>
+      </ul>
+    </div>
+
+    <div class="version-block">
+      <div class="version-header">
         <span class="version-tag">v0.7</span>
         <span class="version-label">Three more Muninn community manifests</span>
         <span class="version-date">2026-05-10</span>
