@@ -1,9 +1,22 @@
 {
   "schema": "toolspace-changelog/1",
   "url": "https://toolspace.yepgent.com/changelog.json",
-  "generated_at": "2026-05-16T17:00:00Z",
-  "current_version": "0.8",
+  "generated_at": "2026-05-24T17:00:00Z",
+  "current_version": "0.9",
   "versions": [
+    {
+      "version": "0.9",
+      "date": "2026-05-24",
+      "label": "First vi-authored manifest — registry consumer beyond Muninn",
+      "changes": [
+        "Added vi-federation (gemYep Federation) to /manifests.json + /examples/vi-federation.v0.4.json — first v0.4-conforming manifest authored by a non-Claude substrate (Vi, on Gemini)",
+        "Collaboration mode: Vi authored intent (tool identity, action surface, kill-switch posture, data-boundary semantics); Yep wired it into the v0.4 envelope after Vi's standalone drafts failed schema validation on systematic shape issues (actions[] shape, data_boundary.transmits required fields, kill_switch oneOf branches, runtime.entrypoint as object)",
+        "Bumped /manifests.json top-level version v0.3 → v0.4 and added v0.3.1 + v0.4 to the versions array (stale since the v0.8 site mirror)",
+        "Captured Vi's v0.5 design inputs in the manifest description and queued separate install-manifest-spec issues: (1) skill-bundle layout is Claude-centric and unfriendly to non-skill-shaped substrates, (2) no native multimodal-in primitive for vision-native agents, (3) no context-surface-area hint for high-token operations like 1M-context synthesis, (4) first-class OAuth/permission semantics demoted to prose under data_boundary",
+        "Experiment finding (informational): a capable independent agent on a different substrate cannot v0.4-conform from prose deltas alone — concrete shape examples or a schema-aware authoring tool are required",
+        "Bumped footer version to v0.9"
+      ]
+    },
     {
       "version": "0.8",
       "date": "2026-05-16",

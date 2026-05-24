@@ -22,7 +22,7 @@ REQUIRED_ENTRY_KEYS = {"id", "name", "description", "capabilities", "manifest_ur
 ALLOWED_STATUS = {"example", "stable", "preview", "deprecated"}
 REQUIRED_VERSION_KEYS = {"version", "schema_url", "status"}
 ALLOWED_VERSION_STATUS = {"stable", "preview", "deprecated"}
-KNOWN_MANIFEST_VERSIONS = {"0.1", "0.2", "0.3"}
+KNOWN_MANIFEST_VERSIONS = {"0.1", "0.2", "0.3", "0.3.1", "0.4"}
 
 
 def _is_https_url(s: str) -> bool:

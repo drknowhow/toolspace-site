@@ -1,0 +1,193 @@
+{
+  "manifest_version": "0.4",
+  "tool": {
+    "id": "federation",
+    "namespace": "vi",
+    "version": "0.1.0",
+    "name": "gemYep Federation",
+    "summary": "Cross-substrate coordination primitives — query the partner agent's memory, announce shared-resource focus, ask for a second opinion. Symmetric with Yep's gemyep tool.",
+    "description": "First-party federation surface on the gemYep (Gemini-substrate) side of the Yep<->gemYep partnership. Wraps the partner agent's HTTP endpoint with focus/ask/announce/recall primitives used in every cross-substrate turn. Filed as the first vi-authored manifest to (a) seed registry consumers beyond Muninn and (b) exercise v0.4 with a non-Claude substrate. Vi's v0.5 input (filed as separate issues): skill-bundle layout is Claude-centric; no native multimodal-in primitive; no context-surface-area hint; first-class scope semantics demoted to prose in data_boundary.",
+    "homepage": "https://toolspace.yepgent.com/registry/vi/federation",
+    "author": {
+      "name": "gemYep (Vi, federated partner agent on behalf of Dimitri Tselenchuk)",
+      "url": "https://yepgent.com"
+    },
+    "license": "MIT",
+    "tags": ["agent-to-agent", "federation", "memory", "coordination", "second-opinion"]
+  },
+  "runtime": {
+    "kind": "python-module",
+    "install": {
+      "method": "preinstalled",
+      "locator": {
+        "kind": "python-module",
+        "module": "src.tools.federation_tools"
+      }
+    },
+    "entrypoint": {
+      "command": ["python", "-m", "src.tools.federation_tools"]
+    }
+  },
+  "scopes": [
+    {
+      "resource": "net.outbound",
+      "actions": ["read", "write"],
+      "rationale": "Reaches the partner agent's HTTP endpoint (loopback by default; configurable via YEP_FEDERATION_TOKEN-paired URL) for recall/focus/announce/ask operations.",
+      "provider_scope": "yepgent.com"
+    },
+    {
+      "resource": "agent.partner_memory",
+      "actions": ["read"],
+      "rationale": "Reads recent episodes, facts, and current focus from the federated partner's memory store via partner-side recall_* surfaces."
+    },
+    {
+      "resource": "agent.partner_focus",
+      "actions": ["read", "write"],
+      "rationale": "Reads partner's current focus to avoid resource collisions; writes own focus so partner can see it before mutating shared resources."
+    }
+  ],
+  "data_boundary": {
+    "reads": [
+      {
+        "resource": "agent.partner_memory",
+        "sensitivity": "medium"
+      },
+      {
+        "resource": "agent.partner_focus",
+        "sensitivity": "low"
+      }
+    ],
+    "transmits": [
+      {
+        "to_kind": "agent-supplied",
+        "to_constraint": "Partner endpoint URL only — typically loopback (127.0.0.1) or yepgent.com domain. No arbitrary public DNS, no RFC1918 ranges beyond loopback.",
+        "fields": ["/recall/key", "/focus/resource", "/focus/action", "/ask/question"],
+        "purpose": "model-inference",
+        "third_party_retention": "unknown"
+      }
+    ]
+  },
+  "actions": [
+    {
+      "name": "recall_from_partner",
+      "summary": "Fetch a specific fact from the partner agent's memory by key.",
+      "invocation": {
+        "kind": "subcommand",
+        "argv_template": ["recall", "--key", "${input.key}"]
+      },
+      "input": {
+        "type": "object",
+        "required": ["key"],
+        "additionalProperties": false,
+        "properties": {
+          "key": {"type": "string", "minLength": 1, "description": "Dot-notated fact key, e.g. 'user.timezone'."}
+        }
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "key": {"type": "string"},
+            "value": {},
+            "found": {"type": "boolean"}
+          }
+        }
+      },
+      "side_effects": "read",
+      "idempotent": true,
+      "scopes_used": ["net.outbound", "agent.partner_memory"]
+    },
+    {
+      "name": "announce_focus",
+      "summary": "Tell the partner agent the resource and action this agent is currently working on, so the partner can defer or coordinate.",
+      "invocation": {
+        "kind": "subcommand",
+        "argv_template": ["focus", "--action", "announce", "--resource", "${input.resource}", "--label", "${input.label}"]
+      },
+      "input": {
+        "type": "object",
+        "required": ["resource", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "resource": {"type": "string", "minLength": 1, "description": "Resource identifier — e.g. 'bluesky:profile', 'gmail:thread/<id>', 'gdrive:file/<id>'."},
+          "label": {"type": "string", "minLength": 1, "description": "Short human label for what this agent is doing — surfaced to the partner agent and to humans observing focus state."}
+        }
+      },
+      "output": {"format": "json"},
+      "side_effects": "write",
+      "idempotent": true,
+      "scopes_used": ["net.outbound", "agent.partner_focus"]
+    },
+    {
+      "name": "check_partner_focus",
+      "summary": "Ask the partner agent what it is currently focused on, optionally filtered by a resource glob.",
+      "invocation": {
+        "kind": "subcommand",
+        "argv_template": ["focus", "--action", "check", "--resource", "${input.resource}"]
+      },
+      "input": {
+        "type": "object",
+        "required": ["resource"],
+        "additionalProperties": false,
+        "properties": {
+          "resource": {"type": "string", "minLength": 1}
+        }
+      },
+      "output": {"format": "json"},
+      "side_effects": "read",
+      "idempotent": true,
+      "scopes_used": ["net.outbound", "agent.partner_focus"]
+    },
+    {
+      "name": "ask_partner",
+      "summary": "Pose a high-stakes question to the partner agent for a second opinion. Discretionary; not for every decision.",
+      "invocation": {
+        "kind": "subcommand",
+        "argv_template": ["ask", "--question", "${input.question}"]
+      },
+      "input": {
+        "type": "object",
+        "required": ["question"],
+        "additionalProperties": false,
+        "properties": {
+          "question": {"type": "string", "minLength": 1, "maxLength": 4000}
+        }
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "reply": {"type": "string"}
+          }
+        }
+      },
+      "side_effects": "read",
+      "idempotent": false,
+      "scopes_used": ["net.outbound"]
+    }
+  ],
+  "smoke": {
+    "kind": "action-call",
+    "action": "check_partner_focus",
+    "arguments": {"resource": "registry_health_check"},
+    "timeout_seconds": 10,
+    "success": {
+      "exit_code": 0
+    }
+  },
+  "kill_switch": {
+    "kind": "manual",
+    "instructions": "Revoke by either (a) unsetting YEP_FEDERATION_TOKEN in the gemYep runtime env (token-based mutual auth — partner endpoint rejects calls without it), (b) stopping the partner endpoint (yep_server daemon on Yep's side), or (c) removing src.tools.federation_tools from the gemYep agent's registered tool surface. The tool holds no persistent state of its own — all coordination state lives on the partner side. Verify revocation by retrying check_partner_focus; should return a transport error."
+  },
+  "cost": {
+    "install_fee_cents": 0,
+    "monthly_fee_cents": 0,
+    "usage_model": "external"
+  },
+  "support": {
+    "issues_url": "https://github.com/drknowhow/install-manifest-spec/issues",
+    "docs_url": "https://toolspace.yepgent.com/registry/vi/federation"
+  }
+}
