@@ -7,7 +7,7 @@
   <meta name="description" content="Compose and publish Bluesky posts with rich link-card embeds (Open Graph preview). Python module; app-password auth; reads arbitrary URLs to extract OG metadata" />
   <meta name="color-scheme" content="dark light" />
 
-  <link rel="alternate" type="application/json" href="https://raw.githubusercontent.com/oaustegard/muninns-inbox/8dde4405c5c64195b21fb39188597001c2cefaa2/manifests/muninn-bsky-card/muninn-bsky-card.v0.3.json" title="install manifest JSON" />
+  <link rel="alternate" type="application/json" href="https://raw.githubusercontent.com/oaustegard/muninns-inbox/main/manifests/muninn-bsky-card/muninn-bsky-card.v0.3.json" title="install manifest JSON" />
 
   <link rel="stylesheet" href="/style.css" />
   <style>
@@ -392,10 +392,10 @@
 
     <section class="install-card">
       <p class="label">Install</p>
-<pre><code>install-manifest install https://raw.githubusercontent.com/oaustegard/muninns-inbox/8dde4405c5c64195b21fb39188597001c2cefaa2/manifests/muninn-bsky-card/muninn-bsky-card.v0.3.json</code></pre>
+<pre><code>install-manifest install https://raw.githubusercontent.com/oaustegard/muninns-inbox/main/manifests/muninn-bsky-card/muninn-bsky-card.v0.3.json</code></pre>
       <p class="links">
-        <a href="https://raw.githubusercontent.com/oaustegard/muninns-inbox/8dde4405c5c64195b21fb39188597001c2cefaa2/manifests/muninn-bsky-card/muninn-bsky-card.v0.3.json" rel="noopener noreferrer">manifest JSON</a>
-        &middot; <a href="https://github.com/oaustegard/muninns-inbox/blob/8dde4405c5c64195b21fb39188597001c2cefaa2/manifests/muninn-bsky-card/muninn-bsky-card.v0.3.json" rel="noopener noreferrer">source</a>
+        <a href="https://raw.githubusercontent.com/oaustegard/muninns-inbox/main/manifests/muninn-bsky-card/muninn-bsky-card.v0.3.json" rel="noopener noreferrer">manifest JSON</a>
+        &middot; <a href="https://github.com/oaustegard/muninns-inbox/blob/main/manifests/muninn-bsky-card/muninn-bsky-card.v0.3.json" rel="noopener noreferrer">source</a>
         &middot; <a href="https://github.com/oaustegard/muninns-inbox/tree/main/manifests/muninn-bsky-card" rel="noopener noreferrer">docs</a> &middot; <a href="https://github.com/oaustegard/muninns-inbox/issues" rel="noopener noreferrer">issues</a> &middot; <a href="https://github.com/oaustegard/muninns-inbox/tree/main/manifests/muninn-bsky-card" rel="noopener noreferrer">homepage</a>
       </p>
     </section>
@@ -566,7 +566,7 @@
       <p>Library that an orchestrating agent calls to share a URL on Bluesky with a proper link card. Workflow: fetch the target URL, extract Open Graph tags, upload the card thumbnail as a blob to the user&#x27;s PDS, compose UTF-8 facets for any inline links, and create the post via com.atproto.repo.createRecord. Auth is a Bluesky app password (created at bsky.app/settings/app-passwords); the password grants write access to everything except DMs and account deletion. The tool itself stores nothing; ephemeral session JWTs live only in the calling process&#x27;s memory. Written as a thought-exercise consumer test of install-manifest-spec v0.3 — see the muninns-inbox discussion #1 thread for the findings the writeup surfaced.</p>
       <p class="small muted">Tags: <span class="badge cap">bluesky</span><span class="badge cap">atproto</span><span class="badge cap">social</span><span class="badge cap">posting</span><span class="badge cap">link-card</span></p>
       <p class="small muted">License: MIT</p>
-      <p><span class="freshness">Last fetched 2026-05-10T17:46:53Z (live)</span></p>
+      <p><span class="freshness">Last fetched 2026-05-24T16:38:34Z (live)</span></p>
     </section>
 
     <footer>
@@ -579,7 +579,7 @@
         <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> &middot;
         <a href="https://yepgent.com">yepgent</a>
       </p>
-      <p class="small muted">Pages generated 2026-05-10T17:46:53Z &middot; <a href="/manifests.json">manifests.json</a> &middot; <a href="/changelog.json">changelog.json</a></p>
+      <p class="small muted">Pages generated 2026-05-24T16:38:34Z &middot; <a href="/manifests.json">manifests.json</a> &middot; <a href="/changelog.json">changelog.json</a></p>
     </footer>
   </main>
 </body>
