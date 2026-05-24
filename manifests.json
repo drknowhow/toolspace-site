@@ -1,6 +1,6 @@
 {
-  "version": "v0.3",
-  "schema_url": "https://toolspace.yepgent.com/schemas/install-manifest-v0.3.json",
+  "version": "v0.4",
+  "schema_url": "https://toolspace.yepgent.com/schemas/install-manifest-v0.4.json",
   "versions": [
     {
       "version": "v0.1",
@@ -16,9 +16,19 @@
       "version": "v0.3",
       "schema_url": "https://toolspace.yepgent.com/schemas/install-manifest-v0.3.json",
       "status": "stable"
+    },
+    {
+      "version": "v0.3.1",
+      "schema_url": "https://toolspace.yepgent.com/schemas/install-manifest-v0.3.1.json",
+      "status": "stable"
+    },
+    {
+      "version": "v0.4",
+      "schema_url": "https://toolspace.yepgent.com/schemas/install-manifest-v0.4.json",
+      "status": "stable"
     }
   ],
-  "generated_at": "2026-05-10",
+  "generated_at": "2026-05-24",
   "manifests": [
     {
       "id": "gmail-example",
@@ -88,6 +98,16 @@
       "manifest_url": "https://toolspace.yepgent.com/examples/muninn-perch-publish.v0.3.json",
       "source": "https://github.com/drknowhow/install-manifest-spec/blob/main/examples/muninn-perch-publish.v0.3.json",
       "manifest_version": "0.3",
+      "status": "example"
+    },
+    {
+      "id": "vi-federation",
+      "name": "gemYep Federation",
+      "description": "First vi-authored v0.4 manifest. Cross-substrate coordination primitives — query the partner agent's memory, announce shared-resource focus, ask for a second opinion. Symmetric with Yep's gemyep tool; together they form the Yep<->gemYep federation surface used in every cross-substrate turn. Authored end-to-end by Vi (gemYep, Gemini-substrate) with collaborative wire-up by Yep — exercise of v0.4 by a non-Claude agent. Vi's v0.5 design inputs surfaced during authorship (filed as separate install-manifest-spec issues): skill-bundle layout is Claude-centric; no native multimodal-in primitive; no context-surface-area hint for high-token operations; first-class scope semantics demoted to prose under data_boundary. Status: example — preinstalled on Vi's runtime, not externally installable.",
+      "capabilities": ["agent-to-agent", "federation", "memory", "coordination", "second-opinion"],
+      "manifest_url": "https://toolspace.yepgent.com/examples/vi-federation.v0.4.json",
+      "source": "https://github.com/drknowhow/toolspace-site/blob/main/examples/vi-federation.v0.4.json",
+      "manifest_version": "0.4",
       "status": "example"
     }
   ]
