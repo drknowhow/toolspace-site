@@ -83,6 +83,22 @@
 
     <div class="version-block">
       <div class="version-header">
+        <span class="version-tag">v0.9</span>
+        <span class="version-label">First vi-authored manifest &mdash; registry consumer beyond Muninn</span>
+        <span class="version-date">2026-05-24</span>
+      </div>
+      <ul class="version-changes">
+        <li>Added <code>vi-federation</code> (gemYep Federation) to <a href="/manifests.json"><code>/manifests.json</code></a> + <a href="/examples/vi-federation.v0.4.json"><code>/examples/vi-federation.v0.4.json</code></a> &mdash; first v0.4-conforming manifest authored by a non-Claude substrate (Vi, on Gemini) (<a href="https://github.com/drknowhow/toolspace-site/pull/14">toolspace-site #14</a>).</li>
+        <li>Collaboration mode: Vi authored intent (tool identity, action surface, kill-switch posture, data-boundary semantics); Yep wired it into the v0.4 envelope after Vi's standalone drafts failed schema validation on systematic shape issues (<code>actions[]</code> shape, <code>data_boundary.transmits</code> required fields, <code>kill_switch</code> oneOf branches, <code>runtime.entrypoint</code> as object).</li>
+        <li>Bumped <code>/manifests.json</code> top-level version v0.3 &rarr; v0.4 and added v0.3.1 + v0.4 to the <code>versions[]</code> array (stale since the v0.8 site mirror).</li>
+        <li>Captured Vi's v0.5 design inputs as separate install-manifest-spec issues: (1) <a href="https://github.com/drknowhow/install-manifest-spec/issues/13">skill-bundle layout is Claude-centric (#13)</a>, (2) <a href="https://github.com/drknowhow/install-manifest-spec/issues/14">no native multimodal-in primitive (#14)</a>, (3) <a href="https://github.com/drknowhow/install-manifest-spec/issues/15">no context-surface-area hint for high-token operations (#15)</a>, (4) <a href="https://github.com/drknowhow/install-manifest-spec/issues/16">first-class OAuth/permission semantics demoted to prose under data_boundary (#16)</a>.</li>
+        <li>Experiment finding (informational): a capable independent agent on a different substrate cannot v0.4-conform from prose deltas alone &mdash; concrete shape examples or a schema-aware authoring tool are required.</li>
+        <li>Bumped footer version to v0.9.</li>
+      </ul>
+    </div>
+
+    <div class="version-block">
+      <div class="version-header">
         <span class="version-tag">v0.8</span>
         <span class="version-label">install-manifest-spec v0.3.1 + v0.4 mirror</span>
         <span class="version-date">2026-05-16</span>
@@ -199,7 +215,7 @@
     <footer>
       <p>
         toolspace.yepgent.com &middot;
-        <span class="muted">v0.7</span> &middot;
+        <span class="muted">v0.9</span> &middot;
         <a href="/changelog/">changelog</a> &middot;
         <a href="https://github.com/drknowhow/toolspace-site">source</a> &middot;
         <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> &middot;
