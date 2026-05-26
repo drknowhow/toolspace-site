@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>toolspace &mdash; agent install manifests</title>
-  <meta name="description" content="A registry of install manifests for autonomous agents. Built on the install-manifest-spec." />
+  <title>toolspace &mdash; manifest spec for personal stateful agents</title>
+  <meta name="description" content="An open manifest spec for personal, stateful AI agents &mdash; the long-running kind that hold memory, schedule themselves, and act between conversations. AGENTS.md-aligned." />
   <meta name="color-scheme" content="dark light" />
 
   <!-- Open Graph -->
-  <meta property="og:title" content="toolspace &mdash; agent install manifests" />
-  <meta property="og:description" content="A registry of install manifests for autonomous agents. Built on the install-manifest-spec." />
+  <meta property="og:title" content="toolspace &mdash; manifest spec for personal stateful agents" />
+  <meta property="og:description" content="An open manifest spec for personal, stateful AI agents &mdash; the long-running kind that hold memory, schedule themselves, and act between conversations. AGENTS.md-aligned." />
   <meta property="og:url" content="https://toolspace.yepgent.com/" />
   <meta property="og:type" content="website" />
 
@@ -156,15 +156,31 @@
           <circle cx="40" cy="42" r="9"/>
           <path d="M36 42.5l3 3 6-6.5"/>
         </svg>
-        <h1>A registry<br /><span class="muted">for autonomous agents<span class="blink">&nbsp;</span></span></h1>
+        <h1>A manifest spec<br /><span class="muted">for personal, stateful agents<span class="blink">&nbsp;</span></span></h1>
       </div>
-      <p class="lede">install manifests &mdash; signed, schema-validated, agent-installable.</p>
+      <p class="lede">long-running agents &mdash; memory, schedules, federation. Open spec, <a href="https://agents.md/">AGENTS.md</a>-aligned.</p>
 
       <p>
-        Toolspace hosts <a href="https://github.com/drknowhow/install-manifest-spec">install-manifest-spec</a>
-        manifests &mdash; signed JSON descriptions of what an agent needs to set up a tool: env vars,
-        prompts, verification, revocation. Agents can install from this registry, from raw GitHub URLs,
-        or from any mirror &mdash; <strong>the spec is the moat, not the registry</strong>.
+        <strong>Toolspace is an open manifest spec for personal, stateful AI agents</strong> &mdash;
+        the long-running kind that hold memory, schedule themselves, learn their operator's
+        preferences over weeks and months, and act on their own initiative between
+        conversations.
+      </p>
+
+      <p>
+        It's a structured JSON layer that sits on top of
+        <a href="https://agents.md/">AGENTS.md</a>: where AGENTS.md gives an agent prose context
+        about a repo or workspace, toolspace gives it a machine-readable contract for the tools,
+        memories, schedules, and behaviors that make up a personal agent's surface. AGENTS.md
+        tells an agent what this place is for. <strong>toolspace tells an agent what
+        this agent is made of.</strong>
+      </p>
+
+      <p>
+        Not a registry for coding-assistant plugins. Different consumers, different lifecycle,
+        different trust model. The canonical demo is <a href="https://yepgent.com/">Yep</a>
+        and its federated counterpart Vi &mdash; every primitive lands in production there
+        before it lands in the spec.
       </p>
 
       <!-- Flow illustration: agent fetches a manifest, installs a tool. -->
