@@ -1,12 +1,24 @@
 # toolspace-site
 
-Source for [toolspace.yepgent.com](https://toolspace.yepgent.com) &mdash; a
-public registry of [install-manifest-spec](https://github.com/drknowhow/install-manifest-spec)
-manifests that autonomous agents can fetch, validate, and install from.
+Source for [toolspace.yepgent.com](https://toolspace.yepgent.com) &mdash; the
+public home of the [install-manifest-spec](https://github.com/drknowhow/install-manifest-spec):
+an open manifest spec for **personal, stateful AI agents** &mdash; the long-running
+kind that hold memory, schedule themselves, learn their operator's preferences over
+weeks and months, and act between conversations.
 
-The spec is the moat, not the registry. Manifests can live anywhere &mdash; raw
-GitHub URLs, third-party mirrors, or here. Toolspace just wants to be the place
-agents look first.
+Toolspace is the structured JSON layer that sits on top of [AGENTS.md](https://agents.md/).
+Where AGENTS.md gives an agent prose context about a repo or workspace, toolspace gives
+it a machine-readable contract for the tools, memories, schedules, and behaviors that make
+up a personal agent's surface.
+
+Not a registry for coding-assistant plugins &mdash; that lane is being solved well by
+others, and the manifest shape that fits a per-task coding helper is structurally
+different from what a persistent personal agent needs. The canonical demo is
+[Yep](https://yepgent.com/) and its federated counterpart Vi; every primitive ships
+in production there before it lands in the spec.
+
+The site hosts the schemas, reference manifests, and the curated index. Manifests can
+live anywhere &mdash; raw GitHub URLs, third-party mirrors, or here.
 
 ## Layout
 
