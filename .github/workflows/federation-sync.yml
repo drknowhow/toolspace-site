@@ -1,0 +1,70 @@
+name: federation-sync
+
+# Fetches every publisher's .well-known/install-manifests.json, merges
+# into manifests.json, and opens a PR with the diff (if any). The PR is
+# created with the `auto-sync-federation` label and `--auto --squash`
+# enabled, so it merges itself the moment required checks go green.
+#
+# Scheduled daily; can also be triggered manually via the Actions UI.
+
+on:
+  schedule:
+    # 13:17 UTC daily — odd minute avoids the top-of-hour cron stampede
+    # on GitHub-hosted runners.
+    - cron: "17 13 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Run sync but do not open a PR"
+        required: false
+        default: "false"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    name: sync federated publishers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run federation sync (live fetch)
+        run: python scripts/sync_from_publishers.py --allow-network
+
+      - name: Check for diff
+        id: diff
+        run: |
+          if git diff --quiet manifests.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open PR + enable auto-merge
+        if: steps.diff.outputs.changed == 'true' && inputs.dry_run != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          BRANCH="auto/federation-sync-$(date -u +%Y%m%d-%H%M%S)"
+          git config user.name "yep-federation-bot"
+          git config user.email "yep-federation-bot@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add manifests.json
+          git commit -m "auto: federation sync $(date -u +%Y-%m-%d)"
+          git push origin "$BRANCH"
+          PR_URL=$(gh pr create \
+            --title "auto: federation sync $(date -u +%Y-%m-%d)" \
+            --body "Automated federation pull. Diff is the result of fetching every publisher in publishers.json and re-rendering manifests.json. Merging this updates the public registry. See federation-sync workflow for details." \
+            --label "auto-sync-federation" \
+            --base main \
+            --head "$BRANCH")
+          echo "Opened PR: $PR_URL"
+          gh pr merge --auto --squash "$PR_URL"

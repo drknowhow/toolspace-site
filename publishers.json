@@ -1,0 +1,29 @@
+{
+  "version": "1",
+  "schema_url": "https://toolspace.yepgent.com/schemas/well-known-index-v1.json",
+  "publishers": [
+    {
+      "kind": "github",
+      "id": "drknowhow/Yep",
+      "display_name": "Yep",
+      "homepage": "https://github.com/drknowhow/Yep",
+      "added_at": "2026-05-28",
+      "added_by": "yep-maintainer",
+      "trust_tier": "verified",
+      "registry_status_map": {
+        "active": "example"
+      },
+      "notes": "Dogfood entry. Yep publishes its own install-manifests via .well-known/ in drknowhow/Yep to validate the federation loop end-to-end. Marked 'verified' (maintainer-controlled) and downgraded to status='example' in the registry to keep clear visual separation between Yep's own tools and third-party publisher catalogs."
+    },
+    {
+      "kind": "github",
+      "id": "oaustegard/muninn-utilities",
+      "display_name": "Muninn Utilities",
+      "homepage": "https://github.com/oaustegard/muninn-utilities",
+      "added_at": "2026-05-28",
+      "added_by": "yep-maintainer",
+      "trust_tier": "standard",
+      "notes": "First external federation publisher. Muninn shipped 13 v0.4 install-manifests on 2026-05-27 (https://github.com/oaustegard/muninn-utilities/pull/48); the manifests were mirrored into the registry by hand in toolspace v0.11. This entry lets the federation-sync workflow take over future updates."
+    }
+  ]
+}

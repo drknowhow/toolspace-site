@@ -1,0 +1,22 @@
+{
+  "manifest_version": "0.3",
+  "tool": {
+    "id": "muninn-old-tool",
+    "version": "0.0.9",
+    "name": "Muninn Old Tool",
+    "summary": "Older deprecated tool kept for backref.",
+    "homepage": "https://github.com/oaustegard/muninn-utilities",
+    "tags": ["deprecated"]
+  },
+  "runtime": {
+    "kind": "mcp-stdio",
+    "install": {"method": "pip", "package": "muninn-old-tool"},
+    "entrypoint": {"command": ["python", "-m", "muninn_old_tool"]}
+  },
+  "smoke": {
+    "kind": "shell",
+    "command": ["python", "-m", "muninn_old_tool", "--version"],
+    "success": {"exit_code": 0}
+  },
+  "kill_switch": {"kind": "manual", "instructions_url": "https://example.com/revoke"}
+}
