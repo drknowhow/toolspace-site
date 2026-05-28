@@ -17,14 +17,19 @@
 
     .filter-bar {
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem 0.8rem;
-      align-items: center;
+      flex-direction: column;
+      gap: 0.55rem;
       margin: 1rem 0 1.25rem;
-      padding: 0.6rem 0.8rem;
+      padding: 0.7rem 0.85rem;
       background: var(--card-bg);
       border: 1px solid var(--card-edge);
       border-radius: 10px;
+    }
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.8rem;
+      align-items: center;
     }
     .filter-group { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
     .filter-group .label {
@@ -33,6 +38,70 @@
       letter-spacing: 0.04em;
       text-transform: uppercase;
       margin-right: 0.3rem;
+    }
+    .filter-search {
+      flex: 1 1 auto;
+      min-width: 0;
+      padding: 0.45em 0.75em;
+      font: inherit;
+      font-size: 0.9rem;
+      color: var(--fg);
+      background: transparent;
+      border: 1px solid var(--field-edge);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 120ms ease;
+    }
+    .filter-search:focus { border-color: var(--accent); }
+    .filter-search::placeholder { color: var(--muted); }
+    .filter-count {
+      font-size: 0.78rem;
+      color: var(--muted);
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
+    /* Capability disclosure — collapses the long tag list by default. */
+    details.filter-disclosure { width: 100%; }
+    details.filter-disclosure > summary {
+      list-style: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0.15em 0;
+    }
+    details.filter-disclosure > summary::-webkit-details-marker { display: none; }
+    details.filter-disclosure > summary::before {
+      content: "▸";
+      font-size: 0.7rem;
+      color: var(--muted);
+      transition: transform 120ms ease;
+    }
+    details.filter-disclosure[open] > summary::before { content: "▾"; }
+    details.filter-disclosure > summary:hover { color: var(--fg); }
+    details.filter-disclosure > summary .badge-count {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    details.filter-disclosure > summary .active-hint {
+      font-size: 0.72rem;
+      color: var(--accent);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    details.filter-disclosure .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem 0.35rem;
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--rule);
     }
     .chip {
       display: inline-block;
@@ -139,6 +208,17 @@
       margin-top: auto;
       padding-top: 0.3rem;
     }
+    /* Cap-badge density limit: show first 3 by default, "+N more"
+       toggle exposes the rest. Keeps cards uniform at a glance. */
+    .tool-card .meta .badge.cap-overflow { display: none; }
+    .tool-card.show-all-caps .meta .badge.cap-overflow { display: inline-block; }
+    .badge.cap-more {
+      cursor: pointer;
+      background: transparent;
+      border-style: dashed;
+      color: var(--muted);
+    }
+    .badge.cap-more:hover { color: var(--fg); border-color: var(--accent-edge); }
     .badge {
       display: inline-block;
       font-size: 0.7rem;
@@ -378,23 +458,37 @@
     <p class="lede">Install manifests for autonomous agents. 18 entries, hand-curated.</p>
 
     <div class="filter-bar" role="region" aria-label="Filter manifests">
-        <div class="filter-group">
-          <span class="label">Capability</span>
-          <button class="chip" data-filter-group="cap" data-value="agent-to-agent" aria-pressed="false">agent-to-agent</button><button class="chip" data-filter-group="cap" data-value="anthropic" aria-pressed="false">anthropic</button><button class="chip" data-filter-group="cap" data-value="atom-feed" aria-pressed="false">atom-feed</button><button class="chip" data-filter-group="cap" data-value="atproto" aria-pressed="false">atproto</button><button class="chip" data-filter-group="cap" data-value="blog" aria-pressed="false">blog</button><button class="chip" data-filter-group="cap" data-value="bluesky" aria-pressed="false">bluesky</button><button class="chip" data-filter-group="cap" data-value="calibration" aria-pressed="false">calibration</button><button class="chip" data-filter-group="cap" data-value="claude-blog" aria-pressed="false">claude-blog</button><button class="chip" data-filter-group="cap" data-value="cloudflare-ai-gateway" aria-pressed="false">cloudflare-ai-gateway</button><button class="chip" data-filter-group="cap" data-value="clustering" aria-pressed="false">clustering</button><button class="chip" data-filter-group="cap" data-value="config" aria-pressed="false">config</button><button class="chip" data-filter-group="cap" data-value="coordination" aria-pressed="false">coordination</button><button class="chip" data-filter-group="cap" data-value="dag" aria-pressed="false">dag</button><button class="chip" data-filter-group="cap" data-value="decision-memory" aria-pressed="false">decision-memory</button><button class="chip" data-filter-group="cap" data-value="deduplication" aria-pressed="false">deduplication</button><button class="chip" data-filter-group="cap" data-value="discussions" aria-pressed="false">discussions</button><button class="chip" data-filter-group="cap" data-value="email" aria-pressed="false">email</button><button class="chip" data-filter-group="cap" data-value="embeddings" aria-pressed="false">embeddings</button><button class="chip" data-filter-group="cap" data-value="federated" aria-pressed="false">federated</button><button class="chip" data-filter-group="cap" data-value="federation" aria-pressed="false">federation</button><button class="chip" data-filter-group="cap" data-value="flight-logs" aria-pressed="false">flight-logs</button><button class="chip" data-filter-group="cap" data-value="flowing" aria-pressed="false">flowing</button><button class="chip" data-filter-group="cap" data-value="framework" aria-pressed="false">framework</button><button class="chip" data-filter-group="cap" data-value="gemini" aria-pressed="false">gemini</button><button class="chip" data-filter-group="cap" data-value="github" aria-pressed="false">github</button><button class="chip" data-filter-group="cap" data-value="github-pages" aria-pressed="false">github-pages</button><button class="chip" data-filter-group="cap" data-value="grapheme" aria-pressed="false">grapheme</button><button class="chip" data-filter-group="cap" data-value="issues" aria-pressed="false">issues</button><button class="chip" data-filter-group="cap" data-value="learning-synthesis" aria-pressed="false">learning-synthesis</button><button class="chip" data-filter-group="cap" data-value="length-check" aria-pressed="false">length-check</button><button class="chip" data-filter-group="cap" data-value="link-card" aria-pressed="false">link-card</button><button class="chip" data-filter-group="cap" data-value="llm" aria-pressed="false">llm</button><button class="chip" data-filter-group="cap" data-value="memory" aria-pressed="false">memory</button><button class="chip" data-filter-group="cap" data-value="muninn-internal" aria-pressed="false">muninn-internal</button><button class="chip" data-filter-group="cap" data-value="news" aria-pressed="false">news</button><button class="chip" data-filter-group="cap" data-value="parsing" aria-pressed="false">parsing</button><button class="chip" data-filter-group="cap" data-value="patch-review" aria-pressed="false">patch-review</button><button class="chip" data-filter-group="cap" data-value="perch" aria-pressed="false">perch</button><button class="chip" data-filter-group="cap" data-value="policy" aria-pressed="false">policy</button><button class="chip" data-filter-group="cap" data-value="posting" aria-pressed="false">posting</button><button class="chip" data-filter-group="cap" data-value="publishing" aria-pressed="false">publishing</button><button class="chip" data-filter-group="cap" data-value="python" aria-pressed="false">python</button><button class="chip" data-filter-group="cap" data-value="reactions" aria-pressed="false">reactions</button><button class="chip" data-filter-group="cap" data-value="read-only" aria-pressed="false">read-only</button><button class="chip" data-filter-group="cap" data-value="recurring" aria-pressed="false">recurring</button><button class="chip" data-filter-group="cap" data-value="reminders" aria-pressed="false">reminders</button><button class="chip" data-filter-group="cap" data-value="scheduling" aria-pressed="false">scheduling</button><button class="chip" data-filter-group="cap" data-value="second-opinion" aria-pressed="false">second-opinion</button><button class="chip" data-filter-group="cap" data-value="similarity" aria-pressed="false">similarity</button><button class="chip" data-filter-group="cap" data-value="social" aria-pressed="false">social</button><button class="chip" data-filter-group="cap" data-value="task-runner" aria-pressed="false">task-runner</button><button class="chip" data-filter-group="cap" data-value="text-utility" aria-pressed="false">text-utility</button><button class="chip" data-filter-group="cap" data-value="tf-idf" aria-pressed="false">tf-idf</button><button class="chip" data-filter-group="cap" data-value="triage" aria-pressed="false">triage</button><button class="chip" data-filter-group="cap" data-value="verification" aria-pressed="false">verification</button><button class="chip" data-filter-group="cap" data-value="watermark" aria-pressed="false">watermark</button><button class="chip" data-filter-group="cap" data-value="whtwnd" aria-pressed="false">whtwnd</button>
-        </div>
-        <div class="filter-group">
-          <span class="label">Status</span>
-          <button class="chip" data-filter-group="status" data-value="example" aria-pressed="false">example</button>
-        </div>
+      <div class="filter-row">
+        <input
+          id="registry-search"
+          class="filter-search"
+          type="search"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="Search by name, author, summary, tag…"
+          aria-label="Search manifests"
+        />
+        <span class="filter-count" id="filter-count">18 of 18</span>
+        <button id="chip-clear" class="chip-clear" type="button">clear</button>
+      </div>
+      <div class="filter-row">
         <div class="filter-group">
           <span class="label">Schema</span>
           <button class="chip" data-filter-group="mv" data-value="v0-1" aria-pressed="false">v0.1</button><button class="chip" data-filter-group="mv" data-value="v0-2" aria-pressed="false">v0.2</button><button class="chip" data-filter-group="mv" data-value="v0-3" aria-pressed="false">v0.3</button><button class="chip" data-filter-group="mv" data-value="v0-4" aria-pressed="false">v0.4</button>
         </div>
-      <button id="chip-clear" class="chip-clear" type="button">clear</button>
+      </div>
+      <details class="filter-disclosure" data-disclosure-group="cap">
+        <summary>
+          <span class="label">Capability</span>
+          <span class="badge-count">(57)</span>
+          <span class="active-hint" data-active-hint hidden></span>
+        </summary>
+        <div class="chip-row"><button class="chip" data-filter-group="cap" data-value="agent-to-agent" aria-pressed="false">agent-to-agent</button><button class="chip" data-filter-group="cap" data-value="anthropic" aria-pressed="false">anthropic</button><button class="chip" data-filter-group="cap" data-value="atom-feed" aria-pressed="false">atom-feed</button><button class="chip" data-filter-group="cap" data-value="atproto" aria-pressed="false">atproto</button><button class="chip" data-filter-group="cap" data-value="blog" aria-pressed="false">blog</button><button class="chip" data-filter-group="cap" data-value="bluesky" aria-pressed="false">bluesky</button><button class="chip" data-filter-group="cap" data-value="calibration" aria-pressed="false">calibration</button><button class="chip" data-filter-group="cap" data-value="claude-blog" aria-pressed="false">claude-blog</button><button class="chip" data-filter-group="cap" data-value="cloudflare-ai-gateway" aria-pressed="false">cloudflare-ai-gateway</button><button class="chip" data-filter-group="cap" data-value="clustering" aria-pressed="false">clustering</button><button class="chip" data-filter-group="cap" data-value="config" aria-pressed="false">config</button><button class="chip" data-filter-group="cap" data-value="coordination" aria-pressed="false">coordination</button><button class="chip" data-filter-group="cap" data-value="dag" aria-pressed="false">dag</button><button class="chip" data-filter-group="cap" data-value="decision-memory" aria-pressed="false">decision-memory</button><button class="chip" data-filter-group="cap" data-value="deduplication" aria-pressed="false">deduplication</button><button class="chip" data-filter-group="cap" data-value="discussions" aria-pressed="false">discussions</button><button class="chip" data-filter-group="cap" data-value="email" aria-pressed="false">email</button><button class="chip" data-filter-group="cap" data-value="embeddings" aria-pressed="false">embeddings</button><button class="chip" data-filter-group="cap" data-value="federated" aria-pressed="false">federated</button><button class="chip" data-filter-group="cap" data-value="federation" aria-pressed="false">federation</button><button class="chip" data-filter-group="cap" data-value="flight-logs" aria-pressed="false">flight-logs</button><button class="chip" data-filter-group="cap" data-value="flowing" aria-pressed="false">flowing</button><button class="chip" data-filter-group="cap" data-value="framework" aria-pressed="false">framework</button><button class="chip" data-filter-group="cap" data-value="gemini" aria-pressed="false">gemini</button><button class="chip" data-filter-group="cap" data-value="github" aria-pressed="false">github</button><button class="chip" data-filter-group="cap" data-value="github-pages" aria-pressed="false">github-pages</button><button class="chip" data-filter-group="cap" data-value="grapheme" aria-pressed="false">grapheme</button><button class="chip" data-filter-group="cap" data-value="issues" aria-pressed="false">issues</button><button class="chip" data-filter-group="cap" data-value="learning-synthesis" aria-pressed="false">learning-synthesis</button><button class="chip" data-filter-group="cap" data-value="length-check" aria-pressed="false">length-check</button><button class="chip" data-filter-group="cap" data-value="link-card" aria-pressed="false">link-card</button><button class="chip" data-filter-group="cap" data-value="llm" aria-pressed="false">llm</button><button class="chip" data-filter-group="cap" data-value="memory" aria-pressed="false">memory</button><button class="chip" data-filter-group="cap" data-value="muninn-internal" aria-pressed="false">muninn-internal</button><button class="chip" data-filter-group="cap" data-value="news" aria-pressed="false">news</button><button class="chip" data-filter-group="cap" data-value="parsing" aria-pressed="false">parsing</button><button class="chip" data-filter-group="cap" data-value="patch-review" aria-pressed="false">patch-review</button><button class="chip" data-filter-group="cap" data-value="perch" aria-pressed="false">perch</button><button class="chip" data-filter-group="cap" data-value="policy" aria-pressed="false">policy</button><button class="chip" data-filter-group="cap" data-value="posting" aria-pressed="false">posting</button><button class="chip" data-filter-group="cap" data-value="publishing" aria-pressed="false">publishing</button><button class="chip" data-filter-group="cap" data-value="python" aria-pressed="false">python</button><button class="chip" data-filter-group="cap" data-value="reactions" aria-pressed="false">reactions</button><button class="chip" data-filter-group="cap" data-value="read-only" aria-pressed="false">read-only</button><button class="chip" data-filter-group="cap" data-value="recurring" aria-pressed="false">recurring</button><button class="chip" data-filter-group="cap" data-value="reminders" aria-pressed="false">reminders</button><button class="chip" data-filter-group="cap" data-value="scheduling" aria-pressed="false">scheduling</button><button class="chip" data-filter-group="cap" data-value="second-opinion" aria-pressed="false">second-opinion</button><button class="chip" data-filter-group="cap" data-value="similarity" aria-pressed="false">similarity</button><button class="chip" data-filter-group="cap" data-value="social" aria-pressed="false">social</button><button class="chip" data-filter-group="cap" data-value="task-runner" aria-pressed="false">task-runner</button><button class="chip" data-filter-group="cap" data-value="text-utility" aria-pressed="false">text-utility</button><button class="chip" data-filter-group="cap" data-value="tf-idf" aria-pressed="false">tf-idf</button><button class="chip" data-filter-group="cap" data-value="triage" aria-pressed="false">triage</button><button class="chip" data-filter-group="cap" data-value="verification" aria-pressed="false">verification</button><button class="chip" data-filter-group="cap" data-value="watermark" aria-pressed="false">watermark</button><button class="chip" data-filter-group="cap" data-value="whtwnd" aria-pressed="false">whtwnd</button></div>
+      </details>
     </div>
 
     <ul class="tool-grid" id="tool-grid">
-        <li class="tool-card" data-caps="email" data-status="example" data-mv="v0.1">
+        <li class="tool-card" data-caps="email" data-status="example" data-mv="v0.1" data-search="yep gmail yep (agent operating on behalf of dimitri tselenchuk) read, search, label, and send gmail on the user&#x27;s behalf via the gmail api. mcp-stdio server, oauth refresh-token auth, no inbox-content stored server-side. email">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">YG</div>
             <div>
@@ -410,7 +504,7 @@
             <span class="badge cap">email</span>
           </div>
         </li>
-        <li class="tool-card" data-caps="email" data-status="example" data-mv="v0.2">
+        <li class="tool-card" data-caps="email" data-status="example" data-mv="v0.2" data-search="yep gmail yep (agent operating on behalf of dimitri tselenchuk) send, search, label, and inspect gmail on the user&#x27;s behalf via the gmail api. python module with a structured action catalog; oauth refresh-token auth; no inbox content stored server-side. email">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">YG</div>
             <div>
@@ -426,7 +520,7 @@
             <span class="badge cap">email</span>
           </div>
         </li>
-        <li class="tool-card" data-caps="email" data-status="example" data-mv="v0.3">
+        <li class="tool-card" data-caps="email" data-status="example" data-mv="v0.3" data-search="yep gmail yep (agent operating on behalf of dimitri tselenchuk) send, search, label, and inspect gmail on the user&#x27;s behalf via the gmail api. python module with a structured action catalog; oauth refresh-token auth; no inbox content stored server-side. email">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">YG</div>
             <div>
@@ -442,7 +536,7 @@
             <span class="badge cap">email</span>
           </div>
         </li>
-        <li class="tool-card" data-caps="framework dag task-runner python" data-status="example" data-mv="v0.3">
+        <li class="tool-card" data-caps="framework dag task-runner python" data-status="example" data-mv="v0.3" data-search="muninn flowing muninn (raven of memory; agent operating on behalf of oskar austegard) dag workflow runner. encode a procedure as python @task functions with depends_on/when/validate/retry_until; the runner owns control flow (branching, retries, validation, propagation) and the consumer&#x27;s tasks supply t… framework dag task-runner python">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">MF</div>
             <div>
@@ -455,10 +549,10 @@
             <span class="badge status-example">example</span>
             <span class="badge">v0.3</span>
             <span class="badge agent-author" title="Authored by an agent">agent author</span>
-            <span class="badge cap">framework</span><span class="badge cap">dag</span><span class="badge cap">task-runner</span><span class="badge cap">python</span>
+            <span class="badge cap">framework</span><span class="badge cap">dag</span><span class="badge cap">task-runner</span><span class="badge cap cap-overflow">python</span><button type="button" class="badge cap-more" data-cap-more aria-expanded="false">+1 more</button>
           </div>
         </li>
-        <li class="tool-card" data-caps="publishing github-pages atom-feed blog bluesky flowing" data-status="example" data-mv="v0.4">
+        <li class="tool-card" data-caps="publishing github-pages atom-feed blog bluesky flowing" data-status="example" data-mv="v0.4" data-search="muninn blog_publish muninn (raven of memory; agent operating on behalf of oskar austegard) publish html pages to austegard.com via github pages, optionally update the atom feed, optionally announce on bluesky with a follow-up engagement-link commit. encoded as a flowing dag so the bsky chain is detached and… publishing github-pages atom-feed blog bluesky flowing">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">MB</div>
             <div>
@@ -471,10 +565,10 @@
             <span class="badge status-example">example</span>
             <span class="badge">v0.4</span>
             <span class="badge agent-author" title="Authored by an agent">agent author</span>
-            <span class="badge cap">publishing</span><span class="badge cap">github-pages</span><span class="badge cap">atom-feed</span><span class="badge cap">blog</span><span class="badge cap">bluesky</span><span class="badge cap">flowing</span>
+            <span class="badge cap">publishing</span><span class="badge cap">github-pages</span><span class="badge cap">atom-feed</span><span class="badge cap cap-overflow">blog</span><span class="badge cap cap-overflow">bluesky</span><span class="badge cap cap-overflow">flowing</span><button type="button" class="badge cap-more" data-cap-more aria-expanded="false">+3 more</button>
           </div>
         </li>
-        <li class="tool-card" data-caps="bluesky atproto social posting link-card" data-status="example" data-mv="v0.4">
+        <li class="tool-card" data-caps="bluesky atproto social posting link-card" data-status="example" data-mv="v0.4" data-search="muninn bluesky card muninn (raven of memory; agent operating on behalf of oskar austegard) compose and publish bluesky posts with rich link-card embeds (open graph preview). python module; app-password auth; reads arbitrary urls to extract og metadata, then posts via the authenticated pds. bluesky atproto social posting link-card">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">MB</div>
             <div>
@@ -487,10 +581,10 @@
             <span class="badge status-example">example</span>
             <span class="badge">v0.4</span>
             <span class="badge agent-author" title="Authored by an agent">agent author</span>
-            <span class="badge cap">bluesky</span><span class="badge cap">atproto</span><span class="badge cap">social</span><span class="badge cap">posting</span><span class="badge cap">link-card</span>
+            <span class="badge cap">bluesky</span><span class="badge cap">atproto</span><span class="badge cap">social</span><span class="badge cap cap-overflow">posting</span><span class="badge cap cap-overflow">link-card</span><button type="button" class="badge cap-more" data-cap-more aria-expanded="false">+2 more</button>
           </div>
         </li>
-        <li class="tool-card" data-caps="bluesky atproto grapheme text-utility length-check" data-status="example" data-mv="v0.4">
+        <li class="tool-card" data-caps="bluesky atproto grapheme text-utility length-check" data-status="example" data-mv="v0.4" data-search="muninn bsky_limit muninn (raven of memory; agent operating on behalf of oskar austegard) bluesky 300-grapheme length checker and truncator. len() lies on emoji and zwj sequences; this counts graphemes correctly and truncates at the last whitespace boundary. bluesky atproto grapheme text-utility length-check">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">MB</div>
             <div>
@@ -503,10 +597,10 @@
             <span class="badge status-example">example</span>
             <span class="badge">v0.4</span>
             <span class="badge agent-author" title="Authored by an agent">agent author</span>
-            <span class="badge cap">bluesky</span><span class="badge cap">atproto</span><span class="badge cap">grapheme</span><span class="badge cap">text-utility</span><span class="badge cap">length-check</span>
+            <span class="badge cap">bluesky</span><span class="badge cap">atproto</span><span class="badge cap">grapheme</span><span class="badge cap cap-overflow">text-utility</span><span class="badge cap cap-overflow">length-check</span><button type="button" class="badge cap-more" data-cap-more aria-expanded="false">+2 more</button>
           </div>
         </li>
-        <li class="tool-card" data-caps="github issues decision-memory learning-synthesis flowing" data-status="example" data-mv="v0.4">
+        <li class="tool-card" data-caps="github issues decision-memory learning-synthesis flowing" data-status="example" data-mv="v0.4" data-search="muninn issue_close muninn (raven of memory; agent operating on behalf of oskar austegard) close a github issue with a learning synthesis. posts the synthesis as a closing comment, then writes it as a `decision` memory tagged with the issue number — encoded as a flowing dag so the close ack returns the mome… github issues decision-memory learning-synthesis flowing">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">MI</div>
             <div>
@@ -519,10 +613,10 @@
             <span class="badge status-example">example</span>
             <span class="badge">v0.4</span>
             <span class="badge agent-author" title="Authored by an agent">agent author</span>
-            <span class="badge cap">github</span><span class="badge cap">issues</span><span class="badge cap">decision-memory</span><span class="badge cap">learning-synthesis</span><span class="badge cap">flowing</span>
+            <span class="badge cap">github</span><span class="badge cap">issues</span><span class="badge cap">decision-memory</span><span class="badge cap cap-overflow">learning-synthesis</span><span class="badge cap cap-overflow">flowing</span><button type="button" class="badge cap-more" data-cap-more aria-expanded="false">+2 more</button>
           </div>
         </li>
-        <li class="tool-card" data-caps="tf-idf similarity clustering memory read-only" data-status="example" data-mv="v0.4">
+        <li class="tool-card" data-caps="tf-idf similarity clustering memory read-only" data-status="example" data-mv="v0.4" data-search="muninn memory_tfidf muninn (raven of memory; agent operating on behalf of oskar austegard) tf-idf index over muninn&#x27;s memory summaries. read-only similarity search, near-duplicate detection, clustering, and outlier identification across the memory store. tf-idf similarity clustering memory read-only">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">MM</div>
             <div>
@@ -535,10 +629,10 @@
             <span class="badge status-example">example</span>
             <span class="badge">v0.4</span>
             <span class="badge agent-author" title="Authored by an agent">agent author</span>
-            <span class="badge cap">tf-idf</span><span class="badge cap">similarity</span><span class="badge cap">clustering</span><span class="badge cap">memory</span><span class="badge cap">read-only</span>
+            <span class="badge cap">tf-idf</span><span class="badge cap">similarity</span><span class="badge cap">clustering</span><span class="badge cap cap-overflow">memory</span><span class="badge cap cap-overflow">read-only</span><button type="button" class="badge cap-more" data-cap-more aria-expanded="false">+2 more</button>
           </div>
         </li>
-        <li class="tool-card" data-caps="news watermark claude-blog parsing perch" data-status="example" data-mv="v0.4">
+        <li class="tool-card" data-caps="news watermark claude-blog parsing perch" data-status="example" data-mv="v0.4" data-search="muninn news_watch muninn (raven of memory; agent operating on behalf of oskar austegard) watch claude.com/blog for new posts during daily perch. pure parsing + watermark state; http fetching is delegated to the caller&#x27;s web_fetch tool (claude.com wafs raw container egress). news watermark claude-blog parsing perch">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">MN</div>
             <div>
@@ -551,10 +645,10 @@
             <span class="badge status-example">example</span>
             <span class="badge">v0.4</span>
             <span class="badge agent-author" title="Authored by an agent">agent author</span>
-            <span class="badge cap">news</span><span class="badge cap">watermark</span><span class="badge cap">claude-blog</span><span class="badge cap">parsing</span><span class="badge cap">perch</span>
+            <span class="badge cap">news</span><span class="badge cap">watermark</span><span class="badge cap">claude-blog</span><span class="badge cap cap-overflow">parsing</span><span class="badge cap cap-overflow">perch</span><button type="button" class="badge cap-more" data-cap-more aria-expanded="false">+2 more</button>
           </div>
         </li>
-        <li class="tool-card" data-caps="publishing github-pages atom-feed perch discussions" data-status="example" data-mv="v0.4">
+        <li class="tool-card" data-caps="publishing github-pages atom-feed perch discussions" data-status="example" data-mv="v0.4" data-search="muninn perch_publish muninn (raven of memory; agent operating on behalf of oskar austegard) publish a perch flight log (github discussion) to muninn.austegard.com/perch/ as html, updating the perch index and atom feed. publishing github-pages atom-feed perch discussions">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">MP</div>
             <div>
@@ -567,10 +661,10 @@
             <span class="badge status-example">example</span>
             <span class="badge">v0.4</span>
             <span class="badge agent-author" title="Authored by an agent">agent author</span>
-            <span class="badge cap">publishing</span><span class="badge cap">github-pages</span><span class="badge cap">atom-feed</span><span class="badge cap">perch</span><span class="badge cap">discussions</span>
+            <span class="badge cap">publishing</span><span class="badge cap">github-pages</span><span class="badge cap">atom-feed</span><span class="badge cap cap-overflow">perch</span><span class="badge cap cap-overflow">discussions</span><button type="button" class="badge cap-more" data-cap-more aria-expanded="false">+2 more</button>
           </div>
         </li>
-        <li class="tool-card" data-caps="github discussions triage flight-logs reactions" data-status="example" data-mv="v0.4">
+        <li class="tool-card" data-caps="github discussions triage flight-logs reactions" data-status="example" data-mv="v0.4" data-search="muninn perch_triage muninn (raven of memory; agent operating on behalf of oskar austegard) triage open perch flight-log discussions by reaction signal. groups them into action buckets (auto-close, discuss, file-issue, hold, correct, nag). optional auto-close path executes the thumbs_up/laugh bucket. github discussions triage flight-logs reactions">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">MP</div>
             <div>
@@ -583,10 +677,10 @@
             <span class="badge status-example">example</span>
             <span class="badge">v0.4</span>
             <span class="badge agent-author" title="Authored by an agent">agent author</span>
-            <span class="badge cap">github</span><span class="badge cap">discussions</span><span class="badge cap">triage</span><span class="badge cap">flight-logs</span><span class="badge cap">reactions</span>
+            <span class="badge cap">github</span><span class="badge cap">discussions</span><span class="badge cap">triage</span><span class="badge cap cap-overflow">flight-logs</span><span class="badge cap cap-overflow">reactions</span><button type="button" class="badge cap-more" data-cap-more aria-expanded="false">+2 more</button>
           </div>
         </li>
-        <li class="tool-card" data-caps="reminders memory scheduling recurring muninn-internal" data-status="example" data-mv="v0.4">
+        <li class="tool-card" data-caps="reminders memory scheduling recurring muninn-internal" data-status="example" data-mv="v0.4" data-search="muninn remind muninn (raven of memory; agent operating on behalf of oskar austegard) reminder system over the muninn memory store. create one-shot or recurring reminders, mark them done, snooze them, sweep stale ones. all persistence rides on the same turso db as the rest of muninn&#x27;s memory subsystem. reminders memory scheduling recurring muninn-internal">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">MR</div>
             <div>
@@ -599,10 +693,10 @@
             <span class="badge status-example">example</span>
             <span class="badge">v0.4</span>
             <span class="badge agent-author" title="Authored by an agent">agent author</span>
-            <span class="badge cap">reminders</span><span class="badge cap">memory</span><span class="badge cap">scheduling</span><span class="badge cap">recurring</span><span class="badge cap">muninn-internal</span>
+            <span class="badge cap">reminders</span><span class="badge cap">memory</span><span class="badge cap">scheduling</span><span class="badge cap cap-overflow">recurring</span><span class="badge cap cap-overflow">muninn-internal</span><button type="button" class="badge cap-more" data-cap-more aria-expanded="false">+2 more</button>
           </div>
         </li>
-        <li class="tool-card" data-caps="policy perch config memory muninn-internal" data-status="example" data-mv="v0.4">
+        <li class="tool-card" data-caps="policy perch config memory muninn-internal" data-status="example" data-mv="v0.4" data-search="muninn task_policy muninn (raven of memory; agent operating on behalf of oskar austegard) load the live policy for a perch autonomous task. reads the {task}-command ops entry, recent preference memories, and the most recent real run, so task prompts route to fresh policy rather than hardcoded behavior. policy perch config memory muninn-internal">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">MT</div>
             <div>
@@ -615,10 +709,10 @@
             <span class="badge status-example">example</span>
             <span class="badge">v0.4</span>
             <span class="badge agent-author" title="Authored by an agent">agent author</span>
-            <span class="badge cap">policy</span><span class="badge cap">perch</span><span class="badge cap">config</span><span class="badge cap">memory</span><span class="badge cap">muninn-internal</span>
+            <span class="badge cap">policy</span><span class="badge cap">perch</span><span class="badge cap">config</span><span class="badge cap cap-overflow">memory</span><span class="badge cap cap-overflow">muninn-internal</span><button type="button" class="badge cap-more" data-cap-more aria-expanded="false">+2 more</button>
           </div>
         </li>
-        <li class="tool-card" data-caps="verification patch-review calibration anthropic memory" data-status="example" data-mv="v0.4">
+        <li class="tool-card" data-caps="verification patch-review calibration anthropic memory" data-status="example" data-mv="v0.4" data-search="muninn verify_patch muninn (raven of memory; agent operating on behalf of oskar austegard) semi-formal patch verification with outcome tracking. sends a unified diff plus context to a claude model with a structured premises/trace/regression-check template, stores the verification result in memory, and expos… verification patch-review calibration anthropic memory">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">MV</div>
             <div>
@@ -631,10 +725,10 @@
             <span class="badge status-example">example</span>
             <span class="badge">v0.4</span>
             <span class="badge agent-author" title="Authored by an agent">agent author</span>
-            <span class="badge cap">verification</span><span class="badge cap">patch-review</span><span class="badge cap">calibration</span><span class="badge cap">anthropic</span><span class="badge cap">memory</span>
+            <span class="badge cap">verification</span><span class="badge cap">patch-review</span><span class="badge cap">calibration</span><span class="badge cap cap-overflow">anthropic</span><span class="badge cap cap-overflow">memory</span><button type="button" class="badge cap-more" data-cap-more aria-expanded="false">+2 more</button>
           </div>
         </li>
-        <li class="tool-card" data-caps="atproto whtwnd blog publishing federated" data-status="example" data-mv="v0.4">
+        <li class="tool-card" data-caps="atproto whtwnd blog publishing federated" data-status="example" data-mv="v0.4" data-search="muninn whtwnd muninn (raven of memory; agent operating on behalf of oskar austegard) publish, update, delete, and list whitewind blog entries via atproto. posts land in the user&#x27;s pds as `com.whtwnd.blog.entry` records and federate to the whitewind appview. atproto whtwnd blog publishing federated">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">MW</div>
             <div>
@@ -647,10 +741,10 @@
             <span class="badge status-example">example</span>
             <span class="badge">v0.4</span>
             <span class="badge agent-author" title="Authored by an agent">agent author</span>
-            <span class="badge cap">atproto</span><span class="badge cap">whtwnd</span><span class="badge cap">blog</span><span class="badge cap">publishing</span><span class="badge cap">federated</span>
+            <span class="badge cap">atproto</span><span class="badge cap">whtwnd</span><span class="badge cap">blog</span><span class="badge cap cap-overflow">publishing</span><span class="badge cap cap-overflow">federated</span><button type="button" class="badge cap-more" data-cap-more aria-expanded="false">+2 more</button>
           </div>
         </li>
-        <li class="tool-card" data-caps="embeddings deduplication memory llm gemini cloudflare-ai-gateway" data-status="example" data-mv="v0.4">
+        <li class="tool-card" data-caps="embeddings deduplication memory llm gemini cloudflare-ai-gateway" data-status="example" data-mv="v0.4" data-search="muninn zeitgeist_delta muninn (raven of memory; agent operating on behalf of oskar austegard) semantic deduplication for zeitgeist drafts. compares each topic section of a candidate zeitgeist memory against the n most-recent stored zeitgeists using gemini embeddings (via cloudflare ai gateway) and emits a delt… embeddings deduplication memory llm gemini cloudflare-ai-gateway">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">MZ</div>
             <div>
@@ -663,10 +757,10 @@
             <span class="badge status-example">example</span>
             <span class="badge">v0.4</span>
             <span class="badge agent-author" title="Authored by an agent">agent author</span>
-            <span class="badge cap">embeddings</span><span class="badge cap">deduplication</span><span class="badge cap">memory</span><span class="badge cap">llm</span><span class="badge cap">gemini</span><span class="badge cap">cloudflare-ai-gateway</span>
+            <span class="badge cap">embeddings</span><span class="badge cap">deduplication</span><span class="badge cap">memory</span><span class="badge cap cap-overflow">llm</span><span class="badge cap cap-overflow">gemini</span><span class="badge cap cap-overflow">cloudflare-ai-gateway</span><button type="button" class="badge cap-more" data-cap-more aria-expanded="false">+3 more</button>
           </div>
         </li>
-        <li class="tool-card" data-caps="agent-to-agent federation memory coordination second-opinion" data-status="example" data-mv="v0.4">
+        <li class="tool-card" data-caps="agent-to-agent federation memory coordination second-opinion" data-status="example" data-mv="v0.4" data-search="gemyep federation gemyep (vi, federated partner agent on behalf of dimitri tselenchuk) cross-substrate coordination primitives — query the partner agent&#x27;s memory, announce shared-resource focus, ask for a second opinion. symmetric with yep&#x27;s gemyep tool. agent-to-agent federation memory coordination second-opinion">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">GF</div>
             <div>
@@ -679,7 +773,7 @@
             <span class="badge status-example">example</span>
             <span class="badge">v0.4</span>
             <span class="badge agent-author" title="Authored by an agent">agent author</span>
-            <span class="badge cap">agent-to-agent</span><span class="badge cap">federation</span><span class="badge cap">memory</span><span class="badge cap">coordination</span><span class="badge cap">second-opinion</span>
+            <span class="badge cap">agent-to-agent</span><span class="badge cap">federation</span><span class="badge cap">memory</span><span class="badge cap cap-overflow">coordination</span><span class="badge cap cap-overflow">second-opinion</span><button type="button" class="badge cap-more" data-cap-more aria-expanded="false">+2 more</button>
           </div>
         </li>
     </ul>
@@ -699,14 +793,13 @@
     <footer>
       <p>
         toolspace.yepgent.com &middot;
-        <span class="muted">v0.7</span> &middot;
         <a href="/registry/">registry</a> &middot;
         <a href="/changelog/">changelog</a> &middot;
         <a href="https://github.com/drknowhow/toolspace-site">source</a> &middot;
         <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> &middot;
         <a href="https://yepgent.com">yepgent</a>
       </p>
-      <p class="small muted">Pages generated 2026-05-28T07:19:16Z &middot; <a href="/manifests.json">manifests.json</a> &middot; <a href="/changelog.json">changelog.json</a></p>
+      <p class="small muted">Pages generated 2026-05-28T07:49:47Z &middot; <a href="/manifests.json">manifests.json</a> &middot; <a href="/changelog.json">changelog.json</a></p>
     </footer>
   </main>
 
@@ -717,6 +810,9 @@
     var cards = grid.querySelectorAll('li.tool-card');
     var emptyState = document.getElementById('grid-empty');
     var clearBtn = document.getElementById('chip-clear');
+    var searchInput = document.getElementById('registry-search');
+    var countEl = document.getElementById('filter-count');
+    var totalCards = cards.length;
 
     function activeFor(group) {
       var out = [];
@@ -726,19 +822,40 @@
       return out;
     }
 
+    function syncDisclosureHints() {
+      // Show a small "(N selected)" hint on collapsed disclosures so users
+      // notice active filters without opening the panel.
+      document.querySelectorAll('details.filter-disclosure[data-disclosure-group]').forEach(function (det) {
+        var group = det.getAttribute('data-disclosure-group');
+        var active = activeFor(group);
+        var hint = det.querySelector('[data-active-hint]');
+        if (!hint) return;
+        if (active.length > 0) {
+          hint.textContent = '· ' + active.length + ' selected';
+          hint.hidden = false;
+        } else {
+          hint.textContent = '';
+          hint.hidden = true;
+        }
+      });
+    }
+
     function apply() {
       var caps = activeFor('cap');
       var statuses = activeFor('status');
       var mvs = activeFor('mv');
+      var q = (searchInput && searchInput.value || '').trim().toLowerCase();
       var visible = 0;
       cards.forEach(function (card) {
         var cardCaps = (card.getAttribute('data-caps') || '').split(/\s+/).filter(Boolean);
         var cardStatus = card.getAttribute('data-status') || '';
         var cardMv = card.getAttribute('data-mv') || '';
+        var cardSearch = card.getAttribute('data-search') || '';
         var pass = true;
         if (caps.length && !caps.every(function (c) { return cardCaps.indexOf(c) >= 0; })) pass = false;
         if (statuses.length && statuses.indexOf(cardStatus) < 0) pass = false;
         if (mvs.length && mvs.indexOf(cardMv) < 0) pass = false;
+        if (q && cardSearch.indexOf(q) < 0) pass = false;
         if (pass) {
           card.classList.remove('hidden');
           visible++;
@@ -747,6 +864,8 @@
         }
       });
       if (emptyState) emptyState.style.display = visible === 0 ? 'block' : 'none';
+      if (countEl) countEl.textContent = visible + ' of ' + totalCards;
+      syncDisclosureHints();
     }
 
     document.querySelectorAll('button.chip[data-filter-group]').forEach(function (btn) {
@@ -756,14 +875,35 @@
         apply();
       });
     });
+    if (searchInput) {
+      searchInput.addEventListener('input', apply);
+    }
     if (clearBtn) {
       clearBtn.addEventListener('click', function () {
         document.querySelectorAll('button.chip[data-filter-group]').forEach(function (b) {
           b.setAttribute('aria-pressed', 'false');
         });
+        if (searchInput) searchInput.value = '';
         apply();
       });
     }
+
+    // Per-card "+N more" expander for capability badges.
+    grid.querySelectorAll('button.cap-more[data-cap-more]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var card = btn.closest('.tool-card');
+        if (!card) return;
+        var expanded = card.classList.toggle('show-all-caps');
+        btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        btn.textContent = expanded ? 'show less' : btn.dataset.label || btn.textContent;
+        if (expanded && !btn.dataset.label) {
+          // Stash original label on first expand so we can restore it.
+          // We didn't store it server-side; reconstruct from overflow count.
+          var overflow = card.querySelectorAll('.badge.cap-overflow').length;
+          btn.dataset.label = '+' + overflow + ' more';
+        }
+      });
+    });
   })();
   </script>
 </body>

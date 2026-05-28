@@ -37,7 +37,6 @@ SITE_ROOT = Path(__file__).resolve().parent.parent
 INDEX_PATH = SITE_ROOT / "manifests.json"
 REGISTRY_DIR = SITE_ROOT / "registry"
 CACHE_DIR = SITE_ROOT / "_cache" / "registry"
-SITE_VERSION = "0.7"
 
 USER_AGENT = "toolspace-build/0.1 (+https://toolspace.yepgent.com/)"
 FETCH_TIMEOUT = 10  # seconds
@@ -168,7 +167,6 @@ def _footer(generated_at: str) -> str:
     <footer>
       <p>
         toolspace.yepgent.com &middot;
-        <span class="muted">v{SITE_VERSION}</span> &middot;
         <a href="/registry/">registry</a> &middot;
         <a href="/changelog/">changelog</a> &middot;
         <a href="https://github.com/drknowhow/toolspace-site">source</a> &middot;
@@ -189,14 +187,19 @@ REGISTRY_CSS = """\
 
     .filter-bar {
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem 0.8rem;
-      align-items: center;
+      flex-direction: column;
+      gap: 0.55rem;
       margin: 1rem 0 1.25rem;
-      padding: 0.6rem 0.8rem;
+      padding: 0.7rem 0.85rem;
       background: var(--card-bg);
       border: 1px solid var(--card-edge);
       border-radius: 10px;
+    }
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.8rem;
+      align-items: center;
     }
     .filter-group { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
     .filter-group .label {
@@ -205,6 +208,70 @@ REGISTRY_CSS = """\
       letter-spacing: 0.04em;
       text-transform: uppercase;
       margin-right: 0.3rem;
+    }
+    .filter-search {
+      flex: 1 1 auto;
+      min-width: 0;
+      padding: 0.45em 0.75em;
+      font: inherit;
+      font-size: 0.9rem;
+      color: var(--fg);
+      background: transparent;
+      border: 1px solid var(--field-edge);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 120ms ease;
+    }
+    .filter-search:focus { border-color: var(--accent); }
+    .filter-search::placeholder { color: var(--muted); }
+    .filter-count {
+      font-size: 0.78rem;
+      color: var(--muted);
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
+    /* Capability disclosure — collapses the long tag list by default. */
+    details.filter-disclosure { width: 100%; }
+    details.filter-disclosure > summary {
+      list-style: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0.15em 0;
+    }
+    details.filter-disclosure > summary::-webkit-details-marker { display: none; }
+    details.filter-disclosure > summary::before {
+      content: "▸";
+      font-size: 0.7rem;
+      color: var(--muted);
+      transition: transform 120ms ease;
+    }
+    details.filter-disclosure[open] > summary::before { content: "▾"; }
+    details.filter-disclosure > summary:hover { color: var(--fg); }
+    details.filter-disclosure > summary .badge-count {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    details.filter-disclosure > summary .active-hint {
+      font-size: 0.72rem;
+      color: var(--accent);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    details.filter-disclosure .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem 0.35rem;
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--rule);
     }
     .chip {
       display: inline-block;
@@ -311,6 +378,17 @@ REGISTRY_CSS = """\
       margin-top: auto;
       padding-top: 0.3rem;
     }
+    /* Cap-badge density limit: show first 3 by default, "+N more"
+       toggle exposes the rest. Keeps cards uniform at a glance. */
+    .tool-card .meta .badge.cap-overflow { display: none; }
+    .tool-card.show-all-caps .meta .badge.cap-overflow { display: inline-block; }
+    .badge.cap-more {
+      cursor: pointer;
+      background: transparent;
+      border-style: dashed;
+      color: var(--muted);
+    }
+    .badge.cap-more:hover { color: var(--fg); border-color: var(--accent-edge); }
     .badge {
       display: inline-block;
       font-size: 0.7rem;
@@ -553,9 +631,20 @@ def _render_card(entry: dict, manifest: dict) -> str:
     data_status = _slug(status)
     data_mv = f"v{mv}"
 
-    cap_pills = "".join(
-        f'<span class="badge cap">{_e(c)}</span>' for c in caps
-    )
+    # Cap-badge density: first 3 always shown, rest tagged overflow.
+    CAP_VISIBLE = 3
+    cap_pills_parts = []
+    for i, c in enumerate(caps):
+        cls = "badge cap" if i < CAP_VISIBLE else "badge cap cap-overflow"
+        cap_pills_parts.append(f'<span class="{cls}">{_e(c)}</span>')
+    overflow_n = max(0, len(caps) - CAP_VISIBLE)
+    if overflow_n:
+        cap_pills_parts.append(
+            f'<button type="button" class="badge cap-more" '
+            f'data-cap-more aria-expanded="false">'
+            f'+{overflow_n} more</button>'
+        )
+    cap_pills = "".join(cap_pills_parts)
     status_pill = (
         f'<span class="badge status-{_e(_slug(status))}">{_e(status)}</span>'
     )
@@ -565,8 +654,12 @@ def _render_card(entry: dict, manifest: dict) -> str:
         if is_agent else ""
     )
 
+    # data-search: lowercased blob used by the text-search filter.
+    # Includes name, author, summary, and capability tags.
+    search_blob = " ".join([name, author_name, summary, " ".join(caps)]).lower()
+
     return f"""\
-        <li class="tool-card" data-caps="{_e(data_caps)}" data-status="{_e(data_status)}" data-mv="{_e(data_mv)}">
+        <li class="tool-card" data-caps="{_e(data_caps)}" data-status="{_e(data_status)}" data-mv="{_e(data_mv)}" data-search="{_e(search_blob)}">
           <div class="head">
             <div class="tool-glyph" aria-hidden="true">{_e(glyph)}</div>
             <div>
@@ -609,6 +702,9 @@ REGISTRY_INDEX_FILTER_JS = """\
     var cards = grid.querySelectorAll('li.tool-card');
     var emptyState = document.getElementById('grid-empty');
     var clearBtn = document.getElementById('chip-clear');
+    var searchInput = document.getElementById('registry-search');
+    var countEl = document.getElementById('filter-count');
+    var totalCards = cards.length;
 
     function activeFor(group) {
       var out = [];
@@ -618,19 +714,40 @@ REGISTRY_INDEX_FILTER_JS = """\
       return out;
     }
 
+    function syncDisclosureHints() {
+      // Show a small "(N selected)" hint on collapsed disclosures so users
+      // notice active filters without opening the panel.
+      document.querySelectorAll('details.filter-disclosure[data-disclosure-group]').forEach(function (det) {
+        var group = det.getAttribute('data-disclosure-group');
+        var active = activeFor(group);
+        var hint = det.querySelector('[data-active-hint]');
+        if (!hint) return;
+        if (active.length > 0) {
+          hint.textContent = '· ' + active.length + ' selected';
+          hint.hidden = false;
+        } else {
+          hint.textContent = '';
+          hint.hidden = true;
+        }
+      });
+    }
+
     function apply() {
       var caps = activeFor('cap');
       var statuses = activeFor('status');
       var mvs = activeFor('mv');
+      var q = (searchInput && searchInput.value || '').trim().toLowerCase();
       var visible = 0;
       cards.forEach(function (card) {
         var cardCaps = (card.getAttribute('data-caps') || '').split(/\\s+/).filter(Boolean);
         var cardStatus = card.getAttribute('data-status') || '';
         var cardMv = card.getAttribute('data-mv') || '';
+        var cardSearch = card.getAttribute('data-search') || '';
         var pass = true;
         if (caps.length && !caps.every(function (c) { return cardCaps.indexOf(c) >= 0; })) pass = false;
         if (statuses.length && statuses.indexOf(cardStatus) < 0) pass = false;
         if (mvs.length && mvs.indexOf(cardMv) < 0) pass = false;
+        if (q && cardSearch.indexOf(q) < 0) pass = false;
         if (pass) {
           card.classList.remove('hidden');
           visible++;
@@ -639,6 +756,8 @@ REGISTRY_INDEX_FILTER_JS = """\
         }
       });
       if (emptyState) emptyState.style.display = visible === 0 ? 'block' : 'none';
+      if (countEl) countEl.textContent = visible + ' of ' + totalCards;
+      syncDisclosureHints();
     }
 
     document.querySelectorAll('button.chip[data-filter-group]').forEach(function (btn) {
@@ -648,14 +767,35 @@ REGISTRY_INDEX_FILTER_JS = """\
         apply();
       });
     });
+    if (searchInput) {
+      searchInput.addEventListener('input', apply);
+    }
     if (clearBtn) {
       clearBtn.addEventListener('click', function () {
         document.querySelectorAll('button.chip[data-filter-group]').forEach(function (b) {
           b.setAttribute('aria-pressed', 'false');
         });
+        if (searchInput) searchInput.value = '';
         apply();
       });
     }
+
+    // Per-card "+N more" expander for capability badges.
+    grid.querySelectorAll('button.cap-more[data-cap-more]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var card = btn.closest('.tool-card');
+        if (!card) return;
+        var expanded = card.classList.toggle('show-all-caps');
+        btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        btn.textContent = expanded ? 'show less' : btn.dataset.label || btn.textContent;
+        if (expanded && !btn.dataset.label) {
+          // Stash original label on first expand so we can restore it.
+          // We didn't store it server-side; reconstruct from overflow count.
+          var overflow = card.querySelectorAll('.badge.cap-overflow').length;
+          btn.dataset.label = '+' + overflow + ' more';
+        }
+      });
+    });
   })();
   </script>
 """
@@ -679,21 +819,59 @@ def render_registry_index(
         </div>
 """
 
+    def _chip_disclosure(label: str, group: str, values: list[str]) -> str:
+        """Collapsed-by-default chip group — used for long lists (capabilities)."""
+        chips = "".join(
+            f'<button class="chip" data-filter-group="{_e(group)}" data-value="{_e(_slug(v))}" aria-pressed="false">{_e(v)}</button>'
+            for v in values
+        )
+        return f"""\
+      <details class="filter-disclosure" data-disclosure-group="{_e(group)}">
+        <summary>
+          <span class="label">{_e(label)}</span>
+          <span class="badge-count">({len(values)})</span>
+          <span class="active-hint" data-active-hint hidden></span>
+        </summary>
+        <div class="chip-row">{chips}</div>
+      </details>
+"""
+
     cards = "".join(
         _render_card(entry, manifest)
         for entry, manifest in entries_with_manifests
     )
 
+    n_entries = len(entries_with_manifests)
+
+    # Status filter is only useful when there's more than one distinct value.
+    # Today everything is "example" — surfacing a single-value group is noise.
+    show_status_filter = len(filters['statuses']) > 1
+    status_group_html = _chip_group('Status', 'status', filters['statuses']) if show_status_filter else ""
+
     body = f"""\
     <p class="crumb"><a href="/">toolspace</a> &rsaquo; registry</p>
     <h1>Registry</h1>
-    <p class="lede">Install manifests for autonomous agents. {len(entries_with_manifests)} entr{'y' if len(entries_with_manifests) == 1 else 'ies'}, hand-curated.</p>
+    <p class="lede">Install manifests for autonomous agents. {n_entries} entr{'y' if n_entries == 1 else 'ies'}, hand-curated.</p>
 
     <div class="filter-bar" role="region" aria-label="Filter manifests">
-{_chip_group('Capability', 'cap', filters['capabilities'])}\
-{_chip_group('Status', 'status', filters['statuses'])}\
+      <div class="filter-row">
+        <input
+          id="registry-search"
+          class="filter-search"
+          type="search"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="Search by name, author, summary, tag…"
+          aria-label="Search manifests"
+        />
+        <span class="filter-count" id="filter-count">{n_entries} of {n_entries}</span>
+        <button id="chip-clear" class="chip-clear" type="button">clear</button>
+      </div>
+      <div class="filter-row">
 {_chip_group('Schema', 'mv', filters['manifest_versions'])}\
-      <button id="chip-clear" class="chip-clear" type="button">clear</button>
+{status_group_html}\
+      </div>
+{_chip_disclosure('Capability', 'cap', filters['capabilities'])}\
     </div>
 
     <ul class="tool-grid" id="tool-grid">

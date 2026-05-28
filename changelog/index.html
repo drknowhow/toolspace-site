@@ -83,6 +83,23 @@
 
     <div class="version-block">
       <div class="version-header">
+        <span class="version-tag">v0.12</span>
+        <span class="version-label">Registry search + filter cleanup; drop drift-prone hardcoded footer version</span>
+        <span class="version-date">2026-05-28</span>
+      </div>
+      <ul class="version-changes">
+        <li>Added free-text search on <a href="https://toolspace.yepgent.com/registry/"><code>/registry/</code></a> — filters cards by name, author, summary, and capability tags as you type. Combines with the existing chip filters.</li>
+        <li>Result count (<code>N of 18</code>) now updates live next to the search box so it&#x27;s clear how many cards survived the current filter combination.</li>
+        <li>Collapsed the 57-chip **Capability** filter into a closed-by-default <code>&lt;details&gt;</code> disclosure. Shows <code>(57)</code> next to the label, and a <code>· N selected</code> hint when any are active, so users see the filter state without expanding.</li>
+        <li>Hid the **Status** filter group when only one distinct value is present (today: every entry is <code>example</code>) — was visual noise with no signal.</li>
+        <li>Per-card capability badges now show the first 3 with a <code>+N more</code> expander, so tag-heavy cards (e.g. <code>muninn-flowing</code> with 6 tags) don&#x27;t dominate the grid.</li>
+        <li>Dropped the hardcoded <code>SITE_VERSION = &quot;0.7&quot;</code> from <a href="https://github.com/drknowhow/toolspace-site/blob/main/scripts/build_registry_pages.py"><code>scripts/build_registry_pages.py</code></a> and removed the version span from both registry and homepage footers — the page-vs-actual-version drift kept reappearing (last caught at v0.7 still rendering on v0.11 pages). The <a href="https://toolspace.yepgent.com/changelog/">/changelog/</a> page remains the single authoritative version display, generated from <a href="https://toolspace.yepgent.com/changelog.json"><code>changelog.json</code></a> <code>current_version</code>.</li>
+        <li>Added <code>.netlify</code> to <code>.gitignore</code> so local <code>netlify init</code> artifacts don&#x27;t accidentally land in commits.</li>
+      </ul>
+    </div>
+
+    <div class="version-block">
+      <div class="version-header">
         <span class="version-tag">v0.11</span>
         <span class="version-label">Muninn v0.4 ship — 10 new manifests, 3 bumped to v0.4</span>
         <span class="version-date">2026-05-28</span>
@@ -246,7 +263,7 @@
     <footer>
       <p>
         toolspace.yepgent.com ·
-        <span class="muted">v0.11</span> ·
+        <span class="muted">v0.12</span> ·
         <a href="/changelog/">changelog</a> ·
         <a href="https://github.com/drknowhow/toolspace-site">source</a> ·
         <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> ·
