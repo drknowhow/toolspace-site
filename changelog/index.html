@@ -83,6 +83,18 @@
 
     <div class="version-block">
       <div class="version-header">
+        <span class="version-tag">v0.13</span>
+        <span class="version-label">Fix Schema chip filter (slug mismatch); add registry link to homepage footer</span>
+        <span class="version-date">2026-05-28</span>
+      </div>
+      <ul class="version-changes">
+        <li>Fixed the **Schema** chip filter on <a href="https://toolspace.yepgent.com/registry/"><code>/registry/</code></a> — selecting <code>v0.1</code> / <code>v0.2</code> / <code>v0.3</code> / <code>v0.4</code> was a no-op because chip <code>data-value</code> was slugged (<code>v0-1</code>) while the card <code>data-mv</code> attribute was the raw form (<code>v0.1</code>). Now slugging both ends so they match. Pre-existing bug, surfaced once the v0.12 cleanup made the filter visually prominent.</li>
+        <li>Added a <code>registry</code> link to the homepage <a href="https://toolspace.yepgent.com/"><code>index.html</code></a> footer so the discovery path back to the marketplace is one click from any depth.</li>
+      </ul>
+    </div>
+
+    <div class="version-block">
+      <div class="version-header">
         <span class="version-tag">v0.12</span>
         <span class="version-label">Registry search + filter cleanup; drop drift-prone hardcoded footer version</span>
         <span class="version-date">2026-05-28</span>
@@ -263,7 +275,7 @@
     <footer>
       <p>
         toolspace.yepgent.com ·
-        <span class="muted">v0.12</span> ·
+        <span class="muted">v0.13</span> ·
         <a href="/changelog/">changelog</a> ·
         <a href="https://github.com/drknowhow/toolspace-site">source</a> ·
         <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> ·

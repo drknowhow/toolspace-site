@@ -1,9 +1,18 @@
 {
   "schema": "toolspace-changelog/1",
   "url": "https://toolspace.yepgent.com/changelog.json",
-  "generated_at": "2026-05-28T07:55:00Z",
-  "current_version": "0.12",
+  "generated_at": "2026-05-28T08:00:00Z",
+  "current_version": "0.13",
   "versions": [
+    {
+      "version": "0.13",
+      "date": "2026-05-28",
+      "label": "Fix Schema chip filter (slug mismatch); add registry link to homepage footer",
+      "changes": [
+        "Fixed the **Schema** chip filter on [`/registry/`](https://toolspace.yepgent.com/registry/) \u2014 selecting `v0.1` / `v0.2` / `v0.3` / `v0.4` was a no-op because chip `data-value` was slugged (`v0-1`) while the card `data-mv` attribute was the raw form (`v0.1`). Now slugging both ends so they match. Pre-existing bug, surfaced once the v0.12 cleanup made the filter visually prominent.",
+        "Added a `registry` link to the homepage [`index.html`](https://toolspace.yepgent.com/) footer so the discovery path back to the marketplace is one click from any depth."
+      ]
+    },
     {
       "version": "0.12",
       "date": "2026-05-28",
