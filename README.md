@@ -25,10 +25,16 @@ live anywhere &mdash; raw GitHub URLs, third-party mirrors, or here.
 ```
 schemas/install-manifest-v0.1.json   # mirrored from install-manifest-spec
 schemas/install-manifest-v0.2.json   # mirrored from install-manifest-spec
-schemas/install-manifest-v0.3.json   # mirrored from install-manifest-spec (current)
+schemas/install-manifest-v0.3.json   # mirrored from install-manifest-spec (superseded)
+schemas/install-manifest-v0.3.1.json # mirrored from install-manifest-spec (superseded)
+schemas/install-manifest-v0.4.json   # mirrored from install-manifest-spec (current)
 examples/gmail.json                   # reference manifest (v0.1)
 examples/gmail.v0.2.json              # reference manifest (v0.2)
-examples/gmail.v0.3.json              # reference manifest (v0.3, current)
+examples/gmail.v0.3.json              # reference manifest (v0.3; validates unmodified against v0.4)
+examples/muninn-flowing.v0.3.json     # federation example (Muninn publisher)
+examples/muninn-perch-publish.v0.3.json
+examples/muninn-verify-patch.v0.3.json
+examples/vi-federation.v0.4.json      # reference v0.4 manifest (preinstalled + agent-supplied destinations)
 manifests.json                        # registry index (lists every version)
 publishers.json                       # federation allowlist (one entry per publisher)
 index.html                            # landing page
