@@ -627,9 +627,13 @@ def _render_card(entry: dict, manifest: dict) -> str:
     glyph = _initials(name)
 
     # data-* attributes drive the client-side filter.
+    # All values are slugged so they match the chip data-value (which is
+    # also slugged) byte-for-byte — version strings like "0.1" contain "."
+    # which _slug() rewrites to "-", so the raw `v{mv}` form ("v0.1") would
+    # never match the chip value ("v0-1") and the filter would silently drop.
     data_caps = " ".join(_slug(c) for c in caps)
     data_status = _slug(status)
-    data_mv = f"v{mv}"
+    data_mv = _slug(f"v{mv}")
 
     # Cap-badge density: first 3 always shown, rest tagged overflow.
     CAP_VISIBLE = 3
