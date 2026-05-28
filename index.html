@@ -341,9 +341,11 @@ install-manifest install &lt;url-or-path&gt;</code></pre>
 
 <pre><code>pip install install-manifest
 install-manifest validate &lt;url-or-path&gt;
-install-manifest install &lt;url-or-path&gt;</code></pre>
+install-manifest lint     &lt;url-or-path&gt;       # style + best-practice warnings
+install-manifest diff     &lt;url-a&gt; &lt;url-b&gt;     # breaking / additive / cosmetic
+install-manifest install  &lt;url-or-path&gt;</code></pre>
 
-    <p>The <a href="https://github.com/drknowhow/install-manifest-spec/tree/main/cli">install-manifest CLI</a> ships with the schema bundled, so it works offline. Network is only used for the manifest itself.</p>
+    <p>The <a href="https://github.com/drknowhow/install-manifest-spec/tree/main/cli">install-manifest CLI</a> ships with the schema bundled, so it works offline. Network is only used for the manifest itself. <code>lint</code> and <code>diff</code> ship in 0.5.0 &mdash; non-fatal by default; <code>lint --strict</code> turns warnings into a non-zero exit so CI can gate on a clean result.</p>
 
     <footer>
       <p>

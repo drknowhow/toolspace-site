@@ -71,7 +71,12 @@ entry to `manifests.json` directly:
    ```bash
    pip install install-manifest
    install-manifest validate <your-manifest-url>
+   install-manifest lint     <your-manifest-url>   # style + best-practice warnings (LM001-LM010)
    ```
+   `lint` is non-fatal by default (exit 0 with findings); add `--strict`
+   to gate publication on a clean result. Use `install-manifest diff
+   <old-url> <new-url>` to surface breaking / additive / cosmetic
+   changes between two versions before bumping.
 3. CI runs `validate_manifests_index.py` on every PR.
 
 ## Syncing from the spec
