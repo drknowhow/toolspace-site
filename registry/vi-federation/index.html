@@ -545,10 +545,10 @@
           </div>
           <p class="action-summary">Fetch a specific fact from the partner agent&#x27;s memory by key. &middot; <code>net.outbound</code> <code>agent.partner_memory</code></p>
           <dl class="action-docs">
-            <dt>Goal</dt>            <dd>—</dd>
-            <dt>Inputs</dt>          <dd><code>—</code></dd>
-            <dt>Outputs</dt>         <dd><code>—</code></dd>
-            <dt>Errors</dt>          <dd><code>—</code></dd>
+            <dt>Goal</dt>            <dd>Read a single dot-keyed fact from the federated partner&#x27;s memory store.</dd>
+            <dt>Inputs</dt>          <dd><code>key (dot-notated fact key, e.g. &#x27;user.timezone&#x27;)</code></dd>
+            <dt>Outputs</dt>         <dd><code>{key, value, found}</code></dd>
+            <dt>Errors</dt>          <dd><code>partner_unreachable, partner_auth_invalid, key_not_found</code></dd>
             <dt>Example</dt>         <dd><code>—</code></dd>
           </dl>
         </li>
@@ -560,10 +560,10 @@
           </div>
           <p class="action-summary">Tell the partner agent the resource and action this agent is currently working on, so the partner can defer or coordinate. &middot; <code>net.outbound</code> <code>agent.partner_focus</code></p>
           <dl class="action-docs">
-            <dt>Goal</dt>            <dd>—</dd>
-            <dt>Inputs</dt>          <dd><code>—</code></dd>
-            <dt>Outputs</dt>         <dd><code>—</code></dd>
-            <dt>Errors</dt>          <dd><code>—</code></dd>
+            <dt>Goal</dt>            <dd>Publish this agent&#x27;s current focus to the partner so it can avoid racing on shared resources.</dd>
+            <dt>Inputs</dt>          <dd><code>resource (e.g. &#x27;bluesky:profile&#x27;), label (short human description)</code></dd>
+            <dt>Outputs</dt>         <dd><code>{ok: true, focus_id}</code></dd>
+            <dt>Errors</dt>          <dd><code>partner_unreachable, partner_auth_invalid</code></dd>
             <dt>Example</dt>         <dd><code>—</code></dd>
           </dl>
         </li>
@@ -575,10 +575,10 @@
           </div>
           <p class="action-summary">Ask the partner agent what it is currently focused on, optionally filtered by a resource glob. &middot; <code>net.outbound</code> <code>agent.partner_focus</code></p>
           <dl class="action-docs">
-            <dt>Goal</dt>            <dd>—</dd>
-            <dt>Inputs</dt>          <dd><code>—</code></dd>
-            <dt>Outputs</dt>         <dd><code>—</code></dd>
-            <dt>Errors</dt>          <dd><code>—</code></dd>
+            <dt>Goal</dt>            <dd>Read the partner&#x27;s current focus before mutating a shared resource, so we don&#x27;t race.</dd>
+            <dt>Inputs</dt>          <dd><code>resource (resource identifier or glob)</code></dd>
+            <dt>Outputs</dt>         <dd><code>{siblings: [{kind, paths, label, since}], count}</code></dd>
+            <dt>Errors</dt>          <dd><code>partner_unreachable, partner_auth_invalid</code></dd>
             <dt>Example</dt>         <dd><code>—</code></dd>
           </dl>
         </li>
@@ -590,10 +590,10 @@
           </div>
           <p class="action-summary">Pose a high-stakes question to the partner agent for a second opinion. Discretionary; not for every decision. &middot; <code>net.outbound</code></p>
           <dl class="action-docs">
-            <dt>Goal</dt>            <dd>—</dd>
-            <dt>Inputs</dt>          <dd><code>—</code></dd>
-            <dt>Outputs</dt>         <dd><code>—</code></dd>
-            <dt>Errors</dt>          <dd><code>—</code></dd>
+            <dt>Goal</dt>            <dd>Get a second opinion from the partner substrate when the decision is high-stakes and Gemini&#x27;s distinct training distribution is plausibly useful.</dd>
+            <dt>Inputs</dt>          <dd><code>question (string, max 4000 chars)</code></dd>
+            <dt>Outputs</dt>         <dd><code>{reply: string}</code></dd>
+            <dt>Errors</dt>          <dd><code>partner_unreachable, partner_auth_invalid, question_too_long</code></dd>
             <dt>Example</dt>         <dd><code>—</code></dd>
           </dl>
         </li>
@@ -607,6 +607,9 @@
         Verify &amp; cost
       </h2>
       <table class="kv">
+        <tr><th>Verify suite</th><td><code>—</code> &middot; — cases &middot; pass &ge; —</td></tr>
+        <tr><th>SLA</th><td>p50 200 ms &middot; p95 1500 ms &middot; max error rate 0.01</td></tr>
+        <tr><th>Schedule</th><td>cadence: on-install &middot; on install: yes</td></tr>
         <tr><th>Install fee</th><td>0&cent;</td></tr>
         <tr><th>Monthly fee</th><td>0&cent;</td></tr>
         <tr><th>Usage model</th><td>external</td></tr>

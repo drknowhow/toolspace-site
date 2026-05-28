@@ -151,6 +151,18 @@
     }
   },
 
+  "verify": {
+    "sla": {
+      "p50_latency_ms": 500,
+      "p95_latency_ms": 2000,
+      "error_rate_max": 0.01
+    },
+    "schedule": {
+      "cadence": "on-install",
+      "on_install": true
+    }
+  },
+
   "kill_switch": {
     "kind": "manual",
     "instructions_url": "https://github.com/drknowhow/install-manifest-spec/blob/main/examples/muninn-flowing.REVOKE.md"

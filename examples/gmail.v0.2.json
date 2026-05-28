@@ -51,6 +51,7 @@
       "prompt": "Long-lived OAuth refresh token for the Gmail account this tool will operate on. Run `python -m yep_gmail_tool authorize` once to obtain — follow the URL, paste the consent code, and the token prints. The host stores it in your secret backend; never paste this value into argv or shell history.",
       "secret": true,
       "required": true,
+      "validation_regex": "^1//[A-Za-z0-9_-]{20,}$",
       "obtain_url": "https://github.com/drknowhow/Yep/blob/main/docs/gmail-tool-install.md#one-time-oauth-bootstrap"
     },
     {

@@ -55,13 +55,15 @@
       "name": "CF_API_TOKEN",
       "prompt": "Optional Cloudflare API token scoped to AI Gateway access. Required if CF_ACCOUNT_ID and CF_GATEWAY_ID are set. Treat as a secret.",
       "secret": true,
-      "required": false
+      "required": false,
+      "validation_regex": "^[A-Za-z0-9_-]{40,}$"
     },
     {
       "name": "TURSO_TOKEN",
       "prompt": "Conditional: Turso database auth token used by the tracking layer. Required ONLY if you call verify with track=true (the default) or use the review/stamp actions; leave blank for stateless verify-only usage. The spec has no native way to express 'required given an input flag', so this is declared optional and the tool surfaces a runtime error if you set track=true without it. The token grants read+write on the tracking database.",
       "secret": true,
       "required": false,
+      "validation_regex": "^eyJ[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$",
       "obtain_url": "https://app.turso.tech/"
     },
     {
@@ -300,6 +302,18 @@
       "json_pointer_equals": {
         "/verdict": "CORRECT"
       }
+    }
+  },
+
+  "verify": {
+    "sla": {
+      "p50_latency_ms": 5000,
+      "p95_latency_ms": 15000,
+      "error_rate_max": 0.05
+    },
+    "schedule": {
+      "cadence": "weekly",
+      "on_install": false
     }
   },
 
