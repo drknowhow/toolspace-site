@@ -1,9 +1,23 @@
 {
   "schema": "toolspace-changelog/1",
   "url": "https://toolspace.yepgent.com/changelog.json",
-  "generated_at": "2026-05-28T07:30:00Z",
-  "current_version": "0.11",
+  "generated_at": "2026-05-28T07:55:00Z",
+  "current_version": "0.12",
   "versions": [
+    {
+      "version": "0.12",
+      "date": "2026-05-28",
+      "label": "Registry search + filter cleanup; drop drift-prone hardcoded footer version",
+      "changes": [
+        "Added free-text search on [`/registry/`](https://toolspace.yepgent.com/registry/) \u2014 filters cards by name, author, summary, and capability tags as you type. Combines with the existing chip filters.",
+        "Result count (`N of 18`) now updates live next to the search box so it's clear how many cards survived the current filter combination.",
+        "Collapsed the 57-chip **Capability** filter into a closed-by-default `<details>` disclosure. Shows `(57)` next to the label, and a `\u00b7 N selected` hint when any are active, so users see the filter state without expanding.",
+        "Hid the **Status** filter group when only one distinct value is present (today: every entry is `example`) \u2014 was visual noise with no signal.",
+        "Per-card capability badges now show the first 3 with a `+N more` expander, so tag-heavy cards (e.g. `muninn-flowing` with 6 tags) don't dominate the grid.",
+        "Dropped the hardcoded `SITE_VERSION = \"0.7\"` from [`scripts/build_registry_pages.py`](https://github.com/drknowhow/toolspace-site/blob/main/scripts/build_registry_pages.py) and removed the version span from both registry and homepage footers \u2014 the page-vs-actual-version drift kept reappearing (last caught at v0.7 still rendering on v0.11 pages). The [/changelog/](https://toolspace.yepgent.com/changelog/) page remains the single authoritative version display, generated from [`changelog.json`](https://toolspace.yepgent.com/changelog.json) `current_version`.",
+        "Added `.netlify` to `.gitignore` so local `netlify init` artifacts don't accidentally land in commits."
+      ]
+    },
     {
       "version": "0.11",
       "date": "2026-05-28",

@@ -9,3 +9,6 @@ __pycache__/
 # Editor / OS
 .tmp/
 .DS_Store
+
+# Local Netlify folder
+.netlify

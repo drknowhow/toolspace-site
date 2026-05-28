@@ -17,14 +17,19 @@
 
     .filter-bar {
       display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem 0.8rem;
-      align-items: center;
+      flex-direction: column;
+      gap: 0.55rem;
       margin: 1rem 0 1.25rem;
-      padding: 0.6rem 0.8rem;
+      padding: 0.7rem 0.85rem;
       background: var(--card-bg);
       border: 1px solid var(--card-edge);
       border-radius: 10px;
+    }
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.8rem;
+      align-items: center;
     }
     .filter-group { display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; }
     .filter-group .label {
@@ -33,6 +38,70 @@
       letter-spacing: 0.04em;
       text-transform: uppercase;
       margin-right: 0.3rem;
+    }
+    .filter-search {
+      flex: 1 1 auto;
+      min-width: 0;
+      padding: 0.45em 0.75em;
+      font: inherit;
+      font-size: 0.9rem;
+      color: var(--fg);
+      background: transparent;
+      border: 1px solid var(--field-edge);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 120ms ease;
+    }
+    .filter-search:focus { border-color: var(--accent); }
+    .filter-search::placeholder { color: var(--muted); }
+    .filter-count {
+      font-size: 0.78rem;
+      color: var(--muted);
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
+    /* Capability disclosure — collapses the long tag list by default. */
+    details.filter-disclosure { width: 100%; }
+    details.filter-disclosure > summary {
+      list-style: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0.15em 0;
+    }
+    details.filter-disclosure > summary::-webkit-details-marker { display: none; }
+    details.filter-disclosure > summary::before {
+      content: "▸";
+      font-size: 0.7rem;
+      color: var(--muted);
+      transition: transform 120ms ease;
+    }
+    details.filter-disclosure[open] > summary::before { content: "▾"; }
+    details.filter-disclosure > summary:hover { color: var(--fg); }
+    details.filter-disclosure > summary .badge-count {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    details.filter-disclosure > summary .active-hint {
+      font-size: 0.72rem;
+      color: var(--accent);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    details.filter-disclosure .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem 0.35rem;
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--rule);
     }
     .chip {
       display: inline-block;
@@ -139,6 +208,17 @@
       margin-top: auto;
       padding-top: 0.3rem;
     }
+    /* Cap-badge density limit: show first 3 by default, "+N more"
+       toggle exposes the rest. Keeps cards uniform at a glance. */
+    .tool-card .meta .badge.cap-overflow { display: none; }
+    .tool-card.show-all-caps .meta .badge.cap-overflow { display: inline-block; }
+    .badge.cap-more {
+      cursor: pointer;
+      background: transparent;
+      border-style: dashed;
+      color: var(--muted);
+    }
+    .badge.cap-more:hover { color: var(--fg); border-color: var(--accent-edge); }
     .badge {
       display: inline-block;
       font-size: 0.7rem;
@@ -585,20 +665,19 @@
       <p>Six operations: remind, remind_done, remind_snooze, remind_due, remind_list, remind_sweep. Each reminder is a `procedure`-typed memory tagged `remind`, `remind-active`, and `remind-&lt;kind&gt;`. The reminder&#x27;s due time is encoded in the memory&#x27;s `valid_from` field; recurring reminders update `valid_from` forward when completed; nag-kind reminders re-surface every boot until done; notice-kind auto-resolve after first surface. The tool is a thin write-and-tag layer over the `remembering` skill — every persistent operation is a `_remember` / `_exec` call against Turso. Issue #5 calls this out as the test for a tool that writes to the user&#x27;s external reminder system; v0.4 `writes[]` would distinguish this from third-party transmits the way it would for blog_publish.</p>
       <p class="small muted">Tags: <span class="badge cap">reminders</span><span class="badge cap">memory</span><span class="badge cap">scheduling</span><span class="badge cap">recurring</span><span class="badge cap">muninn-internal</span></p>
       <p class="small muted">License: MIT</p>
-      <p><span class="freshness">Last fetched 2026-05-28T07:19:17Z (live)</span></p>
+      <p><span class="freshness">Last fetched 2026-05-28T07:49:48Z (live)</span></p>
     </section>
 
     <footer>
       <p>
         toolspace.yepgent.com &middot;
-        <span class="muted">v0.7</span> &middot;
         <a href="/registry/">registry</a> &middot;
         <a href="/changelog/">changelog</a> &middot;
         <a href="https://github.com/drknowhow/toolspace-site">source</a> &middot;
         <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> &middot;
         <a href="https://yepgent.com">yepgent</a>
       </p>
-      <p class="small muted">Pages generated 2026-05-28T07:19:16Z &middot; <a href="/manifests.json">manifests.json</a> &middot; <a href="/changelog.json">changelog.json</a></p>
+      <p class="small muted">Pages generated 2026-05-28T07:49:47Z &middot; <a href="/manifests.json">manifests.json</a> &middot; <a href="/changelog.json">changelog.json</a></p>
     </footer>
   </main>
 </body>
