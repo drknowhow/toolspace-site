@@ -20,6 +20,15 @@ sync pulls your latest catalog automatically.
    | `https`  | bare hostname               | `https://hostname/.well-known/install-manifests.json`            |
    | `atproto`| `did:plc:…` or `did:web:…`  | (v2 — pending AT Protocol lexicon)                               |
 
+   > **Discovery URLs must be publicly reachable without auth.** The
+   > federation sync runs as an anonymous HTTP client. For `kind=github`
+   > this means the repo must be **public** — private repos return 404
+   > on `raw.githubusercontent.com` and your publisher will fail
+   > validation silently (the sync skips you with a warning, your tools
+   > never appear in `manifests.json`). If your manifests can't live in
+   > a public repo, use `kind=https` and host them on a static site
+   > instead. See "Pre-flight check" in step 2 below.
+
 2. The index conforms to the [well-known-index v1 schema][wki]. It
    lists each tool you publish: id, manifest URL, manifest version,
    status, optional summary + tags.
@@ -69,7 +78,22 @@ sync pulls your latest catalog automatically.
    }
    ```
 
-3. **Validate offline.** Clone toolspace-site and run:
+3. **Pre-flight: confirm the discovery URL fetches anonymously.** From
+   a clean shell (no GitHub auth, no cookies) run:
+
+   ```bash
+   curl -fsSL https://<your-discovery-url>/.well-known/install-manifests.json | jq .publisher.id
+   ```
+
+   You should see your publisher id echoed back. If you get `404`,
+   `403`, or any HTML login page, the federation sync will fail too —
+   fix the hosting before opening the allowlist PR. Common causes:
+   private GitHub repo (move to public or switch to `kind=https`),
+   Cloudflare bot-block / "Just a moment…" challenge on the host,
+   missing CORS on the static site (sync tolerates this, but browser
+   tooling will choke).
+
+4. **Validate offline.** Clone toolspace-site and run:
 
    ```bash
    python scripts/discover_publishers.py --check
@@ -78,7 +102,7 @@ sync pulls your latest catalog automatically.
    …after temporarily editing `publishers.json` to include your entry.
    It will report fetch + validation status for every publisher.
 
-4. **Open a one-time PR adding your publisher entry to
+5. **Open a one-time PR adding your publisher entry to
    `publishers.json`.** Template:
 
    ```json
@@ -94,7 +118,7 @@ sync pulls your latest catalog automatically.
    }
    ```
 
-5. **That's it.** Once your PR merges, the daily federation-sync run
+6. **That's it.** Once your PR merges, the daily federation-sync run
    picks you up automatically. Your subsequent tool additions, version
    bumps, and deprecations land in `manifests.json` with no further
    coordination — just update your `.well-known/install-manifests.json`
