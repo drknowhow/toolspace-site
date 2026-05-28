@@ -252,7 +252,7 @@ install-manifest install &lt;url-or-path&gt;</code></pre>
     </h2>
 
     <div class="surface">
-      <h3>Schema <span class="pill stable">v0.4 &middot; current</span> <span class="pill legacy">v0.3.1 &middot; superseded</span> <span class="pill legacy">v0.2 &middot; frozen</span> <span class="pill legacy">v0.1 &middot; legacy</span></h3>
+      <h3>Schema <span class="pill stable">v0.4 &middot; current</span> <span class="pill legacy">v0.3.1 &middot; superseded</span> <span class="pill legacy">v0.3 &middot; superseded</span> <span class="pill legacy">v0.2 &middot; frozen</span> <span class="pill legacy">v0.1 &middot; legacy</span></h3>
       <p>
         Current: <a href="/schemas/install-manifest-v0.4.json"><code>install-manifest-v0.4.json</code></a> &mdash;
         closes two structural gaps surfaced by community consumer tests:
@@ -287,8 +287,8 @@ install-manifest install &lt;url-or-path&gt;</code></pre>
 
     <div class="surface">
       <h3>Example manifest</h3>
-      <p><a href="/examples/gmail.v0.3.json"><code>/examples/gmail.v0.3.json</code></a> &mdash; reference v0.3 manifest with the five Gmail actions plus the new <code>verify</code> contract (eval suite + SLA), <code>data_boundary</code> declaration (gmail messages read; nothing transmitted to third parties; nothing persisted), and per-action <code>docs</code>. Use this as the template when authoring new manifests.</p>
-      <p>Earlier examples are still available: <a href="/examples/gmail.v0.2.json"><code>gmail.v0.2.json</code></a> for the v0.2 surface, and <a href="/examples/gmail.json"><code>gmail.json</code></a> for v0.1.</p>
+      <p><a href="/examples/gmail.v0.3.json"><code>/examples/gmail.v0.3.json</code></a> &mdash; reference v0.3 manifest with the five Gmail actions plus the <code>verify</code> contract (eval suite + SLA), <code>data_boundary</code> declaration (gmail messages read; nothing transmitted to third parties; nothing persisted), and per-action <code>docs</code>. Validates unmodified against v0.4 &mdash; use this as the template when authoring new manifests.</p>
+      <p>For v0.4-only surfaces (preinstalled tools, agent-supplied destinations), see <a href="/examples/vi-federation.v0.4.json"><code>vi-federation.v0.4.json</code></a>. Earlier examples are still available: <a href="/examples/gmail.v0.2.json"><code>gmail.v0.2.json</code></a> for the v0.2 surface, and <a href="/examples/gmail.json"><code>gmail.json</code></a> for v0.1.</p>
     </div>
 
     <h2>
