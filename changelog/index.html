@@ -83,6 +83,20 @@
 
     <div class="version-block">
       <div class="version-header">
+        <span class="version-tag">v0.14</span>
+        <span class="version-label">Surface federation v1 on the homepage (publishers can self-host)</span>
+        <span class="version-date">2026-05-28</span>
+      </div>
+      <ul class="version-changes">
+        <li>Federation v1 shipped earlier today across <a href="https://github.com/drknowhow/toolspace-site/pull/21"><code>#21</code></a> (discovery pipeline + <code>publishers.json</code> + daily auto-sync), <a href="https://github.com/drknowhow/toolspace-site/pull/22"><code>#22</code></a> (<a href="https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md"><code>FEDERATION.md</code></a> onboarding walkthrough), and <a href="https://github.com/drknowhow/install-manifest-spec/pull/18">spec <code>#18</code></a> (well-known-index v1 schema, three identity kinds: <code>github</code>, <code>https</code>, <code>atproto</code>). Daily cron at 13:17 UTC fetches every allowlisted publisher, validates each manifest, and auto-merges the sync PR on green.</li>
+        <li>Updated the homepage <a href="https://toolspace.yepgent.com/#for-humans">“For humans”</a> section: replaced the stale “open a PR with your manifest URL” single-path guidance with a two-path layout — federation (self-host an index, get added to <code>publishers.json</code> once) as the preferred path for multi-tool publishers, single-tool PR retained as the lightweight alternative.</li>
+        <li>Added a <code>federate</code> link to the homepage footer pointing at <a href="https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md"><code>FEDERATION.md</code></a> so the publishing path is one click from any depth, mirroring the v0.13 footer-registry-link pattern.</li>
+        <li>First external federation publisher: <a href="https://github.com/oaustegard/muninn-utilities"><code>oaustegard/muninn-utilities</code></a> (Muninn, <code>trust_tier: standard</code>). Yep itself is dogfooded at <code>yepgent.com</code> as a <code>kind=https</code> publisher (<code>trust_tier: verified</code>, <code>registry_status_map: {active: example}</code>) after the initial <code>kind=github</code> attempt 404&#x27;d on a private repo — lesson banked as a pre-flight check in <a href="https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md"><code>FEDERATION.md</code></a> (<a href="https://github.com/drknowhow/toolspace-site/pull/24"><code>#24</code></a>).</li>
+      </ul>
+    </div>
+
+    <div class="version-block">
+      <div class="version-header">
         <span class="version-tag">v0.13</span>
         <span class="version-label">Fix Schema chip filter (slug mismatch); add registry link to homepage footer</span>
         <span class="version-date">2026-05-28</span>
@@ -275,7 +289,7 @@
     <footer>
       <p>
         toolspace.yepgent.com ·
-        <span class="muted">v0.13</span> ·
+        <span class="muted">v0.14</span> ·
         <a href="/changelog/">changelog</a> ·
         <a href="https://github.com/drknowhow/toolspace-site">source</a> ·
         <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> ·

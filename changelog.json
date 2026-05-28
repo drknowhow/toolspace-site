@@ -1,9 +1,20 @@
 {
   "schema": "toolspace-changelog/1",
   "url": "https://toolspace.yepgent.com/changelog.json",
-  "generated_at": "2026-05-28T08:00:00Z",
-  "current_version": "0.13",
+  "generated_at": "2026-05-28T09:00:00Z",
+  "current_version": "0.14",
   "versions": [
+    {
+      "version": "0.14",
+      "date": "2026-05-28",
+      "label": "Surface federation v1 on the homepage (publishers can self-host)",
+      "changes": [
+        "Federation v1 shipped earlier today across [`#21`](https://github.com/drknowhow/toolspace-site/pull/21) (discovery pipeline + `publishers.json` + daily auto-sync), [`#22`](https://github.com/drknowhow/toolspace-site/pull/22) ([`FEDERATION.md`](https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md) onboarding walkthrough), and [spec `#18`](https://github.com/drknowhow/install-manifest-spec/pull/18) (well-known-index v1 schema, three identity kinds: `github`, `https`, `atproto`). Daily cron at 13:17 UTC fetches every allowlisted publisher, validates each manifest, and auto-merges the sync PR on green.",
+        "Updated the homepage [\u201cFor humans\u201d](https://toolspace.yepgent.com/#for-humans) section: replaced the stale \u201copen a PR with your manifest URL\u201d single-path guidance with a two-path layout \u2014 federation (self-host an index, get added to `publishers.json` once) as the preferred path for multi-tool publishers, single-tool PR retained as the lightweight alternative.",
+        "Added a `federate` link to the homepage footer pointing at [`FEDERATION.md`](https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md) so the publishing path is one click from any depth, mirroring the v0.13 footer-registry-link pattern.",
+        "First external federation publisher: [`oaustegard/muninn-utilities`](https://github.com/oaustegard/muninn-utilities) (Muninn, `trust_tier: standard`). Yep itself is dogfooded at `yepgent.com` as a `kind=https` publisher (`trust_tier: verified`, `registry_status_map: {active: example}`) after the initial `kind=github` attempt 404'd on a private repo \u2014 lesson banked as a pre-flight check in [`FEDERATION.md`](https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md) ([`#24`](https://github.com/drknowhow/toolspace-site/pull/24))."
+      ]
+    },
     {
       "version": "0.13",
       "date": "2026-05-28",
