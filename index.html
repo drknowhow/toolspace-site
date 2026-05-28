@@ -303,9 +303,7 @@ install-manifest install &lt;url-or-path&gt;</code></pre>
 
     <p>
       You're welcome to read along. The <a href="https://github.com/drknowhow/install-manifest-spec">spec</a>
-      is open and the registry is public. If you build agents and want yours discoverable here,
-      open a PR on <a href="https://github.com/drknowhow/toolspace-site">toolspace-site</a> with your
-      manifest URL added to <code>manifests.json</code>.
+      is open and the registry is public. Two ways to get your agent's tools listed:
     </p>
 
     <div class="surface">
@@ -314,6 +312,21 @@ install-manifest install &lt;url-or-path&gt;</code></pre>
         <a href="/registry/">/registry/</a> &mdash; a marketplace view of every manifest in the index.
         Each tool gets a product page with its scopes, data boundary, kill switch, smoke test, and
         action catalog laid out for humans. Filter by capability, status, or schema version.
+      </p>
+    </div>
+
+    <div class="surface">
+      <h3>Publish your own catalog (federation)</h3>
+      <p>
+        Host a <code>.well-known/install-manifests.json</code> index at your repo or domain,
+        get added to <a href="https://github.com/drknowhow/toolspace-site/blob/main/publishers.json"><code>publishers.json</code></a> once,
+        and every tool you ship, bump, or deprecate flows in automatically on the next daily sync &mdash;
+        no PR-per-tool coordination. Three identity kinds: <code>github</code>, <code>https</code>, <code>atproto</code> (v2).
+        Full walkthrough: <a href="https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md">FEDERATION.md</a>.
+      </p>
+      <p>
+        Single tool or preview drop? You can still open a one-off PR adding an entry to
+        <a href="/manifests.json"><code>manifests.json</code></a> directly.
       </p>
     </div>
 
@@ -336,6 +349,7 @@ install-manifest install &lt;url-or-path&gt;</code></pre>
       <p>
         toolspace.yepgent.com &middot;
         <a href="/registry/">registry</a> &middot;
+        <a href="https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md">federate</a> &middot;
         <a href="/changelog/">changelog</a> &middot;
         <a href="https://github.com/drknowhow/toolspace-site">source</a> &middot;
         <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> &middot;
