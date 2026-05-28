@@ -30,18 +30,35 @@ examples/gmail.json                   # reference manifest (v0.1)
 examples/gmail.v0.2.json              # reference manifest (v0.2)
 examples/gmail.v0.3.json              # reference manifest (v0.3, current)
 manifests.json                        # registry index (lists every version)
+publishers.json                       # federation allowlist (one entry per publisher)
 index.html                            # landing page
 netlify.toml + _headers               # CORS + cache headers
 scripts/sync_from_spec.py             # mirror schemas/examples from spec
 scripts/validate_manifests_index.py   # structural check on manifests.json
-.github/workflows/check.yml           # CI: byte-identity + index validity
+scripts/federation.py                 # shared federation helpers (stdlib)
+scripts/discover_publishers.py        # validate publishers' well-known indexes
+scripts/sync_from_publishers.py       # fetch + merge federation into manifests.json
+.github/workflows/check.yml           # CI: byte-identity + index validity + tests
+.github/workflows/federation-sync.yml # daily cron: fetch publishers, open auto-PR
+FEDERATION.md                         # publisher onboarding walkthrough
 ```
 
 ## Adding a manifest
 
-1. Open a PR adding an entry to `manifests.json`. Required fields:
-   `id`, `name`, `description`, `capabilities` (list), `manifest_url`
-   (https), `status` (`stable` / `preview` / `example` / `deprecated`).
+Two paths, depending on how many tools you publish:
+
+**Federation (recommended for publishers with multiple tools).** Host
+your own `.well-known/install-manifests.json` index and get listed
+once in `publishers.json`. Every tool you add, version, or deprecate
+flows in automatically on the next daily sync. See
+[FEDERATION.md](FEDERATION.md) for the onboarding walkthrough.
+
+**One-off PR (single tool / preview drop).** Open a PR adding an
+entry to `manifests.json` directly:
+
+1. Required fields: `id`, `name`, `description`, `capabilities`
+   (list), `manifest_url` (https), `status` (`stable` / `preview` /
+   `example` / `deprecated`).
 2. The `manifest_url` must validate against the schema in `/schemas/`.
    Use the [install-manifest CLI](https://github.com/drknowhow/install-manifest-spec/tree/main/cli)
    to verify before opening the PR:
