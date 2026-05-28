@@ -84,8 +84,10 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install pytest
-        run: python -m pip install --upgrade pip pytest
+      - name: Install pytest + federation deps
+        run: |
+          python -m pip install --upgrade pip pytest
+          pip install -r requirements-federation.txt
 
       - name: Run federation pipeline tests
         run: python -m pytest tests/test_federation_pipeline.py -v
