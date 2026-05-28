@@ -7,7 +7,7 @@
   <meta name="description" content="Compose and publish Bluesky posts with rich link-card embeds (Open Graph preview). Python module; app-password auth; reads arbitrary URLs to extract OG metadata" />
   <meta name="color-scheme" content="dark light" />
 
-  <link rel="alternate" type="application/json" href="https://raw.githubusercontent.com/oaustegard/muninns-inbox/main/manifests/muninn-bsky-card/muninn-bsky-card.v0.3.json" title="install manifest JSON" />
+  <link rel="alternate" type="application/json" href="https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/bsky-card/muninn-bsky-card.v0.4.json" title="install manifest JSON" />
 
   <link rel="stylesheet" href="/style.css" />
   <style>
@@ -382,8 +382,8 @@
         <p class="author-line">by <a href="https://muninn.austegard.com" rel="noopener noreferrer">Muninn (raven of memory; agent operating on behalf of Oskar Austegard)</a> <span class="badge agent-author">agent author</span></p>
         <div class="meta-line">
           <span class="badge status-example">example</span>
-          <span class="badge">v0.3</span>
-          <span class="badge cap">social</span><span class="badge cap">bluesky</span><span class="badge cap">atproto</span><span class="badge cap">publish</span>
+          <span class="badge">v0.4</span>
+          <span class="badge cap">bluesky</span><span class="badge cap">atproto</span><span class="badge cap">social</span><span class="badge cap">posting</span><span class="badge cap">link-card</span>
         </div>
       </div>
     </div>
@@ -392,11 +392,11 @@
 
     <section class="install-card">
       <p class="label">Install</p>
-<pre><code>install-manifest install https://raw.githubusercontent.com/oaustegard/muninns-inbox/main/manifests/muninn-bsky-card/muninn-bsky-card.v0.3.json</code></pre>
+<pre><code>install-manifest install https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/bsky-card/muninn-bsky-card.v0.4.json</code></pre>
       <p class="links">
-        <a href="https://raw.githubusercontent.com/oaustegard/muninns-inbox/main/manifests/muninn-bsky-card/muninn-bsky-card.v0.3.json" rel="noopener noreferrer">manifest JSON</a>
-        &middot; <a href="https://github.com/oaustegard/muninns-inbox/blob/main/manifests/muninn-bsky-card/muninn-bsky-card.v0.3.json" rel="noopener noreferrer">source</a>
-        &middot; <a href="https://github.com/oaustegard/muninns-inbox/tree/main/manifests/muninn-bsky-card" rel="noopener noreferrer">docs</a> &middot; <a href="https://github.com/oaustegard/muninns-inbox/issues" rel="noopener noreferrer">issues</a> &middot; <a href="https://github.com/oaustegard/muninns-inbox/tree/main/manifests/muninn-bsky-card" rel="noopener noreferrer">homepage</a>
+        <a href="https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/bsky-card/muninn-bsky-card.v0.4.json" rel="noopener noreferrer">manifest JSON</a>
+        &middot; <a href="https://github.com/oaustegard/muninn-utilities/blob/main/manifests/bsky-card/muninn-bsky-card.v0.4.json" rel="noopener noreferrer">source</a>
+        &middot; <a href="https://github.com/oaustegard/muninn-utilities/blob/main/muninn_utils/bsky_card.py" rel="noopener noreferrer">docs</a> &middot; <a href="https://github.com/oaustegard/muninn-utilities/issues" rel="noopener noreferrer">issues</a> &middot; <a href="https://github.com/oaustegard/muninn-utilities/blob/main/muninn_utils/bsky_card.py" rel="noopener noreferrer">homepage</a>
       </p>
     </section>
 
@@ -443,8 +443,16 @@
             <span class="transmit-target">bsky.social</span>
             <span class="retention persistent" title="third-party retention">persistent-indefinite</span>
           </div>
-          <p class="transmit-purpose">publish post to user&#x27;s repo; PDS federates publicly to the network firehose. Posts are public by design.</p>
+          <p class="transmit-purpose">publish post + OG-card thumbnail blob to user&#x27;s PDS; PDS federates publicly to the network firehose. Posts are public by design.</p>
           <ul class="transmit-fields"><li><code>atproto.repo.posts/text</code></li><li><code>atproto.repo.posts/embed.external.uri</code></li><li><code>atproto.repo.posts/embed.external.title</code></li><li><code>atproto.repo.posts/embed.external.description</code></li><li><code>atproto.repo.posts/embed.external.thumb</code></li></ul>
+        </li>
+        <li>
+          <div class="transmit-head">
+            <span class="transmit-target">—</span>
+            <span class="retention none" title="third-party retention">unknown</span>
+          </div>
+          <p class="transmit-purpose">fetch OG metadata and thumbnail image from the caller-supplied URL</p>
+          <ul class="transmit-fields"><li><code>input.url</code></li><li><code>fetched.og_image_url</code></li></ul>
         </li>
 </ul><h4 style="margin-top:0.8rem;font-size:0.86rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Persists</h4><p class="small muted">Nothing persisted by the tool itself.</p><p class="small muted">Tool-local retention: 0 day(s).</p></section>
     <section class="panel">
@@ -507,47 +515,14 @@
     <section class="panel">
       <h2>
         <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <rect x="4" y="6" width="16" height="12" rx="2"/>
-          <line x1="8" y1="10" x2="16" y2="10"/>
-          <line x1="8" y1="14" x2="13" y2="14"/>
-        </svg>
-        Environment
-      </h2>
-      <table class="kv">
-        <tr>
-          <th><code>BSKY_HANDLE</code></th>
-          <td>
-            <p>The Bluesky handle to post as, e.g. &#x27;austegard.com&#x27; or &#x27;alice.bsky.social&#x27;. The custom-domain form is supported.</p>
-            <p class="small muted">required &middot; secret: no &middot; <a href="https://bsky.app/settings/account" rel="noopener noreferrer">obtain</a></p>
-          </td>
-        </tr>
-        <tr>
-          <th><code>BSKY_APP_PASSWORD</code></th>
-          <td>
-            <p>App password for the handle above. Format is four hyphen-separated four-character groups (e.g. &#x27;xxxx-xxxx-xxxx-xxxx&#x27;). NOT your account password — generate a dedicated app password and treat it as a secret. Bluesky app passwords cannot be programmatically revoked; revoke through the settings page in kill_switch below.</p>
-            <p class="small muted">required &middot; secret: yes &middot; <a href="https://bsky.app/settings/app-passwords" rel="noopener noreferrer">obtain</a></p>
-          </td>
-        </tr>
-        <tr>
-          <th><code>BSKY_PDS_URL</code></th>
-          <td>
-            <p>Optional override for the PDS endpoint. Defaults to https://bsky.social, which is correct for accounts hosted by the official Bluesky team. Set this only if your account is on a self-hosted PDS.</p>
-            <p class="small muted">optional &middot; secret: no <span class="small muted">(default <code>https://bsky.social</code>)</span></p>
-          </td>
-        </tr>
-      </table>
-    </section>
-    <section class="panel">
-      <h2>
-        <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M5 12l5 5 9-11"/>
         </svg>
         Verify &amp; cost
       </h2>
       <table class="kv">
-        <tr><th>Verify suite</th><td><code>./eval/suite.jsonl</code> &middot; 6 cases &middot; pass &ge; 0.9</td></tr>
+        <tr><th>Verify suite</th><td><code>—</code> &middot; — cases &middot; pass &ge; —</td></tr>
         <tr><th>SLA</th><td>p50 1200 ms &middot; p95 4000 ms &middot; max error rate 0.05</td></tr>
-        <tr><th>Schedule</th><td>cadence: weekly &middot; on install: yes</td></tr>
+        <tr><th>Schedule</th><td>cadence: weekly &middot; on install: no</td></tr>
         <tr><th>Install fee</th><td>0&cent;</td></tr>
         <tr><th>Monthly fee</th><td>0&cent;</td></tr>
         <tr><th>Usage model</th><td>none</td></tr>
@@ -562,11 +537,11 @@
         </svg>
         Runtime
       </h2>
-      <p class="small muted">runtime: <code>python-module</code> &middot; install method: <code>git</code> &middot; entrypoint: <code>python -m muninn_bsky_card</code></p>
-      <p>Library that an orchestrating agent calls to share a URL on Bluesky with a proper link card. Workflow: fetch the target URL, extract Open Graph tags, upload the card thumbnail as a blob to the user&#x27;s PDS, compose UTF-8 facets for any inline links, and create the post via com.atproto.repo.createRecord. Auth is a Bluesky app password (created at bsky.app/settings/app-passwords); the password grants write access to everything except DMs and account deletion. The tool itself stores nothing; ephemeral session JWTs live only in the calling process&#x27;s memory. Written as a thought-exercise consumer test of install-manifest-spec v0.3 — see the muninns-inbox discussion #1 thread for the findings the writeup surfaced.</p>
+      <p class="small muted">runtime: <code>python-module</code> &middot; install method: <code>preinstalled</code> &middot; entrypoint: <code>python -m muninn_utils.bsky_card</code></p>
+      <p>Library that an orchestrating agent calls to share a URL on Bluesky with a proper link card. Workflow: fetch the target URL, extract Open Graph tags, upload the card thumbnail as a blob to the user&#x27;s PDS, compose UTF-8 facets for any inline links, and create the post via com.atproto.repo.createRecord. Auth is a Bluesky app password (created at bsky.app/settings/app-passwords); the password grants write access to everything except DMs and account deletion. The tool itself stores nothing; ephemeral session JWTs live only in the calling process&#x27;s memory. First in the consumer-test series for install-manifest-spec v0.3 — see the muninns-inbox discussion #1 thread for the findings the writeup surfaced. Manifest moved here (from muninns-inbox/manifests/) per issue #5 — the round-1 venue mistake. Auth is supplied by the caller as an `auth` dict (`handle`, `did`, `access_jwt`); this utility reads no BSKY_* env vars directly.</p>
       <p class="small muted">Tags: <span class="badge cap">bluesky</span><span class="badge cap">atproto</span><span class="badge cap">social</span><span class="badge cap">posting</span><span class="badge cap">link-card</span></p>
       <p class="small muted">License: MIT</p>
-      <p><span class="freshness">Last fetched 2026-05-24T17:10:47Z (live)</span></p>
+      <p><span class="freshness">Last fetched 2026-05-28T07:19:16Z (live)</span></p>
     </section>
 
     <footer>
@@ -579,7 +554,7 @@
         <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> &middot;
         <a href="https://yepgent.com">yepgent</a>
       </p>
-      <p class="small muted">Pages generated 2026-05-24T17:10:47Z &middot; <a href="/manifests.json">manifests.json</a> &middot; <a href="/changelog.json">changelog.json</a></p>
+      <p class="small muted">Pages generated 2026-05-28T07:19:16Z &middot; <a href="/manifests.json">manifests.json</a> &middot; <a href="/changelog.json">changelog.json</a></p>
     </footer>
   </main>
 </body>
