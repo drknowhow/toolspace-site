@@ -1,0 +1,30 @@
+{
+  "manifest_version": "0.4",
+  "tool": {
+    "id": "muninn-bsky-card",
+    "version": "0.1.0",
+    "name": "Muninn Bluesky Card",
+    "summary": "Compose and publish Bluesky posts with rich link-card embeds.",
+    "homepage": "https://github.com/oaustegard/muninn-utilities",
+    "tags": ["bluesky", "atproto", "social", "posting", "link-card"]
+  },
+  "runtime": {
+    "kind": "python-module",
+    "install": {"method": "pip", "package": "muninn-bsky-card"},
+    "entrypoint": {"command": ["python", "-m", "muninn_bsky_card"]}
+  },
+  "actions": [
+    {
+      "name": "post",
+      "summary": "Post to Bluesky with a card embed.",
+      "invocation": {"kind": "subcommand", "argv_template": ["post"]},
+      "side_effects": "destructive"
+    }
+  ],
+  "smoke": {
+    "kind": "shell",
+    "command": ["python", "-m", "muninn_bsky_card", "--version"],
+    "success": {"exit_code": 0}
+  },
+  "kill_switch": {"kind": "manual", "instructions_url": "https://example.com/revoke"}
+}

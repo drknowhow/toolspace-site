@@ -1,0 +1,14 @@
+{
+  "version": "1",
+  "publishers": [
+    {
+      "kind": "github",
+      "id": "oaustegard/muninn-utilities",
+      "display_name": "Muninn Utilities",
+      "homepage": "https://github.com/oaustegard/muninn-utilities",
+      "added_at": "2026-05-28",
+      "added_by": "test-fixture",
+      "trust_tier": "standard"
+    }
+  ]
+}
