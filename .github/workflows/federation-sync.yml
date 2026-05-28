@@ -35,6 +35,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install federation deps
+        run: pip install -r requirements-federation.txt
+
       - name: Run federation sync (live fetch)
         run: python scripts/sync_from_publishers.py --allow-network
 

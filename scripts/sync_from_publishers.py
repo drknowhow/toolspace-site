@@ -123,6 +123,29 @@ def _fetch_install_manifest(url: str) -> tuple[dict | None, str | None]:
         doc = json.loads(raw.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as e:
         return None, f"not valid UTF-8 JSON: {e}"
+
+    # Validate the manifest body against the canonical install-manifest
+    # schema for its declared version. Without this, an upstream publisher
+    # can land an invalid manifest (wrong enum, missing required field) in
+    # toolspace's registry while the published `install-manifest` CLI would
+    # reject it — exactly the divergence Beck flagged on 2026-05-28 when
+    # yep-memory.v0.4 passed sync with to_kind="self-hosted" but failed the
+    # CLI. Single source of truth: install-manifest >= 0.4.0.
+    try:
+        from install_manifest.validate import validate as _validate_manifest
+    except ImportError:
+        return (
+            None,
+            "install-manifest package not installed — "
+            "pip install -r requirements-federation.txt",
+        )
+
+    result = _validate_manifest(doc)
+    if not result.ok:
+        head = "; ".join(f"{p}: {m}" for p, m in result.errors[:3])
+        more = "" if len(result.errors) <= 3 else f" (+{len(result.errors) - 3} more)"
+        return None, f"manifest invalid ({result.summary}): {head}{more}"
+
     return doc, None
 
 

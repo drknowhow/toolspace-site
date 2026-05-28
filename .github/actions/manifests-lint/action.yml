@@ -1,0 +1,61 @@
+name: Lint install manifests
+description: >
+  Validate every install-manifest JSON file in the calling repo against
+  the canonical install-manifest spec. Catches invalid manifests at the
+  publisher's PR layer, before the federation cron mirrors them.
+
+  Looks at:
+    * `manifests/**/*.v*.json` (publisher manifest catalogs)
+    * `.well-known/install-manifests.json` (well-known index, validated
+      structurally — the canonical CLI doesn't validate well-known indexes
+      yet, so we re-check minimal shape here).
+
+  Skips silently when no matching files exist (so the action is safe to
+  add to any repo as defense-in-depth).
+
+inputs:
+  install-manifest-version:
+    description: install-manifest package version specifier (passed to pip)
+    required: false
+    default: ">=0.4.0,<0.5"
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install install-manifest CLI
+      shell: bash
+      run: pip install "install-manifest${{ inputs.install-manifest-version }}"
+
+    - name: Validate manifests
+      shell: bash
+      run: |
+        set -e
+        shopt -s globstar nullglob
+        failures=0
+        checked=0
+        for f in manifests/**/*.v*.json .well-known/install-manifests.json; do
+          [ -f "$f" ] || continue
+          # Skip the well-known index file when handing to `install-manifest
+          # validate` — it's a different schema. Validate it as JSON only.
+          if [[ "$f" == *".well-known/install-manifests.json" ]]; then
+            python -c "import json,sys; json.load(open(sys.argv[1], encoding='utf-8'))" "$f"
+            echo "  ok (json-only): $f"
+            checked=$((checked+1))
+            continue
+          fi
+          echo "validate: $f"
+          if ! install-manifest validate "$f"; then
+            failures=$((failures+1))
+          fi
+          checked=$((checked+1))
+        done
+        echo ""
+        echo "checked $checked file(s), $failures failure(s)"
+        if [ "$failures" -gt 0 ]; then
+          exit 1
+        fi

@@ -1,0 +1,40 @@
+{
+  "manifest_version": "0.4",
+  "tool": {
+    "id": "muninn-bad-enum",
+    "version": "0.1.0",
+    "name": "Muninn Bad Enum",
+    "summary": "Regression fixture: declares an invalid data_boundary.transmits.to_kind enum so the federation pipeline must reject it.",
+    "homepage": "https://github.com/oaustegard/muninn-utilities",
+    "tags": ["regression-test"]
+  },
+  "runtime": {
+    "kind": "python-module",
+    "install": {"method": "pip", "package": "muninn-bad-enum"},
+    "entrypoint": {"command": ["python", "-m", "muninn_bad_enum"]}
+  },
+  "data_boundary": {
+    "transmits": [
+      {
+        "to_kind": "self-hosted",
+        "fields": ["query"],
+        "purpose": "intentionally invalid enum — to_kind must be exactly 'agent-supplied' (or omit and provide 'to')",
+        "third_party_retention": "indefinite"
+      }
+    ]
+  },
+  "actions": [
+    {
+      "name": "ping",
+      "summary": "Noop action.",
+      "invocation": {"kind": "subcommand", "argv_template": ["ping"]},
+      "side_effects": "none"
+    }
+  ],
+  "smoke": {
+    "kind": "shell",
+    "command": ["python", "-m", "muninn_bad_enum", "--version"],
+    "success": {"exit_code": 0}
+  },
+  "kill_switch": {"kind": "manual", "instructions_url": "https://example.com/revoke"}
+}
