@@ -3,17 +3,17 @@
   "schema_url": "https://toolspace.yepgent.com/schemas/well-known-index-v1.json",
   "publishers": [
     {
-      "kind": "github",
-      "id": "drknowhow/Yep",
+      "kind": "https",
+      "id": "yepgent.com",
       "display_name": "Yep",
-      "homepage": "https://github.com/drknowhow/Yep",
+      "homepage": "https://yepgent.com",
       "added_at": "2026-05-28",
       "added_by": "yep-maintainer",
       "trust_tier": "verified",
       "registry_status_map": {
         "active": "example"
       },
-      "notes": "Dogfood entry. Yep publishes its own install-manifests via .well-known/ in drknowhow/Yep to validate the federation loop end-to-end. Marked 'verified' (maintainer-controlled) and downgraded to status='example' in the registry to keep clear visual separation between Yep's own tools and third-party publisher catalogs."
+      "notes": "Dogfood entry. Yep publishes its own install-manifests at https://yepgent.com/.well-known/install-manifests.json to validate the federation loop end-to-end. Marked 'verified' (maintainer-controlled) and downgraded to status='example' in the registry to keep clear visual separation between Yep's own tools and third-party publisher catalogs. (Originally attempted as kind=github/drknowhow/Yep in PR #21, but that repo is private and the raw fetch path 404'd; moved to https-kind on the public Netlify deploy.)"
     },
     {
       "kind": "github",
