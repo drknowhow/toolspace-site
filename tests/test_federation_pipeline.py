@@ -323,3 +323,69 @@ def test_sync_no_warnings_for_clean_run(sandbox):
     # that surfaces as a warning. The two healthy manifests should sync cleanly.
     # Verify warnings are scoped to the broken-fetch case specifically.
     assert all("broken" in w or "muninn-broken" in w for w in warnings), warnings
+
+
+# ---- manifest-body validation (2026-05-28 divergence regression) ----------
+
+
+def test_fetch_install_manifest_rejects_invalid_body(fixtures_env):
+    """A fetched manifest body that fails the canonical install-manifest
+    schema MUST be rejected with a descriptive error — not silently
+    mirrored into the registry. Regression guard for the divergence bug
+    where yep-memory.v0.4 passed federation sync with `to_kind=self-hosted`
+    but failed the published CLI."""
+    bad_url = (
+        "https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/"
+        "manifests/bad/muninn-bad-enum.v0.4.json"
+    )
+    doc, err = sync_from_publishers._fetch_install_manifest(bad_url)
+    assert doc is None
+    assert err is not None
+    assert "manifest invalid" in err
+    # The two enums that triggered the original bug:
+    assert "to_kind" in err or "third_party_retention" in err
+
+
+def test_sync_skips_invalid_body_entries(sandbox, monkeypatch):
+    """End-to-end: a publisher index that declares a manifest with an
+    invalid body must result in that entry being SKIPPED (warning, not
+    silent pass), while sibling-valid entries from the same publisher
+    still sync."""
+    # Patch the muninn index to include a bad entry pointing at the bad fixture.
+    real_fetch = sync_from_publishers._fetch_with_fixtures
+    bad_index_url = (
+        "https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/"
+        ".well-known/install-manifests.json"
+    )
+
+    def _patched(url):
+        if url == bad_index_url:
+            raw = real_fetch(url)
+            doc = json.loads(raw.decode("utf-8"))
+            doc["manifests"].append(
+                {
+                    "id": "muninn-bad-enum",
+                    "manifest_url": (
+                        "https://raw.githubusercontent.com/oaustegard/"
+                        "muninn-utilities/main/manifests/bad/"
+                        "muninn-bad-enum.v0.4.json"
+                    ),
+                    "manifest_version": "0.4",
+                    "status": "active",
+                }
+            )
+            return json.dumps(doc).encode("utf-8")
+        return real_fetch(url)
+
+    monkeypatch.setattr(sync_from_publishers, "_fetch_with_fixtures", _patched)
+
+    new_doc, warnings = sync_from_publishers.build_synced_index()
+    ids = [m["id"] for m in new_doc["manifests"]]
+    # Bad entry MUST NOT appear in the registry.
+    assert "muninn-bad-enum" not in ids
+    # Valid sibling entries from the same publisher MUST still sync.
+    assert "muninn-bsky-card" in ids
+    # And the rejection MUST surface as a warning so a maintainer can see it.
+    assert any(
+        "muninn-bad-enum" in w and "manifest invalid" in w for w in warnings
+    ), warnings

@@ -22,9 +22,13 @@ once the install-manifest-spec PR for v1 ships. The structural
 validator below covers the same constraints; full JSON Schema
 validation by registries that want it is layered on top.
 
-The federation pipeline deliberately does NOT call jsonschema. The
-existing site-wide convention (see validate_manifests_index.py) is
-stdlib-only structural checks; new code follows that.
+The well-known-index validator below is stdlib-only, matching the
+site-wide convention (see validate_manifests_index.py). The install-
+manifest BODY validator lives in `sync_from_publishers._fetch_install_
+manifest` and DOES depend on the published `install-manifest` package
+(see requirements-federation.txt) so fetched bodies are checked against
+the same schema the canonical CLI uses — fixing the validator-
+divergence bug surfaced 2026-05-28.
 """
 
 from __future__ import annotations

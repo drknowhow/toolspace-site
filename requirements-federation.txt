@@ -1,0 +1,8 @@
+# Runtime dependencies for the federation sync pipeline.
+#
+# The rest of toolspace-site's scripts/ are stdlib-only by convention.
+# Federation alone needs the canonical install-manifest validator so
+# fetched manifest bodies are checked against the same schema the
+# published CLI uses — preventing the validator-divergence bug surfaced
+# on 2026-05-28 (invalid `to_kind` enum slipping through sync).
+install-manifest>=0.4.0,<0.5
