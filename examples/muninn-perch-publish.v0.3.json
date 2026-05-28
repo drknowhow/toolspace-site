@@ -146,6 +146,18 @@
     }
   },
 
+  "verify": {
+    "sla": {
+      "p50_latency_ms": 3000,
+      "p95_latency_ms": 10000,
+      "error_rate_max": 0.02
+    },
+    "schedule": {
+      "cadence": "manual",
+      "on_install": false
+    }
+  },
+
   "kill_switch": {
     "kind": "manual",
     "instructions_url": "https://github.com/drknowhow/install-manifest-spec/blob/main/examples/muninn-perch-publish.REVOKE.md"

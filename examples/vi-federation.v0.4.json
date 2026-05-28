@@ -71,6 +71,12 @@
     {
       "name": "recall_from_partner",
       "summary": "Fetch a specific fact from the partner agent's memory by key.",
+      "docs": {
+        "goal": "Read a single dot-keyed fact from the federated partner's memory store.",
+        "inputs_brief": "key (dot-notated fact key, e.g. 'user.timezone')",
+        "outputs_brief": "{key, value, found}",
+        "errors_brief": "partner_unreachable, partner_auth_invalid, key_not_found"
+      },
       "invocation": {
         "kind": "subcommand",
         "argv_template": ["recall", "--key", "${input.key}"]
@@ -101,6 +107,12 @@
     {
       "name": "announce_focus",
       "summary": "Tell the partner agent the resource and action this agent is currently working on, so the partner can defer or coordinate.",
+      "docs": {
+        "goal": "Publish this agent's current focus to the partner so it can avoid racing on shared resources.",
+        "inputs_brief": "resource (e.g. 'bluesky:profile'), label (short human description)",
+        "outputs_brief": "{ok: true, focus_id}",
+        "errors_brief": "partner_unreachable, partner_auth_invalid"
+      },
       "invocation": {
         "kind": "subcommand",
         "argv_template": ["focus", "--action", "announce", "--resource", "${input.resource}", "--label", "${input.label}"]
@@ -122,6 +134,12 @@
     {
       "name": "check_partner_focus",
       "summary": "Ask the partner agent what it is currently focused on, optionally filtered by a resource glob.",
+      "docs": {
+        "goal": "Read the partner's current focus before mutating a shared resource, so we don't race.",
+        "inputs_brief": "resource (resource identifier or glob)",
+        "outputs_brief": "{siblings: [{kind, paths, label, since}], count}",
+        "errors_brief": "partner_unreachable, partner_auth_invalid"
+      },
       "invocation": {
         "kind": "subcommand",
         "argv_template": ["focus", "--action", "check", "--resource", "${input.resource}"]
@@ -142,6 +160,12 @@
     {
       "name": "ask_partner",
       "summary": "Pose a high-stakes question to the partner agent for a second opinion. Discretionary; not for every decision.",
+      "docs": {
+        "goal": "Get a second opinion from the partner substrate when the decision is high-stakes and Gemini's distinct training distribution is plausibly useful.",
+        "inputs_brief": "question (string, max 4000 chars)",
+        "outputs_brief": "{reply: string}",
+        "errors_brief": "partner_unreachable, partner_auth_invalid, question_too_long"
+      },
       "invocation": {
         "kind": "subcommand",
         "argv_template": ["ask", "--question", "${input.question}"]
@@ -175,6 +199,17 @@
     "timeout_seconds": 10,
     "success": {
       "exit_code": 0
+    }
+  },
+  "verify": {
+    "sla": {
+      "p50_latency_ms": 200,
+      "p95_latency_ms": 1500,
+      "error_rate_max": 0.01
+    },
+    "schedule": {
+      "cadence": "on-install",
+      "on_install": true
     }
   },
   "kill_switch": {
