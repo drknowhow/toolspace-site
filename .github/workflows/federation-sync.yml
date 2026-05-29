@@ -56,6 +56,15 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
+          # Ensure the auto-sync-federation label exists. `gh label create
+          # --force` is idempotent: it creates the label if missing and
+          # updates color/description if it already exists. Without this,
+          # a missing label aborts `gh pr create` after the branch is
+          # pushed, stranding the diff. (See run 26642509135, 2026-05-29.)
+          gh label create auto-sync-federation \
+            --color BFD4F2 \
+            --description "Auto-generated federation manifest sync" \
+            --force
           BRANCH="auto/federation-sync-$(date -u +%Y%m%d-%H%M%S)"
           git config user.name "yep-federation-bot"
           git config user.email "yep-federation-bot@users.noreply.github.com"
