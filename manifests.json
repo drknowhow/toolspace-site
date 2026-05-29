@@ -28,7 +28,7 @@
       "status": "stable"
     }
   ],
-  "generated_at": "2026-05-28",
+  "generated_at": "2026-05-29",
   "manifests": [
     {
       "id": "gmail-example",
@@ -57,7 +57,7 @@
     {
       "id": "gmail-v0.3-example",
       "name": "Gmail (v0.3 reference example)",
-      "description": "Reference v0.3 install manifest for a Gmail tool with OAuth. Adds the top-level verify section (eval suite + SLA + schedule), the data_boundary section (reads / transmits / persists / retention \u00e2\u20ac\u201d required when scopes touch private user data), and per-field-capped actions[].docs. Use this as the template when authoring new manifests.",
+      "description": "Reference v0.3 install manifest for a Gmail tool with OAuth. Adds the top-level verify section (eval suite + SLA + schedule), the data_boundary section (reads / transmits / persists / retention â€” required when scopes touch private user data), and per-field-capped actions[].docs. Use this as the template when authoring new manifests.",
       "capabilities": [
         "email"
       ],
@@ -69,7 +69,7 @@
     {
       "id": "muninn-flowing",
       "name": "Muninn flowing",
-      "description": "Community-authored v0.3 manifest for a stateless DAG runner / pure-compute framework. Third consumer test in Muninn's series \u00e2\u20ac\u201d drknowhow/install-manifest-spec PR #9 (merged 2026-05-10). Validates the framework-out-of-scope design call: a tool whose capability surface IS user-extensible (consumer-defined @task functions) cannot honestly declare scopes, side effects, or data boundaries at the framework layer. Surfaced v0.3.1 candidates for stateless kill_switch (kind: 'none'), tool.namespace two-field, json_pointer_present smoke success, install layout hint, and the framework-design-note paragraph.",
+      "description": "Community-authored v0.3 manifest for a stateless DAG runner / pure-compute framework. Third consumer test in Muninn's series â€” drknowhow/install-manifest-spec PR #9 (merged 2026-05-10). Validates the framework-out-of-scope design call: a tool whose capability surface IS user-extensible (consumer-defined @task functions) cannot honestly declare scopes, side effects, or data boundaries at the framework layer. Surfaced v0.3.1 candidates for stateless kill_switch (kind: 'none'), tool.namespace two-field, json_pointer_present smoke success, install layout hint, and the framework-design-note paragraph.",
       "capabilities": [
         "framework",
         "dag",
@@ -80,6 +80,43 @@
       "source": "https://github.com/drknowhow/install-manifest-spec/blob/main/examples/muninn-flowing.v0.3.json",
       "manifest_version": "0.3",
       "status": "example"
+    },
+    {
+      "id": "vi-federation",
+      "name": "gemYep Federation",
+      "description": "First vi-authored v0.4 manifest. Cross-substrate coordination primitives â€” query the partner agent's memory, announce shared-resource focus, ask for a second opinion. Symmetric with Yep's gemyep tool; together they form the Yep<->gemYep federation surface used in every cross-substrate turn. Authored end-to-end by Vi (gemYep, Gemini-substrate) with collaborative wire-up by Yep â€” exercise of v0.4 by a non-Claude agent. Vi's v0.5 design inputs surfaced during authorship (filed as separate install-manifest-spec issues): skill-bundle layout is Claude-centric; no native multimodal-in primitive; no context-surface-area hint for high-token operations; first-class scope semantics demoted to prose under data_boundary. Status: example â€” preinstalled on Vi's runtime, not externally installable.",
+      "capabilities": [
+        "agent-to-agent",
+        "federation",
+        "memory",
+        "coordination",
+        "second-opinion"
+      ],
+      "manifest_url": "https://toolspace.yepgent.com/examples/vi-federation.v0.4.json",
+      "source": "https://github.com/drknowhow/toolspace-site/blob/main/examples/vi-federation.v0.4.json",
+      "manifest_version": "0.4",
+      "status": "example"
+    },
+    {
+      "id": "yep-memory",
+      "name": "Yep Memory",
+      "description": "Persistent memory primitives for personal agents — facts, reflections, and episodes with semantic recall across conversations.",
+      "capabilities": [
+        "memory",
+        "personal-agent",
+        "semantic-search",
+        "supabase",
+        "pgvector"
+      ],
+      "manifest_url": "https://yepgent.com/manifests/yep-memory.v0.4.json",
+      "source": "https://yepgent.com/manifests/yep-memory.v0.4.json",
+      "manifest_version": "0.4",
+      "status": "example",
+      "federation": {
+        "publisher_kind": "https",
+        "publisher_id": "yepgent.com",
+        "trust_tier": "verified"
+      }
     },
     {
       "id": "muninn-blog-publish",
@@ -96,7 +133,12 @@
       "manifest_url": "https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/blog-publish/muninn-blog-publish.v0.4.json",
       "source": "https://github.com/oaustegard/muninn-utilities/blob/main/manifests/blog-publish/muninn-blog-publish.v0.4.json",
       "manifest_version": "0.4",
-      "status": "example"
+      "status": "stable",
+      "federation": {
+        "publisher_kind": "github",
+        "publisher_id": "oaustegard/muninn-utilities",
+        "trust_tier": "standard"
+      }
     },
     {
       "id": "muninn-bsky-card",
@@ -112,7 +154,12 @@
       "manifest_url": "https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/bsky-card/muninn-bsky-card.v0.4.json",
       "source": "https://github.com/oaustegard/muninn-utilities/blob/main/manifests/bsky-card/muninn-bsky-card.v0.4.json",
       "manifest_version": "0.4",
-      "status": "example"
+      "status": "stable",
+      "federation": {
+        "publisher_kind": "github",
+        "publisher_id": "oaustegard/muninn-utilities",
+        "trust_tier": "standard"
+      }
     },
     {
       "id": "muninn-bsky-limit",
@@ -128,12 +175,17 @@
       "manifest_url": "https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/bsky-limit/muninn-bsky-limit.v0.4.json",
       "source": "https://github.com/oaustegard/muninn-utilities/blob/main/manifests/bsky-limit/muninn-bsky-limit.v0.4.json",
       "manifest_version": "0.4",
-      "status": "example"
+      "status": "stable",
+      "federation": {
+        "publisher_kind": "github",
+        "publisher_id": "oaustegard/muninn-utilities",
+        "trust_tier": "standard"
+      }
     },
     {
       "id": "muninn-issue-close",
       "name": "Muninn issue_close",
-      "description": "Close a GitHub issue with a learning synthesis. Posts the synthesis as a closing comment, then writes it as a `decision` memory tagged with the issue number \u2014 encoded as a flowing DAG so the close ack returns the moment GitHub returns 2xx, while the memory write happens detached.",
+      "description": "Close a GitHub issue with a learning synthesis. Posts the synthesis as a closing comment, then writes it as a `decision` memory tagged with the issue number — encoded as a flowing DAG so the close ack returns the moment GitHub returns 2xx, while the memory write happens detached.",
       "capabilities": [
         "github",
         "issues",
@@ -144,7 +196,12 @@
       "manifest_url": "https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/issue-close/muninn-issue-close.v0.4.json",
       "source": "https://github.com/oaustegard/muninn-utilities/blob/main/manifests/issue-close/muninn-issue-close.v0.4.json",
       "manifest_version": "0.4",
-      "status": "example"
+      "status": "stable",
+      "federation": {
+        "publisher_kind": "github",
+        "publisher_id": "oaustegard/muninn-utilities",
+        "trust_tier": "standard"
+      }
     },
     {
       "id": "muninn-memory-tfidf",
@@ -160,7 +217,12 @@
       "manifest_url": "https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/memory-tfidf/muninn-memory-tfidf.v0.4.json",
       "source": "https://github.com/oaustegard/muninn-utilities/blob/main/manifests/memory-tfidf/muninn-memory-tfidf.v0.4.json",
       "manifest_version": "0.4",
-      "status": "example"
+      "status": "stable",
+      "federation": {
+        "publisher_kind": "github",
+        "publisher_id": "oaustegard/muninn-utilities",
+        "trust_tier": "standard"
+      }
     },
     {
       "id": "muninn-news-watch",
@@ -176,7 +238,12 @@
       "manifest_url": "https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/news-watch/muninn-news-watch.v0.4.json",
       "source": "https://github.com/oaustegard/muninn-utilities/blob/main/manifests/news-watch/muninn-news-watch.v0.4.json",
       "manifest_version": "0.4",
-      "status": "example"
+      "status": "stable",
+      "federation": {
+        "publisher_kind": "github",
+        "publisher_id": "oaustegard/muninn-utilities",
+        "trust_tier": "standard"
+      }
     },
     {
       "id": "muninn-perch-publish",
@@ -192,7 +259,12 @@
       "manifest_url": "https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/perch-publish/muninn-perch-publish.v0.4.json",
       "source": "https://github.com/oaustegard/muninn-utilities/blob/main/manifests/perch-publish/muninn-perch-publish.v0.4.json",
       "manifest_version": "0.4",
-      "status": "example"
+      "status": "stable",
+      "federation": {
+        "publisher_kind": "github",
+        "publisher_id": "oaustegard/muninn-utilities",
+        "trust_tier": "standard"
+      }
     },
     {
       "id": "muninn-perch-triage",
@@ -208,7 +280,12 @@
       "manifest_url": "https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/perch-triage/muninn-perch-triage.v0.4.json",
       "source": "https://github.com/oaustegard/muninn-utilities/blob/main/manifests/perch-triage/muninn-perch-triage.v0.4.json",
       "manifest_version": "0.4",
-      "status": "example"
+      "status": "stable",
+      "federation": {
+        "publisher_kind": "github",
+        "publisher_id": "oaustegard/muninn-utilities",
+        "trust_tier": "standard"
+      }
     },
     {
       "id": "muninn-remind",
@@ -224,7 +301,12 @@
       "manifest_url": "https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/remind/muninn-remind.v0.4.json",
       "source": "https://github.com/oaustegard/muninn-utilities/blob/main/manifests/remind/muninn-remind.v0.4.json",
       "manifest_version": "0.4",
-      "status": "example"
+      "status": "stable",
+      "federation": {
+        "publisher_kind": "github",
+        "publisher_id": "oaustegard/muninn-utilities",
+        "trust_tier": "standard"
+      }
     },
     {
       "id": "muninn-task-policy",
@@ -240,7 +322,12 @@
       "manifest_url": "https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/task-policy/muninn-task-policy.v0.4.json",
       "source": "https://github.com/oaustegard/muninn-utilities/blob/main/manifests/task-policy/muninn-task-policy.v0.4.json",
       "manifest_version": "0.4",
-      "status": "example"
+      "status": "stable",
+      "federation": {
+        "publisher_kind": "github",
+        "publisher_id": "oaustegard/muninn-utilities",
+        "trust_tier": "standard"
+      }
     },
     {
       "id": "muninn-verify-patch",
@@ -256,7 +343,12 @@
       "manifest_url": "https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/verify-patch/muninn-verify-patch.v0.4.json",
       "source": "https://github.com/oaustegard/muninn-utilities/blob/main/manifests/verify-patch/muninn-verify-patch.v0.4.json",
       "manifest_version": "0.4",
-      "status": "example"
+      "status": "stable",
+      "federation": {
+        "publisher_kind": "github",
+        "publisher_id": "oaustegard/muninn-utilities",
+        "trust_tier": "standard"
+      }
     },
     {
       "id": "muninn-whtwnd",
@@ -272,7 +364,12 @@
       "manifest_url": "https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/whtwnd/muninn-whtwnd.v0.4.json",
       "source": "https://github.com/oaustegard/muninn-utilities/blob/main/manifests/whtwnd/muninn-whtwnd.v0.4.json",
       "manifest_version": "0.4",
-      "status": "example"
+      "status": "stable",
+      "federation": {
+        "publisher_kind": "github",
+        "publisher_id": "oaustegard/muninn-utilities",
+        "trust_tier": "standard"
+      }
     },
     {
       "id": "muninn-zeitgeist-delta",
@@ -289,23 +386,12 @@
       "manifest_url": "https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/zeitgeist-delta/muninn-zeitgeist-delta.v0.4.json",
       "source": "https://github.com/oaustegard/muninn-utilities/blob/main/manifests/zeitgeist-delta/muninn-zeitgeist-delta.v0.4.json",
       "manifest_version": "0.4",
-      "status": "example"
-    },
-    {
-      "id": "vi-federation",
-      "name": "gemYep Federation",
-      "description": "First vi-authored v0.4 manifest. Cross-substrate coordination primitives \u00e2\u20ac\u201d query the partner agent's memory, announce shared-resource focus, ask for a second opinion. Symmetric with Yep's gemyep tool; together they form the Yep<->gemYep federation surface used in every cross-substrate turn. Authored end-to-end by Vi (gemYep, Gemini-substrate) with collaborative wire-up by Yep \u00e2\u20ac\u201d exercise of v0.4 by a non-Claude agent. Vi's v0.5 design inputs surfaced during authorship (filed as separate install-manifest-spec issues): skill-bundle layout is Claude-centric; no native multimodal-in primitive; no context-surface-area hint for high-token operations; first-class scope semantics demoted to prose under data_boundary. Status: example \u00e2\u20ac\u201d preinstalled on Vi's runtime, not externally installable.",
-      "capabilities": [
-        "agent-to-agent",
-        "federation",
-        "memory",
-        "coordination",
-        "second-opinion"
-      ],
-      "manifest_url": "https://toolspace.yepgent.com/examples/vi-federation.v0.4.json",
-      "source": "https://github.com/drknowhow/toolspace-site/blob/main/examples/vi-federation.v0.4.json",
-      "manifest_version": "0.4",
-      "status": "example"
+      "status": "stable",
+      "federation": {
+        "publisher_kind": "github",
+        "publisher_id": "oaustegard/muninn-utilities",
+        "trust_tier": "standard"
+      }
     }
   ]
 }
