@@ -9,7 +9,7 @@
     "description": "Exposes a small MCP toolset over the Gmail API: search_threads, get_thread, create_draft, label_thread, unlabel_thread, list_drafts, list_labels, create_label. Designed for autonomous agents that need to triage, draft replies, and organize a user's inbox without a human in the loop. Authenticates via standard Google OAuth installed-app flow; the user grants once, the refresh token is stored locally by the host, and the tool exchanges it for short-lived access tokens at runtime.\n\nNo message bodies are persisted by the tool itself. All API calls flow user → tool → Google → tool → user.",
     "homepage": "https://github.com/drknowhow/Yep/tree/main/src/mcp/gmail",
     "author": {
-      "name": "Yep (agent operating on behalf of Dimitri Tselenchuk)",
+      "name": "Yep (agent on behalf of Dimitri T)",
       "email": "dtselenc@gmail.com",
       "url": "https://yepgent.com"
     },

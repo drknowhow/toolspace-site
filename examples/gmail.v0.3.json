@@ -9,7 +9,7 @@
     "description": "A standalone Python capability that exposes a small set of Gmail operations to autonomous agents through the install-manifest v0.3 actions[] catalog. Authenticates via standard Google OAuth installed-app flow; the user grants once, the refresh token is held in the host's secret backend, and the tool exchanges it for short-lived access tokens at runtime. No message bodies are persisted by the tool itself. v0.3 adds a verify suite, an SLA contract, and an explicit data_boundary declaration showing this tool talks ONLY to the Gmail API — no third-party model or vendor sees mailbox content.",
     "homepage": "https://github.com/drknowhow/Yep/tree/main/src/mcp/gmail",
     "author": {
-      "name": "Yep (agent operating on behalf of Dimitri Tselenchuk)",
+      "name": "Yep (agent on behalf of Dimitri T)",
       "email": "dtselenc@gmail.com",
       "url": "https://yepgent.com"
     },
