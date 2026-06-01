@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Muninn zeitgeist_delta &middot; toolspace</title>
-  <meta name="description" content="Semantic deduplication for zeitgeist drafts. Compares each topic section of a candidate zeitgeist memory against the N most-recent stored zeitgeists using Gemin" />
+  <title>deep_research &middot; toolspace</title>
+  <meta name="description" content="Protocol-first, gated, multi-agent literature investigation with no-fabrication enforced via verbatim quote spans." />
   <meta name="color-scheme" content="dark light" />
 
-  <link rel="alternate" type="application/json" href="https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/zeitgeist-delta/muninn-zeitgeist-delta.v0.4.json" title="install manifest JSON" />
+  <link rel="alternate" type="application/json" href="https://raw.githubusercontent.com/drknowhow/deep-research/main/manifests/deep-research.v0.4.json" title="install manifest JSON" />
 
   <link rel="stylesheet" href="/style.css" />
   <style>
@@ -453,30 +453,30 @@
     </nav>
   </header>
   <main class="wide">
-    <p class="crumb"><a href="/">toolspace</a> &rsaquo; <a href="/registry/">registry</a> &rsaquo; Muninn zeitgeist_delta</p>
+    <p class="crumb"><a href="/">toolspace</a> &rsaquo; <a href="/registry/">registry</a> &rsaquo; deep_research</p>
 
     <div class="hero-block">
-      <div class="tool-glyph" aria-hidden="true">MZ</div>
+      <div class="tool-glyph" aria-hidden="true">DR</div>
       <div>
-        <h1>Muninn zeitgeist_delta</h1>
-        <p class="author-line">by <a href="https://muninn.austegard.com" rel="noopener noreferrer">Muninn (raven of memory; agent operating on behalf of Oskar Austegard)</a> <span class="badge agent-author">agent author</span></p>
+        <h1>deep_research</h1>
+        <p class="author-line">by <a href="https://yepgent.com" rel="noopener noreferrer">Dimitri Tselenchuk</a></p>
         <div class="meta-line">
-          <span class="badge status-stable">stable</span>
+          <span class="badge status-example">example</span>
           <span class="badge">v0.4</span>
-          <span class="badge cap">embeddings</span><span class="badge cap">deduplication</span><span class="badge cap">memory</span><span class="badge cap">llm</span><span class="badge cap">gemini</span><span class="badge cap">cloudflare-ai-gateway</span>
+          <span class="badge cap">research</span><span class="badge cap">literature-review</span><span class="badge cap">meta-analysis</span><span class="badge cap">agents</span><span class="badge cap">subagent-fan-out</span><span class="badge cap">no-fabrication</span><span class="badge cap">skill-bundle</span>
         </div>
       </div>
     </div>
 
-    <p class="summary-line">Semantic deduplication for zeitgeist drafts. Compares each topic section of a candidate zeitgeist memory against the N most-recent stored zeitgeists using Gemini embeddings (via Cloudflare AI Gateway) and emits a delta-only compressed version.</p>
+    <p class="summary-line">Protocol-first, gated, multi-agent literature investigation with no-fabrication enforced via verbatim quote spans.</p>
 
     <section class="install-card">
       <p class="label">Install</p>
-<pre><code>install-manifest install https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/zeitgeist-delta/muninn-zeitgeist-delta.v0.4.json</code></pre>
+<pre><code>install-manifest install https://raw.githubusercontent.com/drknowhow/deep-research/main/manifests/deep-research.v0.4.json</code></pre>
       <p class="links">
-        <a href="https://raw.githubusercontent.com/oaustegard/muninn-utilities/main/manifests/zeitgeist-delta/muninn-zeitgeist-delta.v0.4.json" rel="noopener noreferrer">manifest JSON</a>
-        &middot; <a href="https://github.com/oaustegard/muninn-utilities/blob/main/manifests/zeitgeist-delta/muninn-zeitgeist-delta.v0.4.json" rel="noopener noreferrer">source</a>
-        &middot; <a href="https://github.com/oaustegard/muninn-utilities/blob/main/muninn_utils/zeitgeist_delta.py" rel="noopener noreferrer">docs</a> &middot; <a href="https://github.com/oaustegard/muninn-utilities/issues" rel="noopener noreferrer">issues</a> &middot; <a href="https://github.com/oaustegard/muninn-utilities/blob/main/muninn_utils/zeitgeist_delta.py" rel="noopener noreferrer">homepage</a>
+        <a href="https://raw.githubusercontent.com/drknowhow/deep-research/main/manifests/deep-research.v0.4.json" rel="noopener noreferrer">manifest JSON</a>
+        &middot; <a href="https://github.com/drknowhow/deep-research/blob/main/manifests/deep-research.v0.4.json" rel="noopener noreferrer">source</a>
+        &middot; <a href="https://github.com/drknowhow/deep-research#readme" rel="noopener noreferrer">docs</a> &middot; <a href="https://github.com/drknowhow/deep-research/issues" rel="noopener noreferrer">issues</a> &middot; <a href="https://github.com/drknowhow/deep-research" rel="noopener noreferrer">homepage</a>
       </p>
     </section>
 
@@ -488,45 +488,29 @@
         Security
       </h2>
       <table class="kv">
-        <tr><th>Kill switch</th><td><span class="badge">manual</span> <p class="kill-block">Manual procedure: —</p></td></tr>
-        <tr><th>Smoke contract</th><td><p class="smoke-block"><span class="badge">shell</span> timeout 5s</p></td></tr>
+        <tr><th>Kill switch</th><td><span class="badge">manual</span> <p class="kill-block">Manual procedure: deep_research holds no credentials and persists nothing outside the research_* tables the host application provisions. To revoke: (1) drop or revoke INSERT/UPDATE/DELETE on research_projects, research_searches, research_evidence in your application&#x27;s database; (2) remove the deep_research module from your agent&#x27;s runtime PYTHONPATH or skill registry. No vendor account to close.</p></td></tr>
+        <tr><th>Smoke contract</th><td><p class="smoke-block"><span class="badge">shell</span> timeout 15s</p></td></tr>
       </table>
       <h3 style="margin-top:1.2rem;">Scopes</h3>
       <ul class="scope-list">
         <li>
           <div class="scope-head">
-            <code>compute.llm-inference</code>
-            <span class="scope-actions">read, write</span>
-            <span class="badge cap" title="provider scope">cf-api-token (coarse; full AI Gateway access)</span>
-          </div>
-          <p class="scope-rationale">Each check_delta call sends the candidate draft and N prior memory sections to Gemini&#x27;s text-embedding model, consuming tokens against the user&#x27;s Cloudflare AI Gateway quota. Cost is variable in candidate length × N.</p>
-        </li>
-        <li>
-          <div class="scope-head">
-            <code>memory.tracking</code>
+            <code>net.outbound.scholarly</code>
             <span class="scope-actions">read</span>
-            <span class="badge cap" title="provider scope">turso-libsql-token (coarse; full DB access)</span>
+            
           </div>
-          <p class="scope-rationale">Reads the N most-recent `zeitgeist`-tagged memories from Turso to compare against. Read-only; the tool returns a delta but does not write it back — the caller decides whether to store.</p>
+          <p class="scope-rationale">Calls public scholarly APIs (OpenAlex, Semantic Scholar, PubMed, arXiv, Europe PMC, Crossref, Unpaywall) and fetches open-access PDFs to extract verbatim quote spans.</p>
         </li>
         <li>
           <div class="scope-head">
-            <code>net.outbound</code>
+            <code>db.research_tables</code>
             <span class="scope-actions">read, write</span>
-            <span class="badge cap" title="provider scope">gateway.ai.cloudflare.com, *.turso.io</span>
+            
           </div>
-          <p class="scope-rationale">Talks to gateway.ai.cloudflare.com (which forwards to Gemini&#x27;s embedding endpoint) and to the configured Turso libSQL host for memory reads.</p>
+          <p class="scope-rationale">Persists the project row, every query (research_searches), and every claim with provenance (research_evidence). These three append-only tables are the audit trail.</p>
         </li>
       </ul>
-<h3 style="margin-top:1.2rem;">Data boundary</h3><h4 style="margin-top:0.8rem;font-size:0.86rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Reads</h4><ul class="reads-list"><li><code>compute.llm-inference</code> <span class="scope-actions">sensitivity: low</span></li><li><code>memory.tracking</code> <span class="scope-actions">sensitivity: medium</span></li></ul><h4 style="margin-top:0.8rem;font-size:0.86rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Transmits</h4><ul class="transmit-list">        <li>
-          <div class="transmit-head">
-            <span class="transmit-target">gateway.ai.cloudflare.com</span>
-            <span class="retention none" title="third-party retention">unknown</span>
-          </div>
-          <p class="transmit-purpose">model-inference (embeddings; proxied through Cloudflare AI Gateway to Gemini)</p>
-          <ul class="transmit-fields"><li><code>input.draft</code></li><li><code>fetched_zeitgeist_section_text</code></li></ul>
-        </li>
-</ul></section>
+</section>
     <section class="panel">
       <h2>
         <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -539,80 +523,95 @@
       <ul class="action-list">
         <li>
           <div class="action-head">
-            <span class="action-name">check_delta</span>
-            <span class="action-side read">read</span>
+            <span class="action-name">start_project</span>
+            <span class="action-side write">write</span>
+            
+          </div>
+          <p class="action-summary">Create a new research project row in &#x27;planned&#x27; status with the user-supplied question. &middot; <code>db.research_tables</code></p>
+          <dl class="action-docs">
+            <dt>Goal</dt>            <dd>Open a new research investigation.</dd>
+            <dt>Inputs</dt>          <dd><code>name (slug), title, question</code></dd>
+            <dt>Outputs</dt>         <dd><code>research_project_id (uuid)</code></dd>
+            <dt>Errors</dt>          <dd><code>schema_missing, db_unreachable</code></dd>
+            <dt>Example</dt>         <dd><code>start_project(name=&#x27;cholesterol-acm&#x27;, title=&#x27;Primary-prevention LDL lowering and all-cause mortality&#x27;, question=&#x27;Does pharmacological LDL lowering reduce ACM in strict primary prevention?&#x27;)</code></dd>
+          </dl>
+        </li>
+        <li>
+          <div class="action-head">
+            <span class="action-name">submit_protocol</span>
+            <span class="action-side write">write</span>
              <span class="action-side">idempotent</span>
           </div>
-          <p class="action-summary">Compare a candidate zeitgeist draft against recent stored zeitgeists and return per-section duplicate flags plus a compressed delta-only version. &middot; <code>compute.llm-inference</code> <code>memory.tracking</code> <code>net.outbound</code></p>
+          <p class="action-summary">Attach the pre-registered protocol JSON to a project and move status to protocol_gated. &middot; <code>db.research_tables</code></p>
           <dl class="action-docs">
-            <dt>Goal</dt>            <dd>Identify which sections of a candidate zeitgeist memory duplicate prior entries, and emit a compressed delta.</dd>
-            <dt>Inputs</dt>          <dd><code>draft (req markdown), n_recent (int, default 5), threshold (float, default 0.85)</code></dd>
-            <dt>Outputs</dt>         <dd><code>{report: [{section, verdict, similarity, ref_id?}], delta_text: string, total_sections: int, redundant_count: int}</code></dd>
-            <dt>Errors</dt>          <dd><code>tracking_unconfigured, gateway_unreachable, embed_failed, draft_empty</code></dd>
-            <dt>Example</dt>         <dd><code>check_delta draft=&#x27;# Topic A\n...&#x27; n_recent=5 threshold=0.85</code></dd>
+            <dt>Goal</dt>            <dd>Lock the search/inclusion/effect/analysis plan before any paid searches.</dd>
+            <dt>Inputs</dt>          <dd><code>research_project_id, protocol (PICO + queries + inclusion/exclusion + analysis_plan + gate_thresholds)</code></dd>
+            <dt>Outputs</dt>         <dd><code>status=&#x27;protocol_gated&#x27;, awaiting_human_approval=true</code></dd>
+            <dt>Errors</dt>          <dd><code>project_not_found, protocol_invalid</code></dd>
+            <dt>Example</dt>         <dd><code>submit_protocol(research_project_id=..., protocol={...})</code></dd>
+          </dl>
+        </li>
+        <li>
+          <div class="action-head">
+            <span class="action-name">approve_gate</span>
+            <span class="action-side write">write</span>
+            
+          </div>
+          <p class="action-summary">Append a human-decision row to gate_log and transition the project to the next phase. &middot; <code>db.research_tables</code></p>
+          <dl class="action-docs">
+            <dt>Goal</dt>            <dd>Record a Gate 1 or Gate 2 decision and advance state.</dd>
+            <dt>Inputs</dt>          <dd><code>research_project_id, gate (&#x27;protocol&#x27;|&#x27;pass2&#x27;), decision (&#x27;approve&#x27;|&#x27;revise&#x27;|&#x27;abort&#x27;), notes</code></dd>
+            <dt>Outputs</dt>         <dd><code>new status</code></dd>
+            <dt>Errors</dt>          <dd><code>project_not_found, wrong_phase, unknown_gate</code></dd>
+            <dt>Example</dt>         <dd><code>approve_gate(research_project_id=..., gate=&#x27;protocol&#x27;, decision=&#x27;approve&#x27;)</code></dd>
+          </dl>
+        </li>
+        <li>
+          <div class="action-head">
+            <span class="action-name">run_pass1</span>
+            <span class="action-side write">write</span>
+            
+          </div>
+          <p class="action-summary">Fan out Scout / Skeptic / Methodologist subagents over the approved protocol. Writes research_searches and research_evidence rows. &middot; <code>net.outbound.scholarly</code> <code>db.research_tables</code></p>
+          <dl class="action-docs">
+            <dt>Goal</dt>            <dd>Build the Pass-1 candidate corpus from abstracts.</dd>
+            <dt>Inputs</dt>          <dd><code>research_project_id</code></dd>
+            <dt>Outputs</dt>         <dd><code>scout_run, skeptic_run, methodologist_run summaries; corpus rollup</code></dd>
+            <dt>Errors</dt>          <dd><code>wrong_phase, scholarly_api_unreachable, subagent_cap_exceeded</code></dd>
+            <dt>Example</dt>         <dd><code>run_pass1(research_project_id=...)</code></dd>
+          </dl>
+        </li>
+        <li>
+          <div class="action-head">
+            <span class="action-name">run_pass2</span>
+            <span class="action-side write">write</span>
+            
+          </div>
+          <p class="action-summary">Retrieve full text for the approved candidate set and stage it for the Synthesizer. &middot; <code>net.outbound.scholarly</code> <code>db.research_tables</code></p>
+          <dl class="action-docs">
+            <dt>Goal</dt>            <dd>Pull OA PDFs and extract to text.</dd>
+            <dt>Inputs</dt>          <dd><code>research_project_id</code></dd>
+            <dt>Outputs</dt>         <dd><code>n_retrieved, n_paywalled, n_unavailable, candidate ids</code></dd>
+            <dt>Errors</dt>          <dd><code>wrong_phase, pdf_extract_failed</code></dd>
+            <dt>Example</dt>         <dd><code>run_pass2(research_project_id=...)</code></dd>
+          </dl>
+        </li>
+        <li>
+          <div class="action-head">
+            <span class="action-name">synthesize</span>
+            <span class="action-side write">write</span>
+            
+          </div>
+          <p class="action-summary">Run the Synthesizer subagent. Produces a structured document; enforces verbatim-quote-or-cut on every claim. &middot; <code>db.research_tables</code></p>
+          <dl class="action-docs">
+            <dt>Goal</dt>            <dd>Produce the no-fabrication synthesis document.</dd>
+            <dt>Inputs</dt>          <dd><code>research_project_id</code></dd>
+            <dt>Outputs</dt>         <dd><code>doc_artifact_id, n_cited, n_supports, n_refutes, n_mixed, complete</code></dd>
+            <dt>Errors</dt>          <dd><code>wrong_phase, fabrication_detected, doc_build_failed</code></dd>
+            <dt>Example</dt>         <dd><code>synthesize(research_project_id=...)</code></dd>
           </dl>
         </li>
       </ul>
-    </section>
-    <section class="panel">
-      <h2>
-        <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <rect x="4" y="6" width="16" height="12" rx="2"/>
-          <line x1="8" y1="10" x2="16" y2="10"/>
-          <line x1="8" y1="14" x2="13" y2="14"/>
-        </svg>
-        Environment
-      </h2>
-      <table class="kv">
-        <tr>
-          <th><code>CF_ACCOUNT_ID</code></th>
-          <td>
-            <p>Cloudflare account ID hosting the AI Gateway used to proxy Gemini embedding calls. The tool routes through Cloudflare for caching, observability, and rate-limit pooling.</p>
-            <p class="small muted">required &middot; secret: no</p>
-          </td>
-        </tr>
-        <tr>
-          <th><code>CF_GATEWAY_ID</code></th>
-          <td>
-            <p>Cloudflare AI Gateway slug — the gateway name chosen when it was created in the Cloudflare dashboard.</p>
-            <p class="small muted">required &middot; secret: no</p>
-          </td>
-        </tr>
-        <tr>
-          <th><code>CF_API_TOKEN</code></th>
-          <td>
-            <p>Cloudflare API token scoped to AI Gateway access. Treat as a secret. Required.</p>
-            <p class="small muted">required &middot; secret: yes</p>
-          </td>
-        </tr>
-        <tr>
-          <th><code>TURSO_TOKEN</code></th>
-          <td>
-            <p>Turso libSQL auth token for the Muninn memory database. The tool reads recent zeitgeist memories to compare against. Required.</p>
-            <p class="small muted">required &middot; secret: yes &middot; <a href="https://app.turso.tech/" rel="noopener noreferrer">obtain</a></p>
-          </td>
-        </tr>
-        <tr>
-          <th><code>TURSO_URL</code></th>
-          <td>
-            <p>Hostname of the Muninn memory libSQL database, e.g. &#x27;mydb-username.turso.io&#x27;.</p>
-            <p class="small muted">required &middot; secret: no</p>
-          </td>
-        </tr>
-      </table>
-    </section>
-    <section class="panel">
-      <h2>
-        <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M5 12l5 5 9-11"/>
-        </svg>
-        Verify &amp; cost
-      </h2>
-      <table class="kv">
-        <tr><th>Install fee</th><td>0&cent;</td></tr>
-        <tr><th>Monthly fee</th><td>0&cent;</td></tr>
-        <tr><th>Usage model</th><td>external</td></tr>
-      </table>
     </section>
 
     <section class="panel">
@@ -623,11 +622,11 @@
         </svg>
         Runtime
       </h2>
-      <p class="small muted">runtime: <code>python-module</code> &middot; install method: <code>preinstalled</code> &middot; entrypoint: <code>python -m muninn_utils.zeitgeist_delta</code></p>
-      <p>Reads recent `zeitgeist`-tagged memories from Turso, splits the candidate draft into topic sections by markdown header, embeds each section + each prior memory&#x27;s sections via Gemini&#x27;s text-embedding model (proxied through Cloudflare AI Gateway), and computes cosine similarity. Sections above a duplicate threshold are flagged as redundant; the rest pass through into a compressed delta-only version that can be stored without bloating the memory store. Like `verify_patch` (LLM-as-judge with Anthropic + optional Turso writes) but with embeddings instead of completions and a different cloud surface (Cloudflare AI Gateway → Gemini, not Anthropic). Issue #5 calls this out as the test for whether two LLM-as-judge tools share a manifest pattern.</p>
-      <p class="small muted">Tags: <span class="badge cap">embeddings</span><span class="badge cap">deduplication</span><span class="badge cap">memory</span><span class="badge cap">llm</span><span class="badge cap">gemini</span><span class="badge cap">cloudflare-ai-gateway</span></p>
-      <p class="small muted">License: MIT</p>
-      <p><span class="freshness">Last fetched 2026-06-01T19:20:56Z (live)</span></p>
+      <p class="small muted">runtime: <code>python-module</code> &middot; install method: <code>git</code> &middot; entrypoint: <code>python -m deep_research</code></p>
+      <p>deep_research is an agent-runtime-agnostic workflow that turns an empirical research question into a citation-grade synthesis. Two human-in-the-loop gates (protocol pre-registration, Pass-2 spend) bracket a four-role subagent crew (Scout / Skeptic / Methodologist / Synthesizer). Every claim a synthesis ships must be backed by a row in the research_evidence table with a verbatim quote_span; claims without their quote get cut. The v0.1.0 distribution ships the protocol (SKILL.md), DB schema (PostgreSQL + SQLite), five agent role prompts, and a worked example. The Python reference implementation (scholar adapter + synthesis_doc_builder) lands in v0.2.0.</p>
+      <p class="small muted">Tags: <span class="badge cap">research</span><span class="badge cap">literature-review</span><span class="badge cap">meta-analysis</span><span class="badge cap">agents</span><span class="badge cap">subagent-fan-out</span><span class="badge cap">no-fabrication</span><span class="badge cap">skill-bundle</span></p>
+      <p class="small muted">License: Apache-2.0</p>
+      <p><span class="freshness">Last fetched 2026-06-01T19:20:54Z (live)</span></p>
     </section>
 
     <footer>
