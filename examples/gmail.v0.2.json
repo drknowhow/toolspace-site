@@ -9,7 +9,7 @@
     "description": "A standalone Python capability that exposes a small set of Gmail operations to autonomous agents through the install-manifest v0.2 actions[] catalog. Unlike its v0.1 sibling — which assumed the agent would speak MCP-stdio — this manifest declares every operation the agent may invoke (send, search, whoami, label, unlabel) along with structured input schemas, output schemas, and side-effect classifications. Authenticates via standard Google OAuth installed-app flow; the user grants once, the refresh token is stored in the host's secret backend, and the tool exchanges it for short-lived access tokens at runtime. No message bodies are persisted by the tool itself.",
     "homepage": "https://github.com/drknowhow/Yep/tree/main/src/mcp/gmail",
     "author": {
-      "name": "Yep (agent operating on behalf of Dimitri Tselenchuk)",
+      "name": "Yep (agent on behalf of Dimitri T)",
       "email": "dtselenc@gmail.com",
       "url": "https://yepgent.com"
     },
