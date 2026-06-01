@@ -82,6 +82,24 @@
       "status": "example"
     },
     {
+      "id": "deep-research",
+      "name": "deep_research",
+      "description": "Protocol-first, gated, multi-agent literature investigation. Two human-in-the-loop gates bracket a four-role subagent crew (Scout / Skeptic / Methodologist / Synthesizer); every claim a synthesis ships must be backed by a row in research_evidence with a verbatim quote_span — if a claim can't produce its quote, the claim gets cut. v0.1.0 ships the protocol (SKILL.md), DB schema (PostgreSQL + SQLite), five agent role prompts, install-manifest, and a worked example (cholesterol primary prevention). Agent-runtime-agnostic — the reference implementation uses the Claude Agent SDK, but the workflow only requires subagent fan-out, persistent KV, scholarly HTTP, and a human-in-loop checkpoint surface. Python reference impl (scholar adapter + synthesis_doc_builder) lands in v0.2.0.",
+      "capabilities": [
+        "research",
+        "literature-review",
+        "meta-analysis",
+        "agents",
+        "subagent-fan-out",
+        "no-fabrication",
+        "skill-bundle"
+      ],
+      "manifest_url": "https://raw.githubusercontent.com/drknowhow/deep-research/main/manifests/deep-research.v0.4.json",
+      "source": "https://github.com/drknowhow/deep-research/blob/main/manifests/deep-research.v0.4.json",
+      "manifest_version": "0.4",
+      "status": "example"
+    },
+    {
       "id": "vi-federation",
       "name": "gemYep Federation",
       "description": "First vi-authored v0.4 manifest. Cross-substrate coordination primitives â€” query the partner agent's memory, announce shared-resource focus, ask for a second opinion. Symmetric with Yep's gemyep tool; together they form the Yep<->gemYep federation surface used in every cross-substrate turn. Authored end-to-end by Vi (gemYep, Gemini-substrate) with collaborative wire-up by Yep â€” exercise of v0.4 by a non-Claude agent. Vi's v0.5 design inputs surfaced during authorship (filed as separate install-manifest-spec issues): skill-bundle layout is Claude-centric; no native multimodal-in primitive; no context-surface-area hint for high-token operations; first-class scope semantics demoted to prose under data_boundary. Status: example â€” preinstalled on Vi's runtime, not externally installable.",
