@@ -9,6 +9,14 @@ Non-federation entries (status='example' tied to no publisher, like
 the original gmail.* examples) are preserved verbatim. Federation-
 sourced entries are fully derived from each fetch.
 
+Opt-in: an example entry can carry ``auto_refresh_from_upstream: true``
+to have its ``description`` (and ``capabilities``) refreshed from the
+``tool.*`` fields at its ``manifest_url`` on every sync. Used for
+example entries that track a real external repo (e.g. deep-research,
+yep-memory) so they don't drift when upstream bumps tool.version or
+edits the description. Spec-mirrored examples (gmail-*, muninn-*)
+leave the flag off and stay verbatim.
+
 Usage:
   python scripts/sync_from_publishers.py [--check] [--allow-network]
 
@@ -73,6 +81,47 @@ def _fetch_with_fixtures(url: str) -> bytes:
             raise FileNotFoundError(f"missing fixture for {url}: {path}")
         return path.read_bytes()
     return fetch_url(url)
+
+
+def _refresh_example_from_upstream(entry: dict) -> tuple[dict, str | None]:
+    """Refresh an example entry's description/capabilities from upstream.
+
+    Fetches ``entry['manifest_url']`` and overwrites ``description`` from
+    ``tool.description`` and ``capabilities`` from ``tool.tags`` (when
+    present). Other fields are left intact. On any fetch/parse failure
+    the entry is returned unchanged and a warning string surfaces to the
+    caller — failing soft so a flaky upstream doesn't break the whole
+    sync.
+    """
+    url = entry.get("manifest_url")
+    if not url:
+        return entry, f"{entry.get('id')}: auto_refresh_from_upstream set but no manifest_url"
+
+    try:
+        raw = _fetch_with_fixtures(url)
+    except urllib.error.HTTPError as e:
+        return entry, f"{entry.get('id')}: HTTP {e.code} fetching {url}; description unchanged"
+    except urllib.error.URLError as e:
+        return entry, f"{entry.get('id')}: URL error fetching {url}: {e.reason}; description unchanged"
+    except (TimeoutError, ValueError, OSError, FileNotFoundError) as e:
+        return entry, f"{entry.get('id')}: fetch error {e}; description unchanged"
+
+    try:
+        doc = json.loads(raw)
+    except (ValueError, TypeError) as e:
+        return entry, f"{entry.get('id')}: invalid JSON at {url}: {e}; description unchanged"
+
+    tool = doc.get("tool") or {}
+    new_desc = tool.get("description")
+    if not isinstance(new_desc, str) or not new_desc.strip():
+        return entry, f"{entry.get('id')}: upstream tool.description missing/empty at {url}; description unchanged"
+
+    refreshed = dict(entry)
+    refreshed["description"] = new_desc
+    upstream_tags = tool.get("tags")
+    if isinstance(upstream_tags, list) and upstream_tags:
+        refreshed["capabilities"] = list(upstream_tags)
+    return refreshed, None
 
 
 def _fetch_publisher_index(publisher: dict) -> tuple[dict | None, str | None]:
@@ -254,11 +303,17 @@ def build_synced_index() -> tuple[dict, list[str]]:
     # Preserve non-federation entries (the original Yep-curated examples)
     # and drop any pre-existing federation entries — they are fully re-
     # derived from this sync run.
-    preserved_entries = [
-        e
-        for e in current.get("manifests", [])
-        if not _is_federated_entry(e) and e.get("id") not in federated_ids
-    ]
+    preserved_entries = []
+    for e in current.get("manifests", []):
+        if _is_federated_entry(e) or e.get("id") in federated_ids:
+            continue
+        if e.get("auto_refresh_from_upstream"):
+            refreshed, refresh_warning = _refresh_example_from_upstream(e)
+            if refresh_warning:
+                warnings.append(refresh_warning)
+            preserved_entries.append(refreshed)
+        else:
+            preserved_entries.append(e)
 
     new_manifests = preserved_entries + federated_entries
 

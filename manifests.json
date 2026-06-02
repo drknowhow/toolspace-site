@@ -84,7 +84,7 @@
     {
       "id": "deep-research",
       "name": "deep_research",
-      "description": "Protocol-first, gated, multi-agent literature investigation. Two human-in-the-loop gates bracket a four-role subagent crew (Scout / Skeptic / Methodologist / Synthesizer); every claim a synthesis ships must be backed by a row in research_evidence with a verbatim quote_span — if a claim can't produce its quote, the claim gets cut. v0.1.0 shipped the protocol (SKILL.md), DB schema (PostgreSQL + SQLite), five agent role prompts, install-manifest, and a worked example (cholesterol primary prevention). v0.2.0 adds the Python reference implementation: a stdlib-urllib scholar adapter (OpenAlex / Semantic Scholar / PubMed / arXiv / Europe PMC / Crossref / Unpaywall) and a python-docx + matplotlib synthesis builder with pluggable upload. Agent-runtime-agnostic; core stays stdlib-only, the docx builder is gated behind the optional [viz] extra.",
+      "description": "deep_research is an agent-runtime-agnostic workflow that turns an empirical research question into a citation-grade synthesis. Two human-in-the-loop gates (protocol pre-registration, Pass-2 spend) bracket a four-role subagent crew (Scout / Skeptic / Methodologist / Synthesizer). Every claim a synthesis ships must be backed by a row in the research_evidence table with a verbatim quote_span; claims without their quote get cut. v0.2.0 adds the Python reference implementation: a stdlib-urllib scholar adapter (OpenAlex / Semantic Scholar / PubMed / arXiv / Europe PMC / Crossref / Unpaywall) and a python-docx + matplotlib synthesis builder with pluggable upload. Core stays stdlib-only; the docx builder is gated behind the optional `[viz]` extra.",
       "capabilities": [
         "research",
         "literature-review",
@@ -97,7 +97,8 @@
       "manifest_url": "https://raw.githubusercontent.com/drknowhow/deep-research/main/manifests/deep-research.v0.4.json",
       "source": "https://github.com/drknowhow/deep-research/blob/main/manifests/deep-research.v0.4.json",
       "manifest_version": "0.4",
-      "status": "example"
+      "status": "example",
+      "auto_refresh_from_upstream": true
     },
     {
       "id": "vi-federation",
@@ -118,7 +119,7 @@
     {
       "id": "yep-memory",
       "name": "Yep Memory",
-      "description": "Persistent memory primitives for personal agents — facts, reflections, and episodes with semantic recall across conversations.",
+      "description": "Yep's memory subsystem exposes three orthogonal stores: facts (key-value, upsert), reflections (free-form learned generalizations), and episodes (event log with semantic search). Used internally by Yep and surfaced here as the canonical example for any personal-agent stack that wants long-running cross-session memory. Backed by Supabase + pgvector; reflection writes are deliberate and sparse, not autopilot. Published as the first dogfood entry on drknowhow/Yep to validate the federation pipeline end-to-end against toolspace.yepgent.com.",
       "capabilities": [
         "memory",
         "personal-agent",
@@ -134,7 +135,8 @@
         "publisher_kind": "https",
         "publisher_id": "yepgent.com",
         "trust_tier": "verified"
-      }
+      },
+      "auto_refresh_from_upstream": true
     },
     {
       "id": "muninn-blog-publish",
