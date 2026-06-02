@@ -92,6 +92,33 @@ jobs:
       - name: Run federation pipeline tests
         run: python -m pytest tests/test_federation_pipeline.py -v
 
+  homepage-version-guard:
+    name: homepage advertises spec's current version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout toolspace-site
+        uses: actions/checkout@v4
+        with:
+          path: toolspace-site
+
+      - name: Checkout install-manifest-spec
+        uses: actions/checkout@v4
+        with:
+          repository: drknowhow/install-manifest-spec
+          path: install-manifest-spec
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pytest
+        run: python -m pip install --upgrade pip pytest
+
+      - name: Run homepage version-drift tests
+        working-directory: toolspace-site
+        run: python -m pytest tests/test_homepage_version_guard.py -v
+
   manifest-lint:
     name: install-manifest lint (advisory)
     runs-on: ubuntu-latest
