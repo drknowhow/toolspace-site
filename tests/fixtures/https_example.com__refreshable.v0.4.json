@@ -1,0 +1,17 @@
+{
+  "manifest_version": "0.4",
+  "tool": {
+    "id": "refreshable-example",
+    "name": "refreshable",
+    "version": "0.2.0",
+    "description": "Upstream description that should replace the registry one.",
+    "tags": ["alpha", "beta", "fresh"]
+  },
+  "install": [
+    {
+      "from": "git",
+      "from_url": "https://github.com/example/refreshable",
+      "to_kind": "self_hosted"
+    }
+  ]
+}

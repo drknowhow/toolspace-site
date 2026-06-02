@@ -389,3 +389,89 @@ def test_sync_skips_invalid_body_entries(sandbox, monkeypatch):
     assert any(
         "muninn-bad-enum" in w and "manifest invalid" in w for w in warnings
     ), warnings
+
+
+# ---- auto_refresh_from_upstream for example entries ----------------------
+
+
+def _seed_with_example(site, example_entry):
+    """Replace the seed manifests.json with one preserved example + the given entry."""
+    seed = {
+        "version": "1",
+        "schema_url": "https://toolspace.yepgent.com/schemas/install-manifest-v0.4.json",
+        "versions": [],
+        "generated_at": "2026-01-01",
+        "manifests": [example_entry],
+    }
+    (site / "manifests.json").write_text(json.dumps(seed, indent=2), encoding="utf-8")
+
+
+def test_auto_refresh_replaces_description_and_tags(sandbox):
+    """An example entry with ``auto_refresh_from_upstream: true`` has its
+    description and capabilities overwritten from the upstream manifest
+    ``tool.description`` and ``tool.tags`` on every sync."""
+    entry = {
+        "id": "refreshable-example",
+        "name": "refreshable",
+        "description": "Stale description that should be replaced.",
+        "capabilities": ["stale-tag"],
+        "manifest_url": "https://example.com/refreshable.v0.4.json",
+        "source": "https://example.com/refreshable.v0.4.json",
+        "manifest_version": "0.4",
+        "status": "example",
+        "auto_refresh_from_upstream": True,
+    }
+    _seed_with_example(sandbox, entry)
+
+    new_doc, _warnings = sync_from_publishers.build_synced_index()
+    refreshed = next(m for m in new_doc["manifests"] if m["id"] == "refreshable-example")
+    assert refreshed["description"] == "Upstream description that should replace the registry one."
+    assert refreshed["capabilities"] == ["alpha", "beta", "fresh"]
+    # Opt-in flag survives the refresh.
+    assert refreshed["auto_refresh_from_upstream"] is True
+
+
+def test_auto_refresh_absent_flag_preserves_verbatim(sandbox):
+    """Without the opt-in flag, the example entry is preserved verbatim
+    even if its manifest_url would resolve to a fetchable upstream."""
+    entry = {
+        "id": "refreshable-example",
+        "name": "refreshable",
+        "description": "Hand-curated description must not be overwritten.",
+        "capabilities": ["curated"],
+        "manifest_url": "https://example.com/refreshable.v0.4.json",
+        "source": "https://example.com/refreshable.v0.4.json",
+        "manifest_version": "0.4",
+        "status": "example",
+        # NO auto_refresh_from_upstream flag.
+    }
+    _seed_with_example(sandbox, entry)
+
+    new_doc, _warnings = sync_from_publishers.build_synced_index()
+    preserved = next(m for m in new_doc["manifests"] if m["id"] == "refreshable-example")
+    assert preserved["description"] == "Hand-curated description must not be overwritten."
+    assert preserved["capabilities"] == ["curated"]
+
+
+def test_auto_refresh_fails_soft_on_missing_upstream(sandbox):
+    """When the upstream fetch fails (no fixture), the entry is preserved
+    unchanged and a warning surfaces — flaky upstream MUST NOT break the
+    rest of the sync."""
+    entry = {
+        "id": "missing-upstream",
+        "name": "missing",
+        "description": "Original description, must survive a failed refresh.",
+        "capabilities": ["original"],
+        "manifest_url": "https://example.com/does-not-exist.v0.4.json",
+        "source": "https://example.com/does-not-exist.v0.4.json",
+        "manifest_version": "0.4",
+        "status": "example",
+        "auto_refresh_from_upstream": True,
+    }
+    _seed_with_example(sandbox, entry)
+
+    new_doc, warnings = sync_from_publishers.build_synced_index()
+    preserved = next(m for m in new_doc["manifests"] if m["id"] == "missing-upstream")
+    assert preserved["description"] == "Original description, must survive a failed refresh."
+    assert preserved["capabilities"] == ["original"]
+    assert any("missing-upstream" in w and "description unchanged" in w for w in warnings), warnings
