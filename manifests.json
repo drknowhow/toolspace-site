@@ -28,7 +28,7 @@
       "status": "stable"
     }
   ],
-  "generated_at": "2026-05-29",
+  "generated_at": "2026-06-05",
   "manifests": [
     {
       "id": "gmail-example",
@@ -119,7 +119,7 @@
     {
       "id": "yep-memory",
       "name": "Yep Memory",
-      "description": "Yep's memory subsystem exposes three orthogonal stores: facts (key-value, upsert), reflections (free-form learned generalizations), and episodes (event log with semantic search). Used internally by Yep and surfaced here as the canonical example for any personal-agent stack that wants long-running cross-session memory. Backed by Supabase + pgvector; reflection writes are deliberate and sparse, not autopilot. Published as the first dogfood entry on drknowhow/Yep to validate the federation pipeline end-to-end against toolspace.yepgent.com.",
+      "description": "Persistent memory primitives for personal agents — facts, reflections, and episodes with semantic recall across conversations.",
       "capabilities": [
         "memory",
         "personal-agent",
@@ -135,8 +135,7 @@
         "publisher_kind": "https",
         "publisher_id": "yepgent.com",
         "trust_tier": "verified"
-      },
-      "auto_refresh_from_upstream": true
+      }
     },
     {
       "id": "muninn-blog-publish",
