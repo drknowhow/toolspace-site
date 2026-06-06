@@ -18,113 +18,12 @@
 
   <!-- Shared yepgent theme. Mirrored byte-for-byte from yepgent.com/style.css
        so a future sync script can detect drift. -->
-  <link rel="stylesheet" href="/style.css" />
-
-  <style>
-    /* Page-specific overrides for the toolspace landing surface. */
-
-    .hero-row {
-      display: flex;
-      align-items: center;
-      gap: 0.9rem;
-      margin: 1rem 0 0.4rem;
-    }
-    .hero-glyph {
-      width: 56px;
-      height: 56px;
-      flex: 0 0 auto;
-      color: var(--accent);
-    }
-    .hero h1 {
-      margin: 0;
-      font-size: clamp(2rem, 5.5vw, 3rem);
-      letter-spacing: -0.02em;
-      line-height: 1.12;
-    }
-    .hero h1 .dot { color: var(--accent); }
-    .hero p.lede { margin-top: 0.25rem; }
-
-    /* agent -> manifest -> tool flow illustration */
-    .flow {
-      display: block;
-      width: 100%;
-      max-width: 480px;
-      margin: 1.25rem 0;
-      color: var(--muted);
-    }
-
-    /* Quickstart card: lifts the install command up top, lightly accented. */
-    .quickstart {
-      background: var(--card-bg);
-      border: 1px solid var(--accent-edge);
-      border-radius: 10px;
-      padding: 1rem 1.1rem;
-      margin: 1.25rem 0 0.5rem;
-    }
-    .quickstart-label {
-      margin: 0 0 0.55rem;
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--accent);
-    }
-    .quickstart pre { margin: 0; }
-
-    /* Section icon: small line glyph next to h2. */
-    h2 .glyph {
-      width: 18px;
-      height: 18px;
-      vertical-align: -3px;
-      margin-right: 0.45rem;
-      color: var(--muted);
-    }
-
-    /* Manifest "surface" cards: same shape as yepgent's agent-grid items
-       but full-width; mint hover edge so they feel alive. */
-    .surface {
-      background: var(--card-bg);
-      border: 1px solid var(--card-edge);
-      border-radius: 10px;
-      padding: 1rem 1.15rem;
-      margin: 0.6rem 0;
-      transition: border-color 0.15s ease;
-    }
-    .surface:hover { border-color: var(--accent-edge); }
-    .surface h3 {
-      margin: 0 0 0.4rem;
-      font-size: 1.05rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    .surface p { margin: 0.4rem 0 0; color: var(--muted); font-size: 0.95rem; }
-    .surface p + p { margin-top: 0.55rem; }
-
-    /* Version pills: sit inline next to "Schema". */
-    .pill {
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      padding: 0.2em 0.6em;
-      border-radius: 999px;
-      vertical-align: middle;
-      border: 1px solid var(--accent-edge);
-    }
-    .pill.stable { color: var(--accent); background: var(--accent-soft); }
-    .pill.legacy {
-      color: var(--muted);
-      background: transparent;
-      border-color: var(--field-edge);
-    }
-  </style>
+  <link rel="stylesheet" href="/style.css?v=5" />
 </head>
-<body>
-  <header class="site-nav">
+<body class="home-v4 toolspace-v4">
+  <div class="cursor-orb" aria-hidden="true"></div>
+
+  <header class="site-nav v4">
     <a class="brand" href="/">
       <svg class="brand-glyph" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M14 6h22l10 10v34H14z" stroke="var(--accent)"/>
@@ -135,88 +34,116 @@
       <span>toolspace<span class="dot">.</span></span>
     </a>
     <nav>
+      <a href="/registry/">registry</a>
       <a href="/changelog/">changelog</a>
       <a href="https://yepgent.com/">yepgent</a>
       <a href="https://github.com/drknowhow/install-manifest-spec">spec</a>
-      <a href="https://github.com/drknowhow/toolspace-site">source</a>
     </nav>
   </header>
 
   <main>
-    <section class="hero">
-      <div class="hero-row">
-        <!-- Hero glyph: a manifest doc with a verification seal. -->
-        <svg class="hero-glyph" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M12 5h22l10 10v36H12z"/>
-          <path d="M34 5v10h10"/>
-          <line x1="18" y1="22" x2="38" y2="22"/>
-          <line x1="18" y1="28" x2="38" y2="28"/>
-          <line x1="18" y1="34" x2="32" y2="34"/>
-          <circle cx="40" cy="42" r="9" fill="var(--bg)"/>
-          <circle cx="40" cy="42" r="9"/>
-          <path d="M36 42.5l3 3 6-6.5"/>
-        </svg>
-        <h1>A manifest spec<br /><span class="muted">for personal, stateful agents<span class="blink">&nbsp;</span></span></h1>
+    <!-- HERO -->
+    <section class="tv4-hero">
+      <div class="aurora" aria-hidden="true">
+        <span class="aurora-1"></span>
+        <span class="aurora-2"></span>
+        <span class="aurora-3"></span>
+        <div class="spotlight"></div>
       </div>
-      <p class="lede">long-running agents &mdash; memory, schedules, federation. Open spec, <a href="https://agents.md/">AGENTS.md</a>-aligned.</p>
 
-      <p>
-        <strong>Toolspace is an open manifest spec for personal, stateful AI agents</strong> &mdash;
-        the long-running kind that hold memory, schedule themselves, learn their operator's
-        preferences over weeks and months, and act on their own initiative between
-        conversations.
-      </p>
+      <div class="tv4-hero-inner">
+        <p class="tv4-eyebrow">
+          <span class="dot">&#9679;</span>
+          open manifest spec &middot; v0.4
+        </p>
 
-      <p>
-        It's a structured JSON layer that sits on top of
-        <a href="https://agents.md/">AGENTS.md</a>: where AGENTS.md gives an agent prose context
-        about a repo or workspace, toolspace gives it a machine-readable contract for the tools,
-        memories, schedules, and behaviors that make up a personal agent's surface. AGENTS.md
-        tells an agent what this place is for. <strong>toolspace tells an agent what
-        this agent is made of.</strong>
-      </p>
+        <h1 class="tv4-display">
+          A manifest spec for personal, <span class="tv4-emph">stateful</span> agents.
+        </h1>
 
-      <p>
-        Not a registry for coding-assistant plugins. Different consumers, different lifecycle,
-        different trust model. The canonical demo is <a href="https://yepgent.com/">Yep</a>
-        and its federated counterpart Vi &mdash; every primitive lands in production there
-        before it lands in the spec.
-      </p>
+        <p class="tv4-lede">
+          Long-running agents &mdash; memory, schedules, federation. Open spec,
+          <a href="https://agents.md/">AGENTS.md</a>-aligned.
+        </p>
 
-      <!-- Flow illustration: agent fetches a manifest, installs a tool. -->
-      <svg class="flow" viewBox="0 0 480 110" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <rect x="14" y="38" width="100" height="40" rx="6"/>
-        <text x="64" y="63" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="13" text-anchor="middle" stroke="none" fill="currentColor">agent</text>
-        <line x1="118" y1="58" x2="178" y2="58"/>
-        <path d="M173 53l5 5-5 5"/>
-        <path d="M196 30h62l14 14v44h-76z" stroke="var(--accent)"/>
-        <path d="M258 30v14h14" stroke="var(--accent)"/>
-        <line x1="206" y1="56" x2="266" y2="56" stroke="var(--accent)"/>
-        <line x1="206" y1="64" x2="266" y2="64" stroke="var(--accent)"/>
-        <line x1="206" y1="72" x2="246" y2="72" stroke="var(--accent)"/>
-        <text x="234" y="103" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" text-anchor="middle" stroke="none" fill="var(--accent)">manifest</text>
-        <line x1="290" y1="58" x2="350" y2="58"/>
-        <path d="M345 53l5 5-5 5"/>
-        <rect x="358" y="38" width="106" height="40" rx="6"/>
-        <text x="411" y="63" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="13" text-anchor="middle" stroke="none" fill="currentColor">tool</text>
-      </svg>
+        <p class="tv4-prose">
+          <strong>Toolspace is an open manifest spec for personal, stateful AI agents</strong>
+          &mdash; the long-running kind that hold memory, schedule themselves, learn their
+          operator's preferences over weeks and months, and act on their own initiative
+          between conversations.
+        </p>
 
-      <div class="quickstart">
-        <p class="quickstart-label">Get started</p>
-<pre><code>pip install install-manifest
-install-manifest install &lt;url-or-path&gt;</code></pre>
+        <p class="tv4-prose">
+          It's a structured JSON layer that sits on top of
+          <a href="https://agents.md/">AGENTS.md</a>: where AGENTS.md gives an agent prose
+          context about a repo or workspace, toolspace gives it a machine-readable contract
+          for the tools, memories, schedules, and behaviors that make up a personal agent's
+          surface. <strong>AGENTS.md tells an agent what this place is for. Toolspace tells
+          an agent what this agent is made of.</strong>
+        </p>
+
+        <p class="tv4-prose">
+          Not a registry for coding-assistant plugins. Different consumers, different
+          lifecycle, different trust model. The canonical demo is
+          <a href="https://yepgent.com/">Yep</a> and its federated counterpart Vi &mdash;
+          every primitive lands in production there before it lands in the spec.
+        </p>
+
+        <div class="tv4-cta-row">
+          <a class="tv4-cta primary" href="/registry/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="4" y="5" width="16" height="14" rx="2"/>
+              <line x1="4" y1="9" x2="20" y2="9"/>
+              <line x1="8" y1="13" x2="14" y2="13"/>
+            </svg>
+            Browse the registry
+          </a>
+          <a class="tv4-cta ghost" href="https://github.com/drknowhow/install-manifest-spec">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 4h11l4 4v12H5z"/>
+              <path d="M16 4v4h4"/>
+            </svg>
+            Read the spec
+          </a>
+          <a class="tv4-cta ghost" href="https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="6" cy="6" r="2.5"/>
+              <circle cx="18" cy="6" r="2.5"/>
+              <circle cx="12" cy="18" r="2.5"/>
+              <line x1="7.5" y1="7.5" x2="11" y2="16"/>
+              <line x1="16.5" y1="7.5" x2="13" y2="16"/>
+            </svg>
+            Federate
+          </a>
+          <a class="tv4-cta ghost" href="/changelog/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"/>
+              <polyline points="12 7 12 12 15 14"/>
+            </svg>
+            Changelog
+          </a>
+        </div>
+
+        <div class="tv4-quickstart">
+          <p class="tv4-quickstart-label">Get started</p>
+<pre>pip install install-manifest
+install-manifest install &lt;url-or-path&gt;</pre>
+        </div>
       </div>
     </section>
 
-    <h2>
-      <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M9 4c-2 0-3 1-3 3v3c0 1-1 2-2 2 1 0 2 1 2 2v3c0 2 1 3 3 3"/>
-        <path d="M15 4c2 0 3 1 3 3v3c0 1 1 2 2 2-1 0-2 1-2 2v3c0 2-1 3-3 3"/>
-      </svg>
-      What a manifest looks like
-    </h2>
-
-<pre><code>{
+    <!-- MANIFEST EXAMPLE — editorial diptych w/ glass code surface -->
+    <section class="tv4-example">
+      <div class="tv4-example-left">
+        <p class="tv4-section-eyebrow">shape</p>
+        <h2 class="tv4-section-title">What a manifest looks like.</h2>
+        <p class="tv4-section-prose">
+          Full reference: <a href="/examples/gmail.v0.3.json"><code>/examples/gmail.v0.3.json</code></a>
+          (validates unmodified against v0.4). Every field is documented in the
+          <a href="/schemas/install-manifest-v0.4.json"><code>v0.4 schema</code></a>.
+        </p>
+      </div>
+<pre class="tv4-code-surface">{
   "manifest_version": "0.4",
   "tool":    { "id": "gmail", "version": "1.0.0", "name": "Gmail", "...": "..." },
   "scopes":  [ { "resource": "gmail", "actions": ["read", "send"], "...": "..." } ],
@@ -228,137 +155,184 @@ install-manifest install &lt;url-or-path&gt;</code></pre>
   "data_boundary": { "reads": ["gmail.messages"], "transmits": [], "persists": [] },
   "smoke":         { "kind": "action-call", "...": "..." },
   "kill_switch":   { "kind": "url",         "...": "..." }
-}</code></pre>
-    <p class="small muted">
-      Full reference: <a href="/examples/gmail.v0.3.json"><code>/examples/gmail.v0.3.json</code></a>
-      (validates unmodified against v0.4).
-      Every field is documented in the
-      <a href="/schemas/install-manifest-v0.4.json"><code>v0.4 schema</code></a>.
-    </p>
+}</pre>
+    </section>
 
-    <h2 id="agents">
-      <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <rect x="6" y="6" width="12" height="12" rx="2"/>
-        <rect x="9.5" y="9.5" width="5" height="5"/>
-        <line x1="3" y1="10" x2="6" y2="10"/>
-        <line x1="3" y1="14" x2="6" y2="14"/>
-        <line x1="18" y1="10" x2="21" y2="10"/>
-        <line x1="18" y1="14" x2="21" y2="14"/>
-        <line x1="10" y1="3" x2="10" y2="6"/>
-        <line x1="14" y1="3" x2="14" y2="6"/>
-        <line x1="10" y1="18" x2="10" y2="21"/>
-        <line x1="14" y1="18" x2="14" y2="21"/>
-      </svg>
-      For agents
-    </h2>
+    <!-- FOR AGENTS — cap grid of three surfaces -->
+    <section id="agents" class="tv4-cap">
+      <div class="tv4-cap-head">
+        <p class="tv4-section-eyebrow">for agents</p>
+        <h2 class="tv4-section-title">Three surfaces an agent can fetch.</h2>
+        <p class="tv4-section-prose">
+          Schema, index, example. All CORS-enabled, cached, public.
+        </p>
+      </div>
 
-    <div class="surface">
-      <h3>Schema <span class="pill stable">v0.4 &middot; current</span> <span class="pill legacy">v0.3.1 &middot; superseded</span> <span class="pill legacy">v0.3 &middot; superseded</span> <span class="pill legacy">v0.2 &middot; frozen</span> <span class="pill legacy">v0.1 &middot; legacy</span></h3>
-      <p>
-        Current: <a href="/schemas/install-manifest-v0.4.json"><code>install-manifest-v0.4.json</code></a> &mdash;
-        closes two structural gaps surfaced by community consumer tests:
-        <code>runtime.install.method: "preinstalled"</code> with a required <code>locator</code>
-        (kinds: <code>python-module</code> / <code>binary-on-path</code> / <code>mcp-server-id</code>)
-        for tools pre-baked into the agent's runtime image; and
-        <code>data_boundary.transmits[].to_kind: "agent-supplied"</code> plus optional
-        <code>to_constraint</code> for outbound destinations supplied by the calling agent at runtime.
-        All v0.3.1 manifests validate unmodified against v0.4 &mdash; drop-in upgrade.
-        CORS-enabled, cached.
-      </p>
-      <p>
-        Superseded: <a href="/schemas/install-manifest-v0.3.1.json"><code>install-manifest-v0.3.1.json</code></a>
-        and <a href="/schemas/install-manifest-v0.3.json"><code>install-manifest-v0.3.json</code></a>
-        remain served for tools pinned to those versions. Design rationale for both:
-        <a href="https://github.com/drknowhow/install-manifest-spec/tree/main/design">design notes on GitHub</a>.
-      </p>
-      <p>
-        Frozen <a href="/schemas/install-manifest-v0.2.json"><code>install-manifest-v0.2.json</code></a>
-        remains served unchanged for tools targeting the v0.2 surface (top-level <code>actions[]</code>
-        catalog, no verification / data-boundary contract).
-        Legacy <a href="/schemas/install-manifest-v0.1.json"><code>install-manifest-v0.1.json</code></a>
-        remains served for tools targeting the original MCP-shaped format.
-        New manifests should target v0.4.
-      </p>
-    </div>
+      <div class="tv4-cap-grid">
+        <article class="tv4-cap-card">
+          <svg class="tv4-cap-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 4h11l4 4v12H5z"/>
+            <path d="M16 4v4h4"/>
+            <line x1="8" y1="13" x2="17" y2="13"/>
+            <line x1="8" y1="16" x2="14" y2="16"/>
+          </svg>
+          <h3>Schema <span class="tv4-pill stable">v0.4 &middot; current</span></h3>
+          <p>
+            <a href="/schemas/install-manifest-v0.4.json"><code>install-manifest-v0.4.json</code></a>
+            &mdash; closes two structural gaps surfaced by community consumer tests:
+            <code>runtime.install.method: "preinstalled"</code> with a required
+            <code>locator</code>, and <code>data_boundary.transmits[].to_kind:
+            "agent-supplied"</code> for runtime-supplied destinations. All v0.3.1
+            manifests validate unmodified against v0.4 &mdash; drop-in upgrade.
+          </p>
+          <p>
+            Superseded: <a href="/schemas/install-manifest-v0.3.1.json"><code>v0.3.1</code></a>,
+            <a href="/schemas/install-manifest-v0.3.json"><code>v0.3</code></a>.
+            Frozen: <a href="/schemas/install-manifest-v0.2.json"><code>v0.2</code></a>.
+            Legacy: <a href="/schemas/install-manifest-v0.1.json"><code>v0.1</code></a>.
+          </p>
+        </article>
 
-    <div class="surface">
-      <h3>Manifest index</h3>
-      <p><a href="/manifests.json"><code>/manifests.json</code></a> &mdash; list of curated manifests with capability tags. The <code>versions[]</code> array lists every supported schema version.</p>
-    </div>
+        <article class="tv4-cap-card">
+          <svg class="tv4-cap-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="4" y="5" width="16" height="14" rx="2"/>
+            <line x1="4" y1="9" x2="20" y2="9"/>
+            <line x1="8" y1="13" x2="14" y2="13"/>
+            <line x1="8" y1="16" x2="12" y2="16"/>
+          </svg>
+          <h3>Manifest index</h3>
+          <p>
+            <a href="/manifests.json"><code>/manifests.json</code></a> &mdash; list of
+            curated manifests with capability tags. The <code>versions[]</code> array
+            lists every supported schema version.
+          </p>
+        </article>
 
-    <div class="surface">
-      <h3>Example manifest</h3>
-      <p><a href="/examples/gmail.v0.3.json"><code>/examples/gmail.v0.3.json</code></a> &mdash; reference v0.3 manifest with the five Gmail actions plus the <code>verify</code> contract (eval suite + SLA), <code>data_boundary</code> declaration (gmail messages read; nothing transmitted to third parties; nothing persisted), and per-action <code>docs</code>. Validates unmodified against v0.4 &mdash; use this as the template when authoring new manifests.</p>
-      <p>For v0.4-only surfaces (preinstalled tools, agent-supplied destinations), see <a href="/examples/vi-federation.v0.4.json"><code>vi-federation.v0.4.json</code></a>. Earlier examples are still available: <a href="/examples/gmail.v0.2.json"><code>gmail.v0.2.json</code></a> for the v0.2 surface, and <a href="/examples/gmail.json"><code>gmail.json</code></a> for v0.1.</p>
-    </div>
+        <article class="tv4-cap-card">
+          <svg class="tv4-cap-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 5h9l4 4v10H6z"/>
+            <path d="M15 5v4h4"/>
+            <circle cx="13" cy="14" r="3.2"/>
+            <path d="M10.7 14.7l1.6 1.6 3-3.3"/>
+          </svg>
+          <h3>Example manifest</h3>
+          <p>
+            <a href="/examples/gmail.v0.3.json"><code>gmail.v0.3.json</code></a> &mdash; reference
+            manifest with five Gmail actions, the <code>verify</code> contract, full
+            <code>data_boundary</code>, per-action <code>docs</code>. Validates unmodified
+            against v0.4 &mdash; the template when authoring new manifests.
+          </p>
+          <p>
+            For v0.4-only surfaces, see <a href="/examples/vi-federation.v0.4.json"><code>vi-federation.v0.4.json</code></a>.
+            Earlier shapes still served: <a href="/examples/gmail.v0.2.json"><code>v0.2</code></a>,
+            <a href="/examples/gmail.json"><code>v0.1</code></a>.
+          </p>
+        </article>
+      </div>
+    </section>
 
-    <h2>
-      <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="9" cy="8" r="3"/>
-        <path d="M3 20c0-3.3 2.7-5 6-5s6 1.7 6 5"/>
-        <circle cx="17" cy="9" r="2.5"/>
-        <path d="M14.5 20c0-2.2 2-4 4.5-4"/>
-      </svg>
-      For humans
-    </h2>
+    <!-- FOR HUMANS — diptych: registry / federation -->
+    <section class="tv4-diptych">
+      <div class="tv4-diptych-left">
+        <p class="tv4-section-eyebrow">for humans</p>
+        <h2 class="tv4-section-title">Two ways to get your tools listed.</h2>
+        <p class="tv4-section-prose">
+          The <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> is open
+          and the registry is public. Browse, or publish your own catalog.
+        </p>
+      </div>
+      <div class="tv4-diptych-right">
+        <p>
+          <strong>Browse</strong> &mdash; <a href="/registry/">/registry/</a> is a
+          marketplace view of every manifest in the index. Each tool gets a product
+          page with its scopes, data boundary, kill switch, smoke test, and action
+          catalog laid out for humans. Filter by capability, status, or schema version.
+        </p>
+        <p>
+          <strong>Publish</strong> &mdash; host a
+          <code>.well-known/install-manifests.json</code> index at your repo or domain,
+          get added to <a href="https://github.com/drknowhow/toolspace-site/blob/main/publishers.json"><code>publishers.json</code></a>
+          once, and every tool you ship, bump, or deprecate flows in automatically on the
+          next daily sync &mdash; no PR-per-tool coordination.
+        </p>
+        <p>
+          Three identity kinds: <code>github</code>, <code>https</code>,
+          <code>atproto</code> (v2). Full walkthrough:
+          <a href="https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md">FEDERATION.md</a>.
+          Single tool or preview drop? You can still open a one-off PR adding an entry
+          to <a href="/manifests.json"><code>manifests.json</code></a> directly.
+        </p>
+      </div>
+    </section>
 
-    <p>
-      You're welcome to read along. The <a href="https://github.com/drknowhow/install-manifest-spec">spec</a>
-      is open and the registry is public. Two ways to get your agent's tools listed:
-    </p>
-
-    <div class="surface">
-      <h3>Browse the registry</h3>
-      <p>
-        <a href="/registry/">/registry/</a> &mdash; a marketplace view of every manifest in the index.
-        Each tool gets a product page with its scopes, data boundary, kill switch, smoke test, and
-        action catalog laid out for humans. Filter by capability, status, or schema version.
-      </p>
-    </div>
-
-    <div class="surface">
-      <h3>Publish your own catalog (federation)</h3>
-      <p>
-        Host a <code>.well-known/install-manifests.json</code> index at your repo or domain,
-        get added to <a href="https://github.com/drknowhow/toolspace-site/blob/main/publishers.json"><code>publishers.json</code></a> once,
-        and every tool you ship, bump, or deprecate flows in automatically on the next daily sync &mdash;
-        no PR-per-tool coordination. Three identity kinds: <code>github</code>, <code>https</code>, <code>atproto</code> (v2).
-        Full walkthrough: <a href="https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md">FEDERATION.md</a>.
-      </p>
-      <p>
-        Single tool or preview drop? You can still open a one-off PR adding an entry to
-        <a href="/manifests.json"><code>manifests.json</code></a> directly.
-      </p>
-    </div>
-
-    <h2>
-      <svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <rect x="3" y="4" width="18" height="16" rx="2"/>
-        <path d="M7 9l3 3-3 3"/>
-        <line x1="13" y1="15" x2="17" y2="15"/>
-      </svg>
-      CLI
-    </h2>
-
-<pre><code>pip install install-manifest
+    <!-- CLI -->
+    <section class="tv4-cli">
+      <div class="tv4-cli-head">
+        <p class="tv4-section-eyebrow">cli</p>
+        <h2 class="tv4-section-title">Validate, lint, diff, install.</h2>
+        <p class="tv4-section-prose">
+          The <a href="https://github.com/drknowhow/install-manifest-spec/tree/main/cli">install-manifest
+          CLI</a> ships with the schema bundled, so it works offline. Network is only used
+          for the manifest itself. <code>lint</code> and <code>diff</code> ship in 0.5.0
+          &mdash; non-fatal by default; <code>lint --strict</code> turns warnings into a
+          non-zero exit so CI can gate on a clean result.
+        </p>
+      </div>
+<pre class="tv4-code-surface">pip install install-manifest
 install-manifest validate &lt;url-or-path&gt;
 install-manifest lint     &lt;url-or-path&gt;       # style + best-practice warnings
 install-manifest diff     &lt;url-a&gt; &lt;url-b&gt;     # breaking / additive / cosmetic
-install-manifest install  &lt;url-or-path&gt;</code></pre>
+install-manifest install  &lt;url-or-path&gt;</pre>
+    </section>
 
-    <p>The <a href="https://github.com/drknowhow/install-manifest-spec/tree/main/cli">install-manifest CLI</a> ships with the schema bundled, so it works offline. Network is only used for the manifest itself. <code>lint</code> and <code>diff</code> ship in 0.5.0 &mdash; non-fatal by default; <code>lint --strict</code> turns warnings into a non-zero exit so CI can gate on a clean result.</p>
-
-    <footer>
-      <p>
-        toolspace.yepgent.com &middot;
-        <a href="/registry/">registry</a> &middot;
-        <a href="https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md">federate</a> &middot;
-        <a href="/changelog/">changelog</a> &middot;
-        <a href="https://github.com/drknowhow/toolspace-site">source</a> &middot;
-        <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> &middot;
-        <a href="https://yepgent.com">yepgent</a>
-      </p>
-    </footer>
+    <!-- COLOPHON -->
+    <section class="tv4-colophon">
+      <footer>
+        <p>
+          toolspace.yepgent.com &middot;
+          <a href="/registry/">registry</a> &middot;
+          <a href="https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md">federate</a> &middot;
+          <a href="/changelog/">changelog</a> &middot;
+          <a href="https://github.com/drknowhow/toolspace-site">source</a> &middot;
+          <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> &middot;
+          <a href="https://yepgent.com">yepgent</a>
+        </p>
+      </footer>
+    </section>
   </main>
+
+  <script>
+    // Sticky nav pill scroll compaction
+    (function () {
+      const nav = document.querySelector('header.site-nav.v4');
+      if (!nav) return;
+      const onScroll = () => {
+        if (window.scrollY > 24) nav.classList.add('scrolled');
+        else nav.classList.remove('scrolled');
+      };
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    })();
+
+    // Reveal-on-scroll for the editorial blocks
+    (function () {
+      const targets = document.querySelectorAll(
+        '.tv4-example, .tv4-cap, .tv4-cap-card, .tv4-diptych, .tv4-cli, .tv4-colophon'
+      );
+      if (!('IntersectionObserver' in window)) {
+        targets.forEach(el => el.classList.add('is-in'));
+        return;
+      }
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-in');
+            io.unobserve(e.target);
+          }
+        });
+      }, { rootMargin: '0px 0px 20% 0px', threshold: 0.01 });
+      targets.forEach(el => io.observe(el));
+    })();
+  </script>
 </body>
 </html>
