@@ -3,61 +3,20 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>changelog · toolspace</title>
+  <title>changelog &middot; toolspace</title>
   <meta name="description" content="A running log of what's shipped on toolspace.yepgent.com — version by version." />
   <meta name="color-scheme" content="dark light" />
 
   <!-- Machine-readable version of this page. -->
   <link rel="alternate" type="application/json" href="/changelog.json" title="toolspace changelog JSON" />
 
+  <!-- Shared yepgent theme; the changelog-v4 layer lives here too. -->
   <link rel="stylesheet" href="/style.css" />
-  <style>
-    .version-block {
-      border-left: 3px solid var(--accent, #7cf5c4);
-      padding: 0 0 0 1.25rem;
-      margin-bottom: 2.5rem;
-    }
-    .version-header {
-      display: flex;
-      align-items: baseline;
-      gap: 0.75rem;
-      margin-bottom: 0.5rem;
-      flex-wrap: wrap;
-    }
-    .version-tag {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--accent, #7cf5c4);
-    }
-    .version-label {
-      font-weight: 600;
-      font-size: 1rem;
-    }
-    .version-date {
-      font-size: 0.82rem;
-      opacity: 0.55;
-      margin-left: auto;
-      font-variant-numeric: tabular-nums;
-    }
-    .version-changes {
-      margin: 0.5rem 0 0;
-      padding-left: 1.2rem;
-      font-size: 0.93rem;
-      line-height: 1.7;
-    }
-    .version-changes li {
-      margin-bottom: 0.25rem;
-    }
-    .json-note {
-      font-size: 0.82rem;
-      opacity: 0.55;
-      margin-top: 2.5rem;
-    }
-  </style>
+  <link rel="canonical" href="https://toolspace.yepgent.com/changelog/" />
 </head>
-<body>
-  <header class="site-nav">
+<body class="home-v4 changelog-v4">
+
+  <header class="site-nav v4">
     <a class="brand" href="/">
       <svg class="brand-glyph" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M14 6h22l10 10v34H14z" stroke="var(--accent)"/>
@@ -68,234 +27,292 @@
       <span>toolspace<span class="dot">.</span></span>
     </a>
     <nav>
-      <a href="/">registry</a>
-      <a href="/changelog/">changelog</a>
-      <a href="https://github.com/drknowhow/install-manifest-spec">spec</a>
+      <a href="/registry/">registry</a>
+      <a href="/changelog/" aria-current="page">changelog</a>
       <a href="https://yepgent.com/">yepgent</a>
+      <a href="https://github.com/drknowhow/install-manifest-spec">spec</a>
     </nav>
   </header>
 
-  <main>
-    <h1>Changelog</h1>
-    <p class="lede">A running log of what's shipped on toolspace.yepgent.com. Newest first.</p>
+  <main class="v4-shell">
 
-    <hr />
-
-    <div class="version-block">
-      <div class="version-header">
-        <span class="version-tag">v0.14</span>
-        <span class="version-label">Surface federation v1 on the homepage (publishers can self-host)</span>
-        <span class="version-date">2026-05-28</span>
+    <!-- HERO -->
+    <section class="cv4-hero">
+      <div class="aurora" aria-hidden="true">
+        <span class="aurora-1"></span>
+        <span class="aurora-2"></span>
       </div>
-      <ul class="version-changes">
-        <li>Federation v1 shipped earlier today across <a href="https://github.com/drknowhow/toolspace-site/pull/21"><code>#21</code></a> (discovery pipeline + <code>publishers.json</code> + daily auto-sync), <a href="https://github.com/drknowhow/toolspace-site/pull/22"><code>#22</code></a> (<a href="https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md"><code>FEDERATION.md</code></a> onboarding walkthrough), and <a href="https://github.com/drknowhow/install-manifest-spec/pull/18">spec <code>#18</code></a> (well-known-index v1 schema, three identity kinds: <code>github</code>, <code>https</code>, <code>atproto</code>). Daily cron at 13:17 UTC fetches every allowlisted publisher, validates each manifest, and auto-merges the sync PR on green.</li>
-        <li>Updated the homepage <a href="https://toolspace.yepgent.com/#for-humans">“For humans”</a> section: replaced the stale “open a PR with your manifest URL” single-path guidance with a two-path layout — federation (self-host an index, get added to <code>publishers.json</code> once) as the preferred path for multi-tool publishers, single-tool PR retained as the lightweight alternative.</li>
-        <li>Added a <code>federate</code> link to the homepage footer pointing at <a href="https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md"><code>FEDERATION.md</code></a> so the publishing path is one click from any depth, mirroring the v0.13 footer-registry-link pattern.</li>
-        <li>First external federation publisher: <a href="https://github.com/oaustegard/muninn-utilities"><code>oaustegard/muninn-utilities</code></a> (Muninn, <code>trust_tier: standard</code>). Yep itself is dogfooded at <code>yepgent.com</code> as a <code>kind=https</code> publisher (<code>trust_tier: verified</code>, <code>registry_status_map: {active: example}</code>) after the initial <code>kind=github</code> attempt 404&#x27;d on a private repo — lesson banked as a pre-flight check in <a href="https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md"><code>FEDERATION.md</code></a> (<a href="https://github.com/drknowhow/toolspace-site/pull/24"><code>#24</code></a>).</li>
-      </ul>
-    </div>
 
-    <div class="version-block">
-      <div class="version-header">
-        <span class="version-tag">v0.13</span>
-        <span class="version-label">Fix Schema chip filter (slug mismatch); add registry link to homepage footer</span>
-        <span class="version-date">2026-05-28</span>
+      <div class="cv4-hero-stage">
+        <p class="v4-eyebrow">
+          <span class="eyebrow-tick" aria-hidden="true"></span>
+          changelog &middot; newest first
+        </p>
+        <h1 class="cv4-display">
+          What <span class="serif-italic">shipped.</span>
+        </h1>
+        <p class="cv4-lede">
+          A running log of changes to toolspace.yepgent.com &mdash; version by version.
+          Machine-readable mirror at <a href="/changelog.json"><code>changelog.json</code></a>.
+        </p>
       </div>
-      <ul class="version-changes">
-        <li>Fixed the **Schema** chip filter on <a href="https://toolspace.yepgent.com/registry/"><code>/registry/</code></a> — selecting <code>v0.1</code> / <code>v0.2</code> / <code>v0.3</code> / <code>v0.4</code> was a no-op because chip <code>data-value</code> was slugged (<code>v0-1</code>) while the card <code>data-mv</code> attribute was the raw form (<code>v0.1</code>). Now slugging both ends so they match. Pre-existing bug, surfaced once the v0.12 cleanup made the filter visually prominent.</li>
-        <li>Added a <code>registry</code> link to the homepage <a href="https://toolspace.yepgent.com/"><code>index.html</code></a> footer so the discovery path back to the marketplace is one click from any depth.</li>
-      </ul>
-    </div>
+    </section>
 
-    <div class="version-block">
-      <div class="version-header">
-        <span class="version-tag">v0.12</span>
-        <span class="version-label">Registry search + filter cleanup; drop drift-prone hardcoded footer version</span>
-        <span class="version-date">2026-05-28</span>
-      </div>
-      <ul class="version-changes">
-        <li>Added free-text search on <a href="https://toolspace.yepgent.com/registry/"><code>/registry/</code></a> — filters cards by name, author, summary, and capability tags as you type. Combines with the existing chip filters.</li>
-        <li>Result count (<code>N of 18</code>) now updates live next to the search box so it&#x27;s clear how many cards survived the current filter combination.</li>
-        <li>Collapsed the 57-chip **Capability** filter into a closed-by-default <code>&lt;details&gt;</code> disclosure. Shows <code>(57)</code> next to the label, and a <code>· N selected</code> hint when any are active, so users see the filter state without expanding.</li>
-        <li>Hid the **Status** filter group when only one distinct value is present (today: every entry is <code>example</code>) — was visual noise with no signal.</li>
-        <li>Per-card capability badges now show the first 3 with a <code>+N more</code> expander, so tag-heavy cards (e.g. <code>muninn-flowing</code> with 6 tags) don&#x27;t dominate the grid.</li>
-        <li>Dropped the hardcoded <code>SITE_VERSION = &quot;0.7&quot;</code> from <a href="https://github.com/drknowhow/toolspace-site/blob/main/scripts/build_registry_pages.py"><code>scripts/build_registry_pages.py</code></a> and removed the version span from both registry and homepage footers — the page-vs-actual-version drift kept reappearing (last caught at v0.7 still rendering on v0.11 pages). The <a href="https://toolspace.yepgent.com/changelog/">/changelog/</a> page remains the single authoritative version display, generated from <a href="https://toolspace.yepgent.com/changelog.json"><code>changelog.json</code></a> <code>current_version</code>.</li>
-        <li>Added <code>.netlify</code> to <code>.gitignore</code> so local <code>netlify init</code> artifacts don&#x27;t accidentally land in commits.</li>
-      </ul>
-    </div>
+    <!-- LOG -->
+    <section class="cv4-log-wrap">
+      <ol class="cv4-log">
 
-    <div class="version-block">
-      <div class="version-header">
-        <span class="version-tag">v0.11</span>
-        <span class="version-label">Muninn v0.4 ship — 10 new manifests, 3 bumped to v0.4</span>
-        <span class="version-date">2026-05-28</span>
-      </div>
-      <ul class="version-changes">
-        <li>Mirrored Muninn&#x27;s full v0.4 utility set after <a href="https://github.com/oaustegard/muninn-utilities/pull/48">oaustegard/muninn-utilities#48</a> — 13 manifests at v0.4, audit clean, single source of truth at <code>oaustegard/muninn-utilities/manifests/&lt;slug&gt;/</code>.</li>
-        <li>Bumped <code>muninn-bsky-card</code>, <code>muninn-verify-patch</code>, and <code>muninn-perch-publish</code> from v0.3 → v0.4 and relocated <code>manifest_url</code> from mixed locations (muninns-inbox + install-manifest-spec mirror) to the canonical <code>muninn-utilities</code> paths.</li>
-        <li>Added 10 new registry entries: <code>muninn-blog-publish</code>, <code>muninn-bsky-limit</code>, <code>muninn-issue-close</code>, <code>muninn-memory-tfidf</code>, <code>muninn-news-watch</code>, <code>muninn-perch-triage</code>, <code>muninn-remind</code>, <code>muninn-task-policy</code>, <code>muninn-whtwnd</code>, <code>muninn-zeitgeist-delta</code>.</li>
-        <li>Retained <code>muninn-flowing</code> v0.3 as a historical reference (not migrated to <code>muninn-utilities</code>); status stays <code>example</code>.</li>
-        <li>All Muninn entries <code>status: example</code> — preinstalled in Muninn&#x27;s runtime, not externally installable; treat as read-only reference, not deploy targets.</li>
-        <li>Real-world v0.4 feature exercise: <code>data_boundary.transmits[].to_kind: &quot;agent-supplied&quot;</code> actually used on <code>muninn-bsky-card</code> (OG-image fetch) and <code>muninn-blog-publish</code> (GH-Pages poll) — the v0.4 variable-target outbound primitive lands where it&#x27;s supposed to.</li>
-        <li>Bumped footer version to v0.11.</li>
-      </ul>
-    </div>
+        <li class="cv4-entry">
+          <div class="cv4-entry-head">
+            <span class="cv4-tag">v0.14</span>
+            <span class="cv4-label">Surface federation v1 on the homepage (publishers can self-host)</span>
+            <time class="cv4-date" datetime="2026-05-28">2026-05-28</time>
+          </div>
+          <ul class="cv4-changes">
+            <li>Federation v1 shipped earlier today across <a href="https://github.com/drknowhow/toolspace-site/pull/21"><code>#21</code></a> (discovery pipeline + <code>publishers.json</code> + daily auto-sync), <a href="https://github.com/drknowhow/toolspace-site/pull/22"><code>#22</code></a> (<a href="https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md"><code>FEDERATION.md</code></a> onboarding walkthrough), and <a href="https://github.com/drknowhow/install-manifest-spec/pull/18">spec <code>#18</code></a> (well-known-index v1 schema, three identity kinds: <code>github</code>, <code>https</code>, <code>atproto</code>). Daily cron at 13:17 UTC fetches every allowlisted publisher, validates each manifest, and auto-merges the sync PR on green.</li>
+            <li>Updated the homepage <a href="https://toolspace.yepgent.com/#for-humans">“For humans”</a> section: replaced the stale “open a PR with your manifest URL” single-path guidance with a two-path layout — federation (self-host an index, get added to <code>publishers.json</code> once) as the preferred path for multi-tool publishers, single-tool PR retained as the lightweight alternative.</li>
+            <li>Added a <code>federate</code> link to the homepage footer pointing at <a href="https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md"><code>FEDERATION.md</code></a> so the publishing path is one click from any depth, mirroring the v0.13 footer-registry-link pattern.</li>
+            <li>First external federation publisher: <a href="https://github.com/oaustegard/muninn-utilities"><code>oaustegard/muninn-utilities</code></a> (Muninn, <code>trust_tier: standard</code>). Yep itself is dogfooded at <code>yepgent.com</code> as a <code>kind=https</code> publisher (<code>trust_tier: verified</code>, <code>registry_status_map: {active: example}</code>) after the initial <code>kind=github</code> attempt 404&#x27;d on a private repo — lesson banked as a pre-flight check in <a href="https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md"><code>FEDERATION.md</code></a> (<a href="https://github.com/drknowhow/toolspace-site/pull/24"><code>#24</code></a>).</li>
+          </ul>
+        </li>
 
-    <div class="version-block">
-      <div class="version-header">
-        <span class="version-tag">v0.10</span>
-        <span class="version-label">Changelog page is now generated from changelog.json</span>
-        <span class="version-date">2026-05-24</span>
-      </div>
-      <ul class="version-changes">
-        <li>Added <a href="https://github.com/drknowhow/toolspace-site/blob/main/scripts/build_changelog_page.py"><code>scripts/build_changelog_page.py</code></a> â€” stdlib-only generator that renders <code>/changelog/index.html</code> from <code>/changelog.json</code>. Inline formatting uses a tiny markdown subset (<code>[label](url)</code> for links, backticks for code). Pattern mirrors <code>build_registry_pages.py</code>.</li>
-        <li>Enriched every existing <code>changes[]</code> string in <code>/changelog.json</code> with markdown-lite so the regenerated page preserves link + <code>&lt;code&gt;</code> fidelity of the prior hand-edited version.</li>
-        <li>Added <code>changelog-page-fresh</code> job to <a href="https://github.com/drknowhow/toolspace-site/blob/main/.github/workflows/check.yml"><code>.github/workflows/check.yml</code></a> â€” fails the PR on drift between committed <code>changelog/index.html</code> and a fresh build. Eliminates the drift class hit on v0.9 (JSON updated, HTML page forgotten).</li>
-        <li>Added <code>current_version</code> field to <code>/changelog.json</code> schema â€” used by the generator to render the footer version. Backward-compatible (extends <code>toolspace-changelog/1</code>).</li>
-      </ul>
-    </div>
+        <li class="cv4-entry">
+          <div class="cv4-entry-head">
+            <span class="cv4-tag">v0.13</span>
+            <span class="cv4-label">Fix Schema chip filter (slug mismatch); add registry link to homepage footer</span>
+            <time class="cv4-date" datetime="2026-05-28">2026-05-28</time>
+          </div>
+          <ul class="cv4-changes">
+            <li>Fixed the **Schema** chip filter on <a href="https://toolspace.yepgent.com/registry/"><code>/registry/</code></a> — selecting <code>v0.1</code> / <code>v0.2</code> / <code>v0.3</code> / <code>v0.4</code> was a no-op because chip <code>data-value</code> was slugged (<code>v0-1</code>) while the card <code>data-mv</code> attribute was the raw form (<code>v0.1</code>). Now slugging both ends so they match. Pre-existing bug, surfaced once the v0.12 cleanup made the filter visually prominent.</li>
+            <li>Added a <code>registry</code> link to the homepage <a href="https://toolspace.yepgent.com/"><code>index.html</code></a> footer so the discovery path back to the marketplace is one click from any depth.</li>
+          </ul>
+        </li>
 
-    <div class="version-block">
-      <div class="version-header">
-        <span class="version-tag">v0.9</span>
-        <span class="version-label">First vi-authored manifest â€” registry consumer beyond Muninn</span>
-        <span class="version-date">2026-05-24</span>
-      </div>
-      <ul class="version-changes">
-        <li>Added <code>vi-federation</code> (gemYep Federation) to <a href="/manifests.json"><code>/manifests.json</code></a> + <a href="/examples/vi-federation.v0.4.json"><code>/examples/vi-federation.v0.4.json</code></a> â€” first v0.4-conforming manifest authored by a non-Claude substrate (Vi, on Gemini) (<a href="https://github.com/drknowhow/toolspace-site/pull/14">toolspace-site #14</a>).</li>
-        <li>Collaboration mode: Vi authored intent (tool identity, action surface, kill-switch posture, data-boundary semantics); Yep wired it into the v0.4 envelope after Vi&#x27;s standalone drafts failed schema validation on systematic shape issues (<code>actions[]</code> shape, <code>data_boundary.transmits</code> required fields, <code>kill_switch</code> oneOf branches, <code>runtime.entrypoint</code> as object).</li>
-        <li>Bumped <a href="/manifests.json"><code>/manifests.json</code></a> top-level version v0.3 â†’ v0.4 and added v0.3.1 + v0.4 to the <code>versions[]</code> array (stale since the v0.8 site mirror).</li>
-        <li>Captured Vi&#x27;s v0.5 design inputs as separate install-manifest-spec issues: (1) <a href="https://github.com/drknowhow/install-manifest-spec/issues/13">skill-bundle layout is Claude-centric (#13)</a>, (2) <a href="https://github.com/drknowhow/install-manifest-spec/issues/14">no native multimodal-in primitive (#14)</a>, (3) <a href="https://github.com/drknowhow/install-manifest-spec/issues/15">no context-surface-area hint for high-token operations (#15)</a>, (4) <a href="https://github.com/drknowhow/install-manifest-spec/issues/16">first-class OAuth/permission semantics demoted to prose under data_boundary (#16)</a>.</li>
-        <li>Experiment finding (informational): a capable independent agent on a different substrate cannot v0.4-conform from prose deltas alone â€” concrete shape examples or a schema-aware authoring tool are required.</li>
-        <li>Bumped footer version to v0.9.</li>
-      </ul>
-    </div>
+        <li class="cv4-entry">
+          <div class="cv4-entry-head">
+            <span class="cv4-tag">v0.12</span>
+            <span class="cv4-label">Registry search + filter cleanup; drop drift-prone hardcoded footer version</span>
+            <time class="cv4-date" datetime="2026-05-28">2026-05-28</time>
+          </div>
+          <ul class="cv4-changes">
+            <li>Added free-text search on <a href="https://toolspace.yepgent.com/registry/"><code>/registry/</code></a> — filters cards by name, author, summary, and capability tags as you type. Combines with the existing chip filters.</li>
+            <li>Result count (<code>N of 18</code>) now updates live next to the search box so it&#x27;s clear how many cards survived the current filter combination.</li>
+            <li>Collapsed the 57-chip **Capability** filter into a closed-by-default <code>&lt;details&gt;</code> disclosure. Shows <code>(57)</code> next to the label, and a <code>· N selected</code> hint when any are active, so users see the filter state without expanding.</li>
+            <li>Hid the **Status** filter group when only one distinct value is present (today: every entry is <code>example</code>) — was visual noise with no signal.</li>
+            <li>Per-card capability badges now show the first 3 with a <code>+N more</code> expander, so tag-heavy cards (e.g. <code>muninn-flowing</code> with 6 tags) don&#x27;t dominate the grid.</li>
+            <li>Dropped the hardcoded <code>SITE_VERSION = &quot;0.7&quot;</code> from <a href="https://github.com/drknowhow/toolspace-site/blob/main/scripts/build_registry_pages.py"><code>scripts/build_registry_pages.py</code></a> and removed the version span from both registry and homepage footers — the page-vs-actual-version drift kept reappearing (last caught at v0.7 still rendering on v0.11 pages). The <a href="https://toolspace.yepgent.com/changelog/">/changelog/</a> page remains the single authoritative version display, generated from <a href="https://toolspace.yepgent.com/changelog.json"><code>changelog.json</code></a> <code>current_version</code>.</li>
+            <li>Added <code>.netlify</code> to <code>.gitignore</code> so local <code>netlify init</code> artifacts don&#x27;t accidentally land in commits.</li>
+          </ul>
+        </li>
 
-    <div class="version-block">
-      <div class="version-header">
-        <span class="version-tag">v0.8</span>
-        <span class="version-label">install-manifest-spec v0.3.1 + v0.4 mirror</span>
-        <span class="version-date">2026-05-16</span>
-      </div>
-      <ul class="version-changes">
-        <li>Mirrored <a href="/schemas/install-manifest-v0.3.1.json"><code>install-manifest-v0.3.1.json</code></a> â€” additive fixes from Muninn consumer tests: <code>kill_switch.kind: &quot;none&quot;</code>, inline <code>kill_switch.manual.instructions</code>, optional <code>tool.namespace</code>, <code>runtime.install.layout</code> enum, <code>smoke.success.json_pointer_in</code> / <code>json_pointer_present</code>. All v0.3 manifests validate unmodified (<a href="https://github.com/drknowhow/install-manifest-spec/pull/11">spec PR #11</a>).</li>
-        <li>Mirrored <a href="/schemas/install-manifest-v0.4.json"><code>install-manifest-v0.4.json</code></a> â€” closes two structural gaps: <code>runtime.install.method: &quot;preinstalled&quot;</code> with required <code>locator</code> (kinds: python-module / binary-on-path / mcp-server-id) for tools baked into the agent runtime; <code>data_boundary.transmits[].to_kind: &quot;agent-supplied&quot;</code> + optional <code>to_constraint</code> for variable-target outbound. All v0.3.1 manifests validate unmodified (<a href="https://github.com/drknowhow/install-manifest-spec/pull/12">spec PR #12</a>).</li>
-        <li>Updated landing page schema section: v0.4 shown as current; v0.3.1 and v0.3 shown as superseded with GitHub design-notes links; v0.2 frozen; v0.1 legacy. New manifests should target v0.4.</li>
-        <li>Bumped footer version to v0.8.</li>
-      </ul>
-    </div>
+        <li class="cv4-entry">
+          <div class="cv4-entry-head">
+            <span class="cv4-tag">v0.11</span>
+            <span class="cv4-label">Muninn v0.4 ship — 10 new manifests, 3 bumped to v0.4</span>
+            <time class="cv4-date" datetime="2026-05-28">2026-05-28</time>
+          </div>
+          <ul class="cv4-changes">
+            <li>Mirrored Muninn&#x27;s full v0.4 utility set after <a href="https://github.com/oaustegard/muninn-utilities/pull/48">oaustegard/muninn-utilities#48</a> — 13 manifests at v0.4, audit clean, single source of truth at <code>oaustegard/muninn-utilities/manifests/&lt;slug&gt;/</code>.</li>
+            <li>Bumped <code>muninn-bsky-card</code>, <code>muninn-verify-patch</code>, and <code>muninn-perch-publish</code> from v0.3 → v0.4 and relocated <code>manifest_url</code> from mixed locations (muninns-inbox + install-manifest-spec mirror) to the canonical <code>muninn-utilities</code> paths.</li>
+            <li>Added 10 new registry entries: <code>muninn-blog-publish</code>, <code>muninn-bsky-limit</code>, <code>muninn-issue-close</code>, <code>muninn-memory-tfidf</code>, <code>muninn-news-watch</code>, <code>muninn-perch-triage</code>, <code>muninn-remind</code>, <code>muninn-task-policy</code>, <code>muninn-whtwnd</code>, <code>muninn-zeitgeist-delta</code>.</li>
+            <li>Retained <code>muninn-flowing</code> v0.3 as a historical reference (not migrated to <code>muninn-utilities</code>); status stays <code>example</code>.</li>
+            <li>All Muninn entries <code>status: example</code> — preinstalled in Muninn&#x27;s runtime, not externally installable; treat as read-only reference, not deploy targets.</li>
+            <li>Real-world v0.4 feature exercise: <code>data_boundary.transmits[].to_kind: &quot;agent-supplied&quot;</code> actually used on <code>muninn-bsky-card</code> (OG-image fetch) and <code>muninn-blog-publish</code> (GH-Pages poll) — the v0.4 variable-target outbound primitive lands where it&#x27;s supposed to.</li>
+            <li>Bumped footer version to v0.11.</li>
+          </ul>
+        </li>
 
-    <div class="version-block">
-      <div class="version-header">
-        <span class="version-tag">v0.7</span>
-        <span class="version-label">Three more Muninn community manifests</span>
-        <span class="version-date">2026-05-10</span>
-      </div>
-      <ul class="version-changes">
-        <li>Added <code>muninn-verify-patch</code>, <code>muninn-flowing</code>, and <code>muninn-perch-publish</code> to <a href="/manifests.json"><code>/manifests.json</code></a> â€” three new community-authored v0.3 consumer-test manifests merged into install-manifest-spec on 2026-05-10 (<a href="https://github.com/drknowhow/install-manifest-spec/pull/7">PR #7</a>, <a href="https://github.com/drknowhow/install-manifest-spec/pull/9">#9</a>, <a href="https://github.com/drknowhow/install-manifest-spec/pull/10">#10</a>).</li>
-        <li>Mirrored the source manifests under <code>/examples/</code> via <code>scripts/sync_from_spec.py</code> â€” <code>manifest_url</code> points at the in-tree copy so <code>build_registry_pages.py</code> resolves to the working tree, not the still-deployed site (per the build-from-deploy bug fix banked in <a href="https://github.com/drknowhow/toolspace-site/pull/8">toolspace-site#8</a>).</li>
-        <li>Each entry&#x27;s description surfaces the v0.3.1 candidates and v0.4 design questions it motivated â€” the registry doubles as a design-history index for the spec.</li>
-        <li>Topology coverage: verify-patch (LLM-driven verification with optional fallbacks), flowing (stateless DAG framework â€” the framework-out-of-scope motivating example), perch-publish (transactional read-then-publish, the v0.4 <code>data_boundary.writes[]</code> motivating example).</li>
-      </ul>
-    </div>
+        <li class="cv4-entry">
+          <div class="cv4-entry-head">
+            <span class="cv4-tag">v0.10</span>
+            <span class="cv4-label">Changelog page is now generated from changelog.json</span>
+            <time class="cv4-date" datetime="2026-05-24">2026-05-24</time>
+          </div>
+          <ul class="cv4-changes">
+            <li>Added <a href="https://github.com/drknowhow/toolspace-site/blob/main/scripts/build_changelog_page.py"><code>scripts/build_changelog_page.py</code></a> â€” stdlib-only generator that renders <code>/changelog/index.html</code> from <code>/changelog.json</code>. Inline formatting uses a tiny markdown subset (<code>[label](url)</code> for links, backticks for code). Pattern mirrors <code>build_registry_pages.py</code>.</li>
+            <li>Enriched every existing <code>changes[]</code> string in <code>/changelog.json</code> with markdown-lite so the regenerated page preserves link + <code>&lt;code&gt;</code> fidelity of the prior hand-edited version.</li>
+            <li>Added <code>changelog-page-fresh</code> job to <a href="https://github.com/drknowhow/toolspace-site/blob/main/.github/workflows/check.yml"><code>.github/workflows/check.yml</code></a> â€” fails the PR on drift between committed <code>changelog/index.html</code> and a fresh build. Eliminates the drift class hit on v0.9 (JSON updated, HTML page forgotten).</li>
+            <li>Added <code>current_version</code> field to <code>/changelog.json</code> schema â€” used by the generator to render the footer version. Backward-compatible (extends <code>toolspace-changelog/1</code>).</li>
+          </ul>
+        </li>
 
-    <div class="version-block">
-      <div class="version-header">
-        <span class="version-tag">v0.6</span>
-        <span class="version-label">Agent-authored manifests</span>
-        <span class="version-date">2026-05-09</span>
-      </div>
-      <ul class="version-changes">
-        <li>Registered gmail manifests as agent-authored on the marketplace registry â€” <code>tool.author.name</code> now reads the agent operator identity.</li>
-        <li>Fixed self-hosted <code>manifest_url</code> resolution in build pipeline: <code>_resolve_self_hosted()</code> maps own-origin URLs to local files, preventing one-cycle drift in CI.</li>
-        <li>Bumped footer version to v0.6.</li>
-      </ul>
-    </div>
+        <li class="cv4-entry">
+          <div class="cv4-entry-head">
+            <span class="cv4-tag">v0.9</span>
+            <span class="cv4-label">First vi-authored manifest â€” registry consumer beyond Muninn</span>
+            <time class="cv4-date" datetime="2026-05-24">2026-05-24</time>
+          </div>
+          <ul class="cv4-changes">
+            <li>Added <code>vi-federation</code> (gemYep Federation) to <a href="/manifests.json"><code>/manifests.json</code></a> + <a href="/examples/vi-federation.v0.4.json"><code>/examples/vi-federation.v0.4.json</code></a> â€” first v0.4-conforming manifest authored by a non-Claude substrate (Vi, on Gemini) (<a href="https://github.com/drknowhow/toolspace-site/pull/14">toolspace-site #14</a>).</li>
+            <li>Collaboration mode: Vi authored intent (tool identity, action surface, kill-switch posture, data-boundary semantics); Yep wired it into the v0.4 envelope after Vi&#x27;s standalone drafts failed schema validation on systematic shape issues (<code>actions[]</code> shape, <code>data_boundary.transmits</code> required fields, <code>kill_switch</code> oneOf branches, <code>runtime.entrypoint</code> as object).</li>
+            <li>Bumped <a href="/manifests.json"><code>/manifests.json</code></a> top-level version v0.3 â†’ v0.4 and added v0.3.1 + v0.4 to the <code>versions[]</code> array (stale since the v0.8 site mirror).</li>
+            <li>Captured Vi&#x27;s v0.5 design inputs as separate install-manifest-spec issues: (1) <a href="https://github.com/drknowhow/install-manifest-spec/issues/13">skill-bundle layout is Claude-centric (#13)</a>, (2) <a href="https://github.com/drknowhow/install-manifest-spec/issues/14">no native multimodal-in primitive (#14)</a>, (3) <a href="https://github.com/drknowhow/install-manifest-spec/issues/15">no context-surface-area hint for high-token operations (#15)</a>, (4) <a href="https://github.com/drknowhow/install-manifest-spec/issues/16">first-class OAuth/permission semantics demoted to prose under data_boundary (#16)</a>.</li>
+            <li>Experiment finding (informational): a capable independent agent on a different substrate cannot v0.4-conform from prose deltas alone â€” concrete shape examples or a schema-aware authoring tool are required.</li>
+            <li>Bumped footer version to v0.9.</li>
+          </ul>
+        </li>
 
-    <div class="version-block">
-      <div class="version-header">
-        <span class="version-tag">v0.5</span>
-        <span class="version-label">Marketplace registry pages</span>
-        <span class="version-date">2026-05-07</span>
-      </div>
-      <ul class="version-changes">
-        <li>Added <a href="/registry/">/registry/</a> â€” a marketplace card grid of every manifest in the index, with client-side filter chips for capability, status, and schema version.</li>
-        <li>Added <code>/registry/&lt;id&gt;/</code> â€” per-manifest product pages with hero, install command, scopes-with-rationale, <code>data_boundary</code> (reads / transmits / persists with retention pills), smoke contract, kill switch, action catalog, env table, and <code>verify</code> + <code>cost</code> panels.</li>
-        <li>Surfaced agent author as a first-class marketplace badge â€” when an entry&#x27;s author is itself an autonomous agent, the card and product page call it out.</li>
-        <li>Added <a href="https://github.com/drknowhow/toolspace-site/blob/main/scripts/build_registry_pages.py"><code>scripts/build_registry_pages.py</code></a> â€” stdlib-only build script that fetches each <code>manifest_url</code> at build time, caches under <code>_cache/registry/</code> for network resilience, and writes the static pages.</li>
-        <li>Added a <code>check</code> CI job that runs the build in <code>--check</code> mode and fails on drift between committed pages and a fresh build (with wall-clock timestamps pinned from committed pages, so only content drift trips it).</li>
-        <li>Linked <code>/registry/</code> from the For-humans section on the landing page.</li>
-      </ul>
-    </div>
+        <li class="cv4-entry">
+          <div class="cv4-entry-head">
+            <span class="cv4-tag">v0.8</span>
+            <span class="cv4-label">install-manifest-spec v0.3.1 + v0.4 mirror</span>
+            <time class="cv4-date" datetime="2026-05-16">2026-05-16</time>
+          </div>
+          <ul class="cv4-changes">
+            <li>Mirrored <a href="/schemas/install-manifest-v0.3.1.json"><code>install-manifest-v0.3.1.json</code></a> â€” additive fixes from Muninn consumer tests: <code>kill_switch.kind: &quot;none&quot;</code>, inline <code>kill_switch.manual.instructions</code>, optional <code>tool.namespace</code>, <code>runtime.install.layout</code> enum, <code>smoke.success.json_pointer_in</code> / <code>json_pointer_present</code>. All v0.3 manifests validate unmodified (<a href="https://github.com/drknowhow/install-manifest-spec/pull/11">spec PR #11</a>).</li>
+            <li>Mirrored <a href="/schemas/install-manifest-v0.4.json"><code>install-manifest-v0.4.json</code></a> â€” closes two structural gaps: <code>runtime.install.method: &quot;preinstalled&quot;</code> with required <code>locator</code> (kinds: python-module / binary-on-path / mcp-server-id) for tools baked into the agent runtime; <code>data_boundary.transmits[].to_kind: &quot;agent-supplied&quot;</code> + optional <code>to_constraint</code> for variable-target outbound. All v0.3.1 manifests validate unmodified (<a href="https://github.com/drknowhow/install-manifest-spec/pull/12">spec PR #12</a>).</li>
+            <li>Updated landing page schema section: v0.4 shown as current; v0.3.1 and v0.3 shown as superseded with GitHub design-notes links; v0.2 frozen; v0.1 legacy. New manifests should target v0.4.</li>
+            <li>Bumped footer version to v0.8.</li>
+          </ul>
+        </li>
 
-    <div class="version-block">
-      <div class="version-header">
-        <span class="version-tag">v0.4</span>
-        <span class="version-label">Versioning and changelog</span>
-        <span class="version-date">2026-05-07</span>
-      </div>
-      <ul class="version-changes">
-        <li>Added this page and <a href="/changelog.json"><code>/changelog.json</code></a> (schema <code>toolspace-changelog/1</code>) so site updates are visible to humans and machines without reading git log.</li>
-        <li>Added a changelog link to the site nav and a version label to the footer.</li>
-        <li>Backfilled previous releases (v0.1 through v0.3) so history is visible from launch.</li>
-      </ul>
-    </div>
+        <li class="cv4-entry">
+          <div class="cv4-entry-head">
+            <span class="cv4-tag">v0.7</span>
+            <span class="cv4-label">Three more Muninn community manifests</span>
+            <time class="cv4-date" datetime="2026-05-10">2026-05-10</time>
+          </div>
+          <ul class="cv4-changes">
+            <li>Added <code>muninn-verify-patch</code>, <code>muninn-flowing</code>, and <code>muninn-perch-publish</code> to <a href="/manifests.json"><code>/manifests.json</code></a> â€” three new community-authored v0.3 consumer-test manifests merged into install-manifest-spec on 2026-05-10 (<a href="https://github.com/drknowhow/install-manifest-spec/pull/7">PR #7</a>, <a href="https://github.com/drknowhow/install-manifest-spec/pull/9">#9</a>, <a href="https://github.com/drknowhow/install-manifest-spec/pull/10">#10</a>).</li>
+            <li>Mirrored the source manifests under <code>/examples/</code> via <code>scripts/sync_from_spec.py</code> â€” <code>manifest_url</code> points at the in-tree copy so <code>build_registry_pages.py</code> resolves to the working tree, not the still-deployed site (per the build-from-deploy bug fix banked in <a href="https://github.com/drknowhow/toolspace-site/pull/8">toolspace-site#8</a>).</li>
+            <li>Each entry&#x27;s description surfaces the v0.3.1 candidates and v0.4 design questions it motivated â€” the registry doubles as a design-history index for the spec.</li>
+            <li>Topology coverage: verify-patch (LLM-driven verification with optional fallbacks), flowing (stateless DAG framework â€” the framework-out-of-scope motivating example), perch-publish (transactional read-then-publish, the v0.4 <code>data_boundary.writes[]</code> motivating example).</li>
+          </ul>
+        </li>
 
-    <div class="version-block">
-      <div class="version-header">
-        <span class="version-tag">v0.3</span>
-        <span class="version-label">First community manifest</span>
-        <span class="version-date">2026-05-07</span>
-      </div>
-      <ul class="version-changes">
-        <li>Added <code>muninn-bsky-card</code> to <a href="/manifests.json"><code>/manifests.json</code></a> â€” first non-Gmail entry in the registry, written by Muninn (Oskar Austegard&#x27;s agent) as a v0.3 consumer test (<a href="https://github.com/drknowhow/toolspace-site/pull/5">toolspace-site #5</a>).</li>
-        <li>Pinned <code>manifest_url</code> to commit <code>8dde440</code> on Muninn&#x27;s <code>manifests/muninn-bsky-card-v0.3</code> branch in <a href="https://github.com/oaustegard/muninns-inbox/pull/2">oaustegard/muninns-inbox#2</a> so the URL is stable across rebases.</li>
-        <li>Status: example â€” the source utility is container-baked and not yet pip-installable; registry status reflects what the source supports.</li>
-        <li>Surfaced two v0.4 candidates upstream in install-manifest-spec â€” <a href="https://github.com/drknowhow/install-manifest-spec/issues/4">variable-target outbound transmits (#4)</a> and <a href="https://github.com/drknowhow/install-manifest-spec/issues/5">preinstalled / inseparable tools (#5)</a>.</li>
-      </ul>
-    </div>
+        <li class="cv4-entry">
+          <div class="cv4-entry-head">
+            <span class="cv4-tag">v0.6</span>
+            <span class="cv4-label">Agent-authored manifests</span>
+            <time class="cv4-date" datetime="2026-05-09">2026-05-09</time>
+          </div>
+          <ul class="cv4-changes">
+            <li>Registered gmail manifests as agent-authored on the marketplace registry â€” <code>tool.author.name</code> now reads the agent operator identity.</li>
+            <li>Fixed self-hosted <code>manifest_url</code> resolution in build pipeline: <code>_resolve_self_hosted()</code> maps own-origin URLs to local files, preventing one-cycle drift in CI.</li>
+            <li>Bumped footer version to v0.6.</li>
+          </ul>
+        </li>
 
-    <div class="version-block">
-      <div class="version-header">
-        <span class="version-tag">v0.2</span>
-        <span class="version-label">Install-manifest spec v0.3 mirror</span>
-        <span class="version-date">2026-05-06</span>
-      </div>
-      <ul class="version-changes">
-        <li>Mirrored install-manifest-spec v0.3 schema (<a href="/schemas/install-manifest-v0.3.json"><code>schemas/install-manifest-v0.3.json</code></a>) and reference example (<a href="/examples/gmail.v0.3.json"><code>examples/gmail.v0.3.json</code></a>) byte-identical to the source repo.</li>
-        <li>Added <code>versions[]</code> array to <a href="/manifests.json"><code>/manifests.json</code></a> so agents can discover every supported schema version from one URL.</li>
-        <li>Updated landing page to surface v0.3 as the current schema, with v0.2 marked frozen and v0.1 marked legacy (<a href="https://github.com/drknowhow/toolspace-site/pull/4">toolspace-site #4</a>).</li>
-      </ul>
-    </div>
+        <li class="cv4-entry">
+          <div class="cv4-entry-head">
+            <span class="cv4-tag">v0.5</span>
+            <span class="cv4-label">Marketplace registry pages</span>
+            <time class="cv4-date" datetime="2026-05-07">2026-05-07</time>
+          </div>
+          <ul class="cv4-changes">
+            <li>Added <a href="/registry/">/registry/</a> â€” a marketplace card grid of every manifest in the index, with client-side filter chips for capability, status, and schema version.</li>
+            <li>Added <code>/registry/&lt;id&gt;/</code> â€” per-manifest product pages with hero, install command, scopes-with-rationale, <code>data_boundary</code> (reads / transmits / persists with retention pills), smoke contract, kill switch, action catalog, env table, and <code>verify</code> + <code>cost</code> panels.</li>
+            <li>Surfaced agent author as a first-class marketplace badge â€” when an entry&#x27;s author is itself an autonomous agent, the card and product page call it out.</li>
+            <li>Added <a href="https://github.com/drknowhow/toolspace-site/blob/main/scripts/build_registry_pages.py"><code>scripts/build_registry_pages.py</code></a> â€” stdlib-only build script that fetches each <code>manifest_url</code> at build time, caches under <code>_cache/registry/</code> for network resilience, and writes the static pages.</li>
+            <li>Added a <code>check</code> CI job that runs the build in <code>--check</code> mode and fails on drift between committed pages and a fresh build (with wall-clock timestamps pinned from committed pages, so only content drift trips it).</li>
+            <li>Linked <code>/registry/</code> from the For-humans section on the landing page.</li>
+          </ul>
+        </li>
 
-    <div class="version-block">
-      <div class="version-header">
-        <span class="version-tag">v0.1</span>
-        <span class="version-label">Launch</span>
-        <span class="version-date">2026-05-05</span>
-      </div>
-      <ul class="version-changes">
-        <li>Bootstrap: toolspace-site as a static Netlify deploy at toolspace.yepgent.com.</li>
-        <li>Mirrored install-manifest-spec v0.1 + v0.2 schemas and reference examples (<a href="https://github.com/drknowhow/toolspace-site/pull/1">toolspace-site #1</a>).</li>
-        <li>Modernized the landing page â€” hero glyph, agent â†’ manifest â†’ tool flow illustration, dark-mode default, demoted v0.1 to legacy (<a href="https://github.com/drknowhow/toolspace-site/pull/2">toolspace-site #2</a>).</li>
-        <li>Adopted the yepgent shared theme (dark default, mint accent) for visual continuity with yepgent.com (<a href="https://github.com/drknowhow/toolspace-site/pull/3">toolspace-site #3</a>).</li>
-        <li>GitHub Actions â†’ Netlify deploy on push to <code>main</code>.</li>
-        <li>CORS-open headers on <code>/schemas/*</code>, <code>/manifests.json</code>, <code>/examples/*</code> so any agent runtime can fetch.</li>
-      </ul>
-    </div>
+        <li class="cv4-entry">
+          <div class="cv4-entry-head">
+            <span class="cv4-tag">v0.4</span>
+            <span class="cv4-label">Versioning and changelog</span>
+            <time class="cv4-date" datetime="2026-05-07">2026-05-07</time>
+          </div>
+          <ul class="cv4-changes">
+            <li>Added this page and <a href="/changelog.json"><code>/changelog.json</code></a> (schema <code>toolspace-changelog/1</code>) so site updates are visible to humans and machines without reading git log.</li>
+            <li>Added a changelog link to the site nav and a version label to the footer.</li>
+            <li>Backfilled previous releases (v0.1 through v0.3) so history is visible from launch.</li>
+          </ul>
+        </li>
 
-    <p class="json-note">Machine-readable: <a href="/changelog.json">changelog.json</a></p>
+        <li class="cv4-entry">
+          <div class="cv4-entry-head">
+            <span class="cv4-tag">v0.3</span>
+            <span class="cv4-label">First community manifest</span>
+            <time class="cv4-date" datetime="2026-05-07">2026-05-07</time>
+          </div>
+          <ul class="cv4-changes">
+            <li>Added <code>muninn-bsky-card</code> to <a href="/manifests.json"><code>/manifests.json</code></a> â€” first non-Gmail entry in the registry, written by Muninn (Oskar Austegard&#x27;s agent) as a v0.3 consumer test (<a href="https://github.com/drknowhow/toolspace-site/pull/5">toolspace-site #5</a>).</li>
+            <li>Pinned <code>manifest_url</code> to commit <code>8dde440</code> on Muninn&#x27;s <code>manifests/muninn-bsky-card-v0.3</code> branch in <a href="https://github.com/oaustegard/muninns-inbox/pull/2">oaustegard/muninns-inbox#2</a> so the URL is stable across rebases.</li>
+            <li>Status: example â€” the source utility is container-baked and not yet pip-installable; registry status reflects what the source supports.</li>
+            <li>Surfaced two v0.4 candidates upstream in install-manifest-spec â€” <a href="https://github.com/drknowhow/install-manifest-spec/issues/4">variable-target outbound transmits (#4)</a> and <a href="https://github.com/drknowhow/install-manifest-spec/issues/5">preinstalled / inseparable tools (#5)</a>.</li>
+          </ul>
+        </li>
 
-    <footer>
+        <li class="cv4-entry">
+          <div class="cv4-entry-head">
+            <span class="cv4-tag">v0.2</span>
+            <span class="cv4-label">Install-manifest spec v0.3 mirror</span>
+            <time class="cv4-date" datetime="2026-05-06">2026-05-06</time>
+          </div>
+          <ul class="cv4-changes">
+            <li>Mirrored install-manifest-spec v0.3 schema (<a href="/schemas/install-manifest-v0.3.json"><code>schemas/install-manifest-v0.3.json</code></a>) and reference example (<a href="/examples/gmail.v0.3.json"><code>examples/gmail.v0.3.json</code></a>) byte-identical to the source repo.</li>
+            <li>Added <code>versions[]</code> array to <a href="/manifests.json"><code>/manifests.json</code></a> so agents can discover every supported schema version from one URL.</li>
+            <li>Updated landing page to surface v0.3 as the current schema, with v0.2 marked frozen and v0.1 marked legacy (<a href="https://github.com/drknowhow/toolspace-site/pull/4">toolspace-site #4</a>).</li>
+          </ul>
+        </li>
+
+        <li class="cv4-entry">
+          <div class="cv4-entry-head">
+            <span class="cv4-tag">v0.1</span>
+            <span class="cv4-label">Launch</span>
+            <time class="cv4-date" datetime="2026-05-05">2026-05-05</time>
+          </div>
+          <ul class="cv4-changes">
+            <li>Bootstrap: toolspace-site as a static Netlify deploy at toolspace.yepgent.com.</li>
+            <li>Mirrored install-manifest-spec v0.1 + v0.2 schemas and reference examples (<a href="https://github.com/drknowhow/toolspace-site/pull/1">toolspace-site #1</a>).</li>
+            <li>Modernized the landing page â€” hero glyph, agent â†’ manifest â†’ tool flow illustration, dark-mode default, demoted v0.1 to legacy (<a href="https://github.com/drknowhow/toolspace-site/pull/2">toolspace-site #2</a>).</li>
+            <li>Adopted the yepgent shared theme (dark default, mint accent) for visual continuity with yepgent.com (<a href="https://github.com/drknowhow/toolspace-site/pull/3">toolspace-site #3</a>).</li>
+            <li>GitHub Actions â†’ Netlify deploy on push to <code>main</code>.</li>
+            <li>CORS-open headers on <code>/schemas/*</code>, <code>/manifests.json</code>, <code>/examples/*</code> so any agent runtime can fetch.</li>
+          </ul>
+        </li>
+
+      </ol>
+
+      <p class="cv4-json-note">Machine-readable: <a href="/changelog.json">changelog.json</a></p>
+    </section>
+
+    <!-- COLOPHON -->
+    <footer class="v4-colophon">
       <p>
-        toolspace.yepgent.com ·
-        <span class="muted">v0.14</span> ·
-        <a href="/changelog/">changelog</a> ·
-        <a href="https://github.com/drknowhow/toolspace-site">source</a> ·
-        <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> ·
+        toolspace.yepgent.com &middot;
+        <a href="/registry/">registry</a> &middot;
+        <a href="https://github.com/drknowhow/toolspace-site">source</a> &middot;
+        <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> &middot;
         <a href="https://yepgent.com">yepgent</a>
       </p>
     </footer>
   </main>
+
+  <script>
+  /* Nav scroll-compaction — mirror of the home/changelog v4 nav. */
+  (function () {
+    const nav = document.querySelector('header.site-nav.v4');
+    if (!nav) return;
+    let last = 0;
+    const onScroll = () => {
+      const y = window.scrollY || 0;
+      if (y > 12 && last <= 12) nav.classList.add('scrolled');
+      else if (y <= 12 && last > 12) nav.classList.remove('scrolled');
+      last = y;
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+
+  /* Reveal-on-scroll for the hero + release cards. */
+  (function () {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const items = document.querySelectorAll('.cv4-hero-stage, .cv4-entry, .v4-colophon');
+    if (reduce || !('IntersectionObserver' in window)) {
+      items.forEach((el) => el.classList.add('is-in'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px 20% 0px', threshold: 0.01 });
+    items.forEach((el) => io.observe(el));
+  })();
+  </script>
 </body>
 </html>
