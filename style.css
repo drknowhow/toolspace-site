@@ -4102,3 +4102,263 @@ body.toolspace-v4 .tv4-colophon a:hover { color: var(--accent); border-bottom-co
   }
   body.toolspace-v4 .aurora > span { animation: none !important; }
 }
+
+/* ===============================================================
+   CHANGELOG â€” v4 (body.changelog-v4)
+   Chronological log of releases. Glass cards, accent tag pills.
+   =============================================================== */
+
+body.changelog-v4 main.v4-shell { max-width: 100%; }
+
+/* --- HERO --- */
+body.changelog-v4 .cv4-hero {
+  position: relative;
+  padding: clamp(2rem, 5vw, 3.5rem) clamp(1.25rem, 5vw, 4rem) clamp(1.5rem, 3vw, 2.5rem);
+  isolation: isolate;
+  overflow: clip;
+}
+body.changelog-v4 .cv4-hero > * { min-width: 0; }
+body.changelog-v4 .cv4-hero .aurora {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  overflow: clip;
+}
+body.changelog-v4 .cv4-hero .aurora .aurora-1,
+body.changelog-v4 .cv4-hero .aurora .aurora-2 {
+  position: absolute; display: block; border-radius: 50%;
+  filter: blur(70px); mix-blend-mode: screen;
+}
+body.changelog-v4 .cv4-hero .aurora .aurora-1 {
+  top: -28%; left: -12%; width: 50vw; height: 50vw;
+  background: conic-gradient(from 100deg at 50% 50%,
+    color-mix(in oklab, var(--accent) 28%, transparent),
+    transparent 35%,
+    color-mix(in oklab, var(--accent) 18%, transparent) 60%,
+    transparent 80%);
+  opacity: 0.6;
+  animation: v4-drift1 22s ease-in-out infinite alternate;
+}
+body.changelog-v4 .cv4-hero .aurora .aurora-2 {
+  top: -18%; right: -14%; width: 46vw; height: 46vw;
+  background: conic-gradient(from 280deg at 50% 50%,
+    color-mix(in oklab, var(--accent-strong) 22%, transparent),
+    transparent 30%,
+    color-mix(in oklab, var(--accent) 12%, transparent) 55%,
+    transparent 80%);
+  opacity: 0.5;
+  animation: v4-drift2 26s ease-in-out infinite alternate;
+}
+@media (prefers-color-scheme: light) {
+  body.changelog-v4 .cv4-hero .aurora > span { mix-blend-mode: multiply; opacity: 0.4; }
+}
+
+body.changelog-v4 .cv4-hero-stage {
+  max-width: 56rem; margin: 0 auto; width: 100%;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 520ms var(--ease), transform 520ms var(--ease);
+}
+body.changelog-v4 .cv4-hero-stage.is-in { opacity: 1; transform: none; }
+
+body.changelog-v4 .cv4-display {
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 5.5vw, 4.4rem);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  font-weight: 500;
+  margin: 0 0 1rem;
+  color: var(--ink);
+  max-width: 20ch;
+}
+body.changelog-v4 .cv4-display .serif-italic {
+  font-style: italic;
+  color: var(--accent);
+}
+body.changelog-v4 .cv4-lede {
+  max-width: 40rem; margin: 0;
+  font-size: clamp(1.02rem, 1.2vw + 0.7rem, 1.2rem);
+  color: var(--ink-soft); line-height: 1.55;
+}
+body.changelog-v4 .cv4-lede a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-edge);
+}
+body.changelog-v4 .cv4-lede a:hover { border-bottom-color: var(--accent); }
+body.changelog-v4 .cv4-lede code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.92em;
+}
+
+/* --- LOG WRAPPER --- */
+body.changelog-v4 .cv4-log-wrap {
+  max-width: 56rem; margin: 0 auto; width: 100%;
+  padding: clamp(1rem, 3vw, 2rem) clamp(1.25rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+}
+body.changelog-v4 .cv4-log {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+body.changelog-v4 .cv4-log > * { min-width: 0; }
+
+/* --- ENTRY CARD --- */
+body.changelog-v4 .cv4-entry {
+  position: relative;
+  padding: 1.4rem 1.5rem 1.25rem;
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+          backdrop-filter: blur(10px) saturate(1.2);
+  border: 1px solid var(--glass-edge);
+  border-radius: 14px;
+  box-shadow: 0 1px 0 color-mix(in oklab, white 4%, transparent) inset;
+  transition: opacity 520ms var(--ease),
+              transform 520ms var(--ease),
+              border-color 240ms var(--ease),
+              box-shadow 240ms var(--ease),
+              background 240ms var(--ease);
+  opacity: 0;
+  transform: translateY(12px);
+}
+body.changelog-v4 .cv4-entry.is-in { opacity: 1; transform: none; }
+body.changelog-v4 .cv4-entry:hover {
+  border-color: var(--accent-edge);
+  background: color-mix(in oklab, var(--bg) 60%, transparent);
+  box-shadow:
+    0 1px 0 color-mix(in oklab, white 5%, transparent) inset,
+    0 14px 36px -22px color-mix(in oklab, var(--accent) 30%, var(--shadow-tint));
+}
+
+body.changelog-v4 .cv4-entry-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.85rem;
+  margin-bottom: 0.7rem;
+}
+body.changelog-v4 .cv4-tag {
+  display: inline-block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-edge);
+  border-radius: var(--r-pill);
+  padding: 0.18rem 0.65rem;
+  white-space: nowrap;
+}
+body.changelog-v4 .cv4-label {
+  font-family: var(--serif);
+  font-size: clamp(1.1rem, 1.8vw, 1.4rem);
+  line-height: 1.25;
+  font-weight: 500;
+  color: var(--ink);
+  flex: 1 1 14rem;
+  min-width: 0;
+}
+body.changelog-v4 .cv4-label em {
+  font-style: italic;
+  color: var(--ink);
+}
+body.changelog-v4 .cv4-date {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+body.changelog-v4 .cv4-changes {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--ink-soft);
+  font-size: 0.96rem;
+  line-height: 1.65;
+}
+body.changelog-v4 .cv4-changes li { margin: 0 0 0.35rem; }
+body.changelog-v4 .cv4-changes li:last-child { margin-bottom: 0; }
+body.changelog-v4 .cv4-changes li::marker { color: var(--accent); }
+body.changelog-v4 .cv4-changes em {
+  font-family: var(--serif); font-style: italic; color: var(--ink);
+}
+body.changelog-v4 .cv4-changes a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-edge);
+}
+body.changelog-v4 .cv4-changes a:hover { border-bottom-color: var(--accent); }
+body.changelog-v4 .cv4-changes code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88em;
+  padding: 0.06em 0.35em;
+  border-radius: 4px;
+  background: color-mix(in oklab, var(--fg) 6%, transparent);
+  color: var(--ink);
+}
+
+body.changelog-v4 .cv4-json-note {
+  margin-top: 2rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+body.changelog-v4 .cv4-json-note a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-edge);
+}
+body.changelog-v4 .cv4-json-note a:hover { border-bottom-color: var(--accent); }
+
+/* --- Colophon --- */
+body.changelog-v4 .v4-colophon {
+  max-width: 56rem; margin: 0 auto; width: 100%;
+  padding: clamp(2rem, 5vw, 4rem) clamp(1.25rem, 5vw, 4rem) 2rem;
+  border-top: 1px solid var(--glass-edge);
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 520ms var(--ease), transform 520ms var(--ease);
+}
+body.changelog-v4 .v4-colophon.is-in { opacity: 1; transform: none; }
+body.changelog-v4 .v4-colophon a {
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-bottom: 1px solid var(--glass-edge);
+  transition: color 160ms var(--ease), border-color 160ms var(--ease);
+}
+body.changelog-v4 .v4-colophon a:hover { color: var(--accent); border-color: var(--accent-edge); }
+
+/* --- Mobile --- */
+@media (max-width: 40rem) {
+  body.changelog-v4 .cv4-hero {
+    padding: clamp(1.25rem, 4vw, 2rem) 1.1rem clamp(1rem, 3vw, 1.5rem);
+  }
+  body.changelog-v4 .cv4-log-wrap {
+    padding-left: 1.1rem;
+    padding-right: 1.1rem;
+  }
+  body.changelog-v4 .cv4-entry { padding: 1.15rem 1.1rem 1rem; border-radius: 12px; }
+  body.changelog-v4 .cv4-display { font-size: clamp(2rem, 8vw, 2.6rem); max-width: none; }
+  body.changelog-v4 .cv4-date { margin-left: 0; }
+  body.changelog-v4 .cv4-label { flex-basis: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.changelog-v4 .cv4-entry,
+  body.changelog-v4 .cv4-hero-stage,
+  body.changelog-v4 .v4-colophon {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  body.changelog-v4 .cv4-hero .aurora > span { animation: none !important; }
+}

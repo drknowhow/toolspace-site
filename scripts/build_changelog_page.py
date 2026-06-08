@@ -5,7 +5,14 @@ Single source of truth for the changelog is changelog.json (schema
 toolspace-changelog/1). This script renders changelog/index.html from
 it so the two never drift.
 
-Inline formatting inside changes[] strings uses a tiny markdown subset:
+The page uses the shared yepgent v4 design language: it sets
+`body class="home-v4 changelog-v4"` and reuses the v4 shell (glass pill
+nav, aurora hero, reveal motion) plus the `changelog-v4`/`cv4-*` layer
+that lives in style.css — mirrored from yepgent.com/changelog so the two
+sites read the same.
+
+Inline formatting inside changes[]/label strings uses a tiny markdown
+subset:
   `code`            → <code>code</code>
   [label](url)      → <a href="url">label</a>
 
@@ -29,7 +36,6 @@ import filecmp
 import html
 import json
 import re
-import shutil
 import sys
 import tempfile
 from pathlib import Path
@@ -72,7 +78,7 @@ def render_inline(text: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Page renderer
+# Page renderer — v4 design (body.home-v4 .changelog-v4)
 # ---------------------------------------------------------------------------
 
 PAGE_HEAD = """<!doctype html>
@@ -80,61 +86,20 @@ PAGE_HEAD = """<!doctype html>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>changelog · toolspace</title>
+  <title>changelog &middot; toolspace</title>
   <meta name="description" content="A running log of what's shipped on toolspace.yepgent.com — version by version." />
   <meta name="color-scheme" content="dark light" />
 
   <!-- Machine-readable version of this page. -->
   <link rel="alternate" type="application/json" href="/changelog.json" title="toolspace changelog JSON" />
 
+  <!-- Shared yepgent theme; the changelog-v4 layer lives here too. -->
   <link rel="stylesheet" href="/style.css" />
-  <style>
-    .version-block {
-      border-left: 3px solid var(--accent, #7cf5c4);
-      padding: 0 0 0 1.25rem;
-      margin-bottom: 2.5rem;
-    }
-    .version-header {
-      display: flex;
-      align-items: baseline;
-      gap: 0.75rem;
-      margin-bottom: 0.5rem;
-      flex-wrap: wrap;
-    }
-    .version-tag {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--accent, #7cf5c4);
-    }
-    .version-label {
-      font-weight: 600;
-      font-size: 1rem;
-    }
-    .version-date {
-      font-size: 0.82rem;
-      opacity: 0.55;
-      margin-left: auto;
-      font-variant-numeric: tabular-nums;
-    }
-    .version-changes {
-      margin: 0.5rem 0 0;
-      padding-left: 1.2rem;
-      font-size: 0.93rem;
-      line-height: 1.7;
-    }
-    .version-changes li {
-      margin-bottom: 0.25rem;
-    }
-    .json-note {
-      font-size: 0.82rem;
-      opacity: 0.55;
-      margin-top: 2.5rem;
-    }
-  </style>
+  <link rel="canonical" href="https://toolspace.yepgent.com/changelog/" />
 </head>
-<body>
-  <header class="site-nav">
+<body class="home-v4 changelog-v4">
+
+  <header class="site-nav v4">
     <a class="brand" href="/">
       <svg class="brand-glyph" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M14 6h22l10 10v34H14z" stroke="var(--accent)"/>
@@ -145,69 +110,126 @@ PAGE_HEAD = """<!doctype html>
       <span>toolspace<span class="dot">.</span></span>
     </a>
     <nav>
-      <a href="/">registry</a>
-      <a href="/changelog/">changelog</a>
-      <a href="https://github.com/drknowhow/install-manifest-spec">spec</a>
+      <a href="/registry/">registry</a>
+      <a href="/changelog/" aria-current="page">changelog</a>
       <a href="https://yepgent.com/">yepgent</a>
+      <a href="https://github.com/drknowhow/install-manifest-spec">spec</a>
     </nav>
   </header>
 
-  <main>
-    <h1>Changelog</h1>
-    <p class="lede">A running log of what's shipped on toolspace.yepgent.com. Newest first.</p>
+  <main class="v4-shell">
 
-    <hr />
+    <!-- HERO -->
+    <section class="cv4-hero">
+      <div class="aurora" aria-hidden="true">
+        <span class="aurora-1"></span>
+        <span class="aurora-2"></span>
+      </div>
+
+      <div class="cv4-hero-stage">
+        <p class="v4-eyebrow">
+          <span class="eyebrow-tick" aria-hidden="true"></span>
+          changelog &middot; newest first
+        </p>
+        <h1 class="cv4-display">
+          What <span class="serif-italic">shipped.</span>
+        </h1>
+        <p class="cv4-lede">
+          A running log of changes to toolspace.yepgent.com &mdash; version by version.
+          Machine-readable mirror at <a href="/changelog.json"><code>changelog.json</code></a>.
+        </p>
+      </div>
+    </section>
+
+    <!-- LOG -->
+    <section class="cv4-log-wrap">
+      <ol class="cv4-log">
 
 """
 
-PAGE_TAIL_TEMPLATE = """    <p class="json-note">Machine-readable: <a href="/changelog.json">changelog.json</a></p>
+PAGE_TAIL = """
+      </ol>
 
-    <footer>
+      <p class="cv4-json-note">Machine-readable: <a href="/changelog.json">changelog.json</a></p>
+    </section>
+
+    <!-- COLOPHON -->
+    <footer class="v4-colophon">
       <p>
-        toolspace.yepgent.com ·
-        <span class="muted">v{footer_version}</span> ·
-        <a href="/changelog/">changelog</a> ·
-        <a href="https://github.com/drknowhow/toolspace-site">source</a> ·
-        <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> ·
+        toolspace.yepgent.com &middot;
+        <a href="/registry/">registry</a> &middot;
+        <a href="https://github.com/drknowhow/toolspace-site">source</a> &middot;
+        <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> &middot;
         <a href="https://yepgent.com">yepgent</a>
       </p>
     </footer>
   </main>
+
+  <script>
+  /* Nav scroll-compaction — mirror of the home/changelog v4 nav. */
+  (function () {
+    const nav = document.querySelector('header.site-nav.v4');
+    if (!nav) return;
+    let last = 0;
+    const onScroll = () => {
+      const y = window.scrollY || 0;
+      if (y > 12 && last <= 12) nav.classList.add('scrolled');
+      else if (y <= 12 && last > 12) nav.classList.remove('scrolled');
+      last = y;
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+
+  /* Reveal-on-scroll for the hero + release cards. */
+  (function () {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const items = document.querySelectorAll('.cv4-hero-stage, .cv4-entry, .v4-colophon');
+    if (reduce || !('IntersectionObserver' in window)) {
+      items.forEach((el) => el.classList.add('is-in'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px 20% 0px', threshold: 0.01 });
+    items.forEach((el) => io.observe(el));
+  })();
+  </script>
 </body>
 </html>
 """
 
 
-def render_version_block(entry: dict) -> str:
+def render_entry(entry: dict) -> str:
     version = entry["version"]
     label = entry.get("label", "")
     date = entry.get("date", "")
     changes = entry.get("changes", [])
 
     items = "\n".join(
-        f"        <li>{render_inline(c)}</li>" for c in changes
+        f"            <li>{render_inline(c)}</li>" for c in changes
     )
     return (
-        f'    <div class="version-block">\n'
-        f'      <div class="version-header">\n'
-        f'        <span class="version-tag">v{html.escape(version)}</span>\n'
-        f'        <span class="version-label">{render_inline(label)}</span>\n'
-        f'        <span class="version-date">{html.escape(date)}</span>\n'
-        f"      </div>\n"
-        f'      <ul class="version-changes">\n'
+        f'        <li class="cv4-entry">\n'
+        f'          <div class="cv4-entry-head">\n'
+        f'            <span class="cv4-tag">v{html.escape(version)}</span>\n'
+        f'            <span class="cv4-label">{render_inline(label)}</span>\n'
+        f'            <time class="cv4-date" datetime="{html.escape(date, quote=True)}">'
+        f"{html.escape(date)}</time>\n"
+        f"          </div>\n"
+        f'          <ul class="cv4-changes">\n'
         f"{items}\n"
-        f"      </ul>\n"
-        f"    </div>\n"
+        f"          </ul>\n"
+        f"        </li>\n"
     )
 
 
 def render_page(data: dict) -> str:
     versions = data.get("versions", [])
-    footer_version = data.get("current_version", "")
-    blocks = "\n".join(render_version_block(v) for v in versions)
-    return PAGE_HEAD + blocks + "\n" + PAGE_TAIL_TEMPLATE.format(
-        footer_version=html.escape(footer_version)
-    )
+    entries = "\n".join(render_entry(v) for v in versions)
+    return PAGE_HEAD + entries + PAGE_TAIL
 
 
 # ---------------------------------------------------------------------------
