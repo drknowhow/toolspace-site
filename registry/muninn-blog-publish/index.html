@@ -15,6 +15,21 @@
 
     main.wide { max-width: 56rem; }
 
+    /* The site nav is sticky (style.css) but transparent until a .scrolled
+       class is toggled by JS — which these dense registry/product pages
+       don't ship, so the bar vanished into the content on scroll. Give it
+       an always-on backdrop + hairline. Full-bleed bar, with the brand and
+       links kept aligned to the 56rem reading column. */
+    header.site-nav {
+      max-width: none;
+      padding-left: max(1.25rem, calc((100% - 56rem) / 2 + 1.25rem));
+      padding-right: max(1.25rem, calc((100% - 56rem) / 2 + 1.25rem));
+      background: color-mix(in oklab, var(--bg) 88%, transparent);
+      -webkit-backdrop-filter: saturate(1.4) blur(10px);
+      backdrop-filter: saturate(1.4) blur(10px);
+      border-bottom: 1px solid var(--rule);
+    }
+
     .filter-bar {
       display: flex;
       flex-direction: column;
