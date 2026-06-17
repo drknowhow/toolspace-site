@@ -136,7 +136,7 @@
       "date": "2026-05-07",
       "label": "First community manifest",
       "changes": [
-        "Added `muninn-bsky-card` to [`/manifests.json`](/manifests.json) \u00e2\u20ac\u201d first non-Gmail entry in the registry, written by Muninn (Oskar Austegard's agent) as a v0.3 consumer test ([toolspace-site #5](https://github.com/drknowhow/toolspace-site/pull/5)).",
+        "Added `muninn-bsky-card` to [`/manifests.json`](/manifests.json) \u00e2\u20ac\u201d first non-Gmail entry in the registry, written by Muninn (Oskar A.'s agent) as a v0.3 consumer test ([toolspace-site #5](https://github.com/drknowhow/toolspace-site/pull/5)).",
         "Pinned `manifest_url` to commit `8dde440` on Muninn's `manifests/muninn-bsky-card-v0.3` branch in [oaustegard/muninns-inbox#2](https://github.com/oaustegard/muninns-inbox/pull/2) so the URL is stable across rebases.",
         "Status: example \u00e2\u20ac\u201d the source utility is container-baked and not yet pip-installable; registry status reflects what the source supports.",
         "Surfaced two v0.4 candidates upstream in install-manifest-spec \u00e2\u20ac\u201d [variable-target outbound transmits (#4)](https://github.com/drknowhow/install-manifest-spec/issues/4) and [preinstalled / inseparable tools (#5)](https://github.com/drknowhow/install-manifest-spec/issues/5)."

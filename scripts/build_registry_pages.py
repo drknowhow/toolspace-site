@@ -138,6 +138,40 @@ def _initials(s: str, n: int = 2) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Identity redaction
+# ---------------------------------------------------------------------------
+# Policy (Dimitri, 2026-06-17): protect third-party operators' identities on
+# the public site — display a real person's name as "First L." (first name +
+# last initial), not the full surname, unless explicitly told otherwise.
+#
+# Manifests are mirrored from publishers as-is; their `tool.author.name` may
+# carry a full name. We can't (and shouldn't) rewrite the publisher's own
+# JSON or break their functional links (homepage / repo URLs may contain a
+# surname-bearing domain or handle — that's the publisher's own public
+# choice). What we control is how *we* render the name. So redaction happens
+# at render time, here, via an explicit map — safe and extensible, no fragile
+# auto-detection that might mangle agent names ("Muninn", "gemYep", etc.).
+#
+# Add an entry when a new publisher's full surname would otherwise render.
+IDENTITY_REDACTIONS = {
+    "Oskar Austegard": "Oskar A.",
+}
+
+
+def _redact_identities(text: str) -> str:
+    """Replace any known full personal name with its 'First L.' form.
+
+    Applied to author display strings before they reach the page. Leaves
+    functional URLs untouched (those are handled separately, if at all).
+    """
+    if not text:
+        return text
+    for full, short in IDENTITY_REDACTIONS.items():
+        text = text.replace(full, short)
+    return text
+
+
+# ---------------------------------------------------------------------------
 # Shared chrome
 # ---------------------------------------------------------------------------
 
@@ -632,7 +666,7 @@ def _render_card(entry: dict, manifest: dict) -> str:
     if len(summary) > 220:
         summary = summary[:217].rstrip() + "…"
     author = tool.get("author") or {}
-    author_name = author.get("name") or "—"
+    author_name = _redact_identities(author.get("name") or "—")
     if len(author_name) > 90:
         author_name = author_name[:87] + "…"
     is_agent = _is_agent_author(author)
@@ -1275,7 +1309,7 @@ def render_product_page(
     homepage = tool.get("homepage")
     license_str = tool.get("license") or "—"
     author = tool.get("author") or {}
-    author_name = author.get("name") or "—"
+    author_name = _redact_identities(author.get("name") or "—")
     author_url = author.get("url")
     is_agent = _is_agent_author(author)
 
