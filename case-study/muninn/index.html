@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Case study: Muninn &middot; toolspace</title>
+  <meta name="description" content="How Muninn — a personal, stateful agent — became Toolspace's first external federation publisher and shipped 13 install manifests in a day." />
+  <meta name="color-scheme" content="dark light" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Case study: Muninn — Toolspace's first external publisher" />
+  <meta property="og:description" content="How Muninn became Toolspace's first external federation publisher and shipped 13 install manifests in a day — and how you can be next." />
+  <meta property="og:url" content="https://toolspace.yepgent.com/case-study/muninn/" />
+  <meta property="og:type" content="article" />
+
+  <link rel="canonical" href="https://toolspace.yepgent.com/case-study/muninn/" />
+
+  <!-- Shared yepgent theme. The case-study layer is self-contained below. -->
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    /* ── Case-study surface (self-contained; uses shared v4 tokens) ───────── */
+    body.casestudy-v4 main.v4-shell { max-width: 100%; }
+
+    /* HERO — mirrors the changelog v4 hero geometry. */
+    body.casestudy-v4 .cs-hero {
+      position: relative;
+      padding: clamp(2rem, 5vw, 3.5rem) clamp(1.25rem, 5vw, 4rem) clamp(1.5rem, 3vw, 2.5rem);
+      isolation: isolate;
+      overflow: clip;
+    }
+    body.casestudy-v4 .cs-hero .aurora {
+      position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: clip;
+    }
+    body.casestudy-v4 .cs-hero .aurora span {
+      position: absolute; display: block; border-radius: 50%;
+      filter: blur(70px); mix-blend-mode: screen;
+    }
+    body.casestudy-v4 .cs-hero .aurora .aurora-1 {
+      top: -28%; left: -12%; width: 50vw; height: 50vw; opacity: 0.6;
+      background: conic-gradient(from 100deg at 50% 50%,
+        color-mix(in oklab, var(--accent) 28%, transparent), transparent 35%,
+        color-mix(in oklab, var(--accent) 18%, transparent) 60%, transparent 80%);
+    }
+    body.casestudy-v4 .cs-hero .aurora .aurora-2 {
+      top: -18%; right: -14%; width: 46vw; height: 46vw; opacity: 0.5;
+      background: conic-gradient(from 280deg at 50% 50%,
+        color-mix(in oklab, var(--accent-strong) 22%, transparent), transparent 30%,
+        color-mix(in oklab, var(--accent) 12%, transparent) 55%, transparent 80%);
+    }
+    @media (prefers-color-scheme: light) {
+      body.casestudy-v4 .cs-hero .aurora > span { mix-blend-mode: multiply; opacity: 0.4; }
+    }
+
+    body.casestudy-v4 .cs-stage {
+      max-width: 56rem; margin: 0 auto; width: 100%;
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 520ms var(--ease), transform 520ms var(--ease);
+    }
+    body.casestudy-v4 .cs-stage.is-in { opacity: 1; transform: none; }
+
+    body.casestudy-v4 .cs-crumb {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.8rem; color: var(--ink-soft); margin: 0 0 1rem;
+    }
+    body.casestudy-v4 .cs-crumb a { color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid var(--line); }
+    body.casestudy-v4 .cs-crumb a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+    body.casestudy-v4 .cs-display {
+      font-family: var(--serif);
+      font-size: clamp(2.4rem, 5.5vw, 4.4rem);
+      line-height: 1.02; letter-spacing: -0.025em; font-weight: 500;
+      margin: 0 0 1rem; color: var(--ink);
+    }
+    body.casestudy-v4 .cs-display .serif-italic { font-style: italic; color: var(--accent); }
+    body.casestudy-v4 .cs-lede {
+      max-width: 42rem; margin: 0;
+      font-size: clamp(1.02rem, 1.2vw + 0.7rem, 1.2rem);
+      color: var(--ink-soft); line-height: 1.55;
+    }
+    body.casestudy-v4 .cs-lede a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-edge); }
+    body.casestudy-v4 .cs-lede a:hover { border-bottom-color: var(--accent); }
+
+    /* STAT STRIP */
+    body.casestudy-v4 .cs-stats {
+      max-width: 56rem; margin: 1.6rem auto 0; width: 100%;
+      display: grid; gap: 0.8rem; grid-template-columns: 1fr;
+    }
+    @media (min-width: 38rem) { body.casestudy-v4 .cs-stats { grid-template-columns: 1fr 1fr 1fr; } }
+    body.casestudy-v4 .cs-stat {
+      background: var(--card-bg); border: 1px solid var(--card-edge);
+      border-radius: 12px; padding: 1rem 1.1rem;
+    }
+    body.casestudy-v4 .cs-stat .num {
+      font-family: var(--serif); font-size: clamp(1.8rem, 4vw, 2.4rem);
+      font-weight: 500; color: var(--accent); line-height: 1; display: block;
+    }
+    body.casestudy-v4 .cs-stat .cap {
+      margin: 0.4rem 0 0; font-size: 0.86rem; color: var(--ink-soft); line-height: 1.45;
+    }
+
+    /* BODY */
+    body.casestudy-v4 .cs-body {
+      max-width: 44rem; margin: 0 auto; width: 100%;
+      padding: clamp(1.5rem, 4vw, 2.75rem) clamp(1.25rem, 5vw, 4rem) clamp(3rem, 6vw, 5rem);
+    }
+    body.casestudy-v4 .cs-section { margin: 0 0 2.4rem; }
+    body.casestudy-v4 .cs-section h2 {
+      font-family: var(--serif); font-weight: 500; letter-spacing: -0.015em;
+      font-size: clamp(1.4rem, 3vw, 1.85rem); margin: 0 0 0.7rem; color: var(--ink);
+    }
+    body.casestudy-v4 .cs-section p { margin: 0 0 0.9rem; line-height: 1.68; color: var(--ink-soft); font-size: 1.02rem; }
+    body.casestudy-v4 .cs-section p:last-child { margin-bottom: 0; }
+    body.casestudy-v4 .cs-section a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-edge); }
+    body.casestudy-v4 .cs-section a:hover { border-bottom-color: var(--accent); }
+    body.casestudy-v4 .cs-section code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9em;
+      background: color-mix(in oklab, var(--ink) 7%, transparent);
+      padding: 0.1em 0.36em; border-radius: 5px;
+    }
+
+    /* TIMELINE */
+    body.casestudy-v4 ol.cs-timeline { list-style: none; margin: 0.4rem 0 0; padding: 0; }
+    body.casestudy-v4 ol.cs-timeline li {
+      position: relative; padding: 0 0 1.15rem 1.5rem;
+      border-left: 2px solid var(--line); margin-left: 0.35rem;
+    }
+    body.casestudy-v4 ol.cs-timeline li:last-child { padding-bottom: 0; }
+    body.casestudy-v4 ol.cs-timeline li::before {
+      content: ""; position: absolute; left: -7px; top: 0.35rem;
+      width: 11px; height: 11px; border-radius: 50%;
+      background: var(--accent); box-shadow: 0 0 0 4px var(--bg);
+    }
+    body.casestudy-v4 ol.cs-timeline .when {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.8rem; color: var(--accent); display: block; margin-bottom: 0.15rem;
+      font-variant-numeric: tabular-nums;
+    }
+    body.casestudy-v4 ol.cs-timeline .what { color: var(--ink-soft); line-height: 1.6; font-size: 0.98rem; }
+
+    /* CTA */
+    body.casestudy-v4 .cs-cta {
+      max-width: 44rem; margin: 0 auto; width: 100%;
+      background: var(--card-bg); border: 1px solid var(--accent-edge); border-radius: 14px;
+      padding: clamp(1.25rem, 3vw, 1.75rem);
+    }
+    body.casestudy-v4 .cs-cta h2 { margin-top: 0; }
+    body.casestudy-v4 .cs-cta-row { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1rem; }
+    body.casestudy-v4 .cs-btn {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      padding: 0.6em 1.05em; border-radius: 10px; font-size: 0.92rem; font-weight: 500;
+      text-decoration: none; border: 1px solid var(--accent-edge); color: var(--ink);
+      transition: border-color 120ms ease, background 120ms ease, color 120ms ease;
+    }
+    body.casestudy-v4 .cs-btn:hover { border-color: var(--accent); color: var(--accent); }
+    body.casestudy-v4 .cs-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    body.casestudy-v4 .cs-btn.primary:hover { background: var(--accent-strong); color: #fff; }
+
+    @media (max-width: 38rem) {
+      body.casestudy-v4 .cs-hero { padding: clamp(1.25rem, 4vw, 2rem) 1.1rem clamp(1rem, 3vw, 1.5rem); }
+      body.casestudy-v4 .cs-body { padding-left: 1.1rem; padding-right: 1.1rem; }
+      body.casestudy-v4 .cs-display { font-size: clamp(2rem, 8vw, 2.6rem); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      body.casestudy-v4 .cs-stage, body.casestudy-v4 .v4-colophon {
+        opacity: 1 !important; transform: none !important; transition: none !important;
+      }
+      body.casestudy-v4 .cs-hero .aurora > span { animation: none !important; }
+    }
+  </style>
+</head>
+<body class="home-v4 casestudy-v4">
+
+  <header class="site-nav v4">
+    <a class="brand" href="/">
+      <svg class="brand-glyph" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 6h22l10 10v34H14z" stroke="var(--accent)"/>
+        <path d="M36 6v10h10" stroke="var(--accent)"/>
+        <circle cx="40" cy="42" r="9" fill="var(--bg)" stroke="var(--accent)"/>
+        <path d="M36 42.5l3 3 6-6.5" stroke="var(--accent)"/>
+      </svg>
+      <span>toolspace<span class="dot">.</span></span>
+    </a>
+    <nav>
+      <a href="/registry/">registry</a>
+      <a href="/changelog/">changelog</a>
+      <a href="https://yepgent.com/">yepgent</a>
+      <a href="https://github.com/drknowhow/install-manifest-spec">spec</a>
+    </nav>
+  </header>
+
+  <main class="v4-shell">
+
+    <!-- HERO -->
+    <section class="cs-hero">
+      <div class="aurora" aria-hidden="true">
+        <span class="aurora-1"></span>
+        <span class="aurora-2"></span>
+      </div>
+
+      <div class="cs-stage">
+        <p class="cs-crumb"><a href="/">toolspace</a> &rsaquo; case study</p>
+        <p class="v4-eyebrow">
+          <span class="eyebrow-tick" aria-hidden="true"></span>
+          case study &middot; federation
+        </p>
+        <h1 class="cs-display">
+          How Muninn shipped 13 tools <span class="serif-italic">in a day.</span>
+        </h1>
+        <p class="cs-lede">
+          Muninn is the first external publisher to federate a catalog into Toolspace.
+          It is a personal, stateful agent &mdash; exactly the kind the
+          <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> is built
+          for &mdash; and its tools are live in the
+          <a href="/registry/">registry</a> today, kept fresh by a daily auto-sync no one
+          has to babysit.
+        </p>
+
+        <div class="cs-stats">
+          <div class="cs-stat">
+            <span class="num">13</span>
+            <p class="cap">v0.4 install manifests, shipped on 2026&#8209;05&#8209;27 in a single batch.</p>
+          </div>
+          <div class="cs-stat">
+            <span class="num">1st</span>
+            <p class="cap">external federation publisher &mdash; the loop, proven end to end with someone other than us.</p>
+          </div>
+          <div class="cs-stat">
+            <span class="num">0</span>
+            <p class="cap">PRs per update after onboarding. A daily cron pulls every change automatically.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="cs-body">
+
+      <section class="cs-section">
+        <h2>Who Muninn is</h2>
+        <p>
+          Muninn &mdash; &ldquo;the raven of memory&rdquo; &mdash; is an agent operating on
+          behalf of Oskar A. It is a
+          long-running, stateful agent: it holds memory, runs scheduled &ldquo;perch&rdquo;
+          tasks, publishes to a blog and to Bluesky, and triages its own work. In other
+          words, it lives in the same category Toolspace was built to describe &mdash; a
+          personal agent with a real tool surface, not a per-task coding plugin.
+        </p>
+        <p>
+          That fit is the whole point. Muninn&rsquo;s tools &mdash; a DAG workflow runner, a
+          TF&#8209;IDF memory index, Bluesky and WhiteWind publishers, a GitHub-issue
+          synthesizer, reminders &mdash; are the connective tissue of a working agent. Each
+          one is described by an install manifest: its scopes, data boundary, kill switch,
+          smoke test, and action catalog laid out so both humans and other agents can read
+          what it&rsquo;s made of.
+        </p>
+      </section>
+
+      <section class="cs-section">
+        <h2>How it happened</h2>
+        <p>
+          None of this started as a bulk import. It started with one tool, as a test &mdash;
+          and grew because the loop kept working.
+        </p>
+        <ol class="cs-timeline">
+          <li>
+            <span class="when">2026-05-07</span>
+            <span class="what">
+              First contact: <code>muninn-bsky-card</code> lands as the registry&rsquo;s
+              first non-Gmail entry &mdash; a v0.3 <em>consumer test</em>. Muninn wasn&rsquo;t
+              just publishing; it was exercising the spec from the outside.
+            </span>
+          </li>
+          <li>
+            <span class="when">2026-05-10</span>
+            <span class="what">
+              Three more consumer tests &mdash; <code>verify-patch</code>,
+              <code>flowing</code>, <code>perch-publish</code> &mdash; each surfacing a real
+              gap. The registry started doubling as a design-history index for the spec.
+            </span>
+          </li>
+          <li>
+            <span class="when">2026-05-16</span>
+            <span class="what">
+              Those tests drove the spec forward: v0.3.1 and then v0.4 added
+              <code>kind: "preinstalled"</code> tools and
+              <code>to_kind: "agent-supplied"</code> outbound targets &mdash; primitives
+              Muninn&rsquo;s real tools actually needed.
+            </span>
+          </li>
+          <li>
+            <span class="when">2026-05-27</span>
+            <span class="what">
+              The full set ships: 13 v0.4 manifests in
+              <a href="https://github.com/oaustegard/muninn-utilities/pull/48">muninn-utilities#48</a>,
+              with a single canonical source of truth in Muninn&rsquo;s own repo.
+            </span>
+          </li>
+          <li>
+            <span class="when">2026-05-28</span>
+            <span class="what">
+              Federation v1 goes live. Muninn is added to
+              <a href="https://github.com/drknowhow/toolspace-site/blob/main/publishers.json"><code>publishers.json</code></a>
+              as the first external publisher (<code>trust_tier: standard</code>). From here
+              on, a daily cron fetches, validates, and auto-merges every change &mdash; no
+              per-tool coordination.
+            </span>
+          </li>
+        </ol>
+      </section>
+
+      <section class="cs-section">
+        <h2>What it proves</h2>
+        <p>
+          The federation loop isn&rsquo;t a diagram &mdash; it runs, with a real external
+          publisher on the other end. Muninn hosts its own catalog, gets listed once, and
+          its updates flow in on their own. That&rsquo;s the model Toolspace is betting on:
+          publishers keep their source of truth; the registry stays current without becoming
+          a bottleneck.
+        </p>
+        <p>
+          It also shows the spec earns its shape from use, not theory. Every v0.4 primitive
+          that matters was forced by a tool someone actually shipped. Browse the
+          <a href="/registry/">registry</a> and search <code>muninn</code> to see all of it
+          live &mdash; or read the <a href="/changelog/">changelog</a> for the full paper
+          trail.
+        </p>
+      </section>
+
+      <section class="cs-cta">
+        <h2>Be the next one</h2>
+        <p>
+          If you&rsquo;re building a personal, stateful agent with a tool surface worth
+          describing, the path Muninn took is open and documented. Host a
+          <code>.well-known/install-manifests.json</code> index, get listed once, and every
+          tool you ship, bump, or deprecate flows in on the next daily sync. Single tool?
+          Open a one-off PR instead &mdash; either way, it&rsquo;s minutes, not a migration.
+        </p>
+        <div class="cs-cta-row">
+          <a class="cs-btn primary" href="https://github.com/drknowhow/toolspace-site/blob/main/FEDERATION.md">Federate your tools &rarr;</a>
+          <a class="cs-btn" href="/registry/">Browse the registry</a>
+          <a class="cs-btn" href="https://github.com/drknowhow/install-manifest-spec">Read the spec</a>
+        </div>
+      </section>
+
+    </div>
+
+    <footer class="v4-colophon">
+      <p>
+        toolspace.yepgent.com &middot;
+        <a href="/registry/">registry</a> &middot;
+        <a href="/changelog/">changelog</a> &middot;
+        <a href="https://github.com/drknowhow/toolspace-site">source</a> &middot;
+        <a href="https://github.com/drknowhow/install-manifest-spec">spec</a> &middot;
+        <a href="https://yepgent.com">yepgent</a>
+      </p>
+    </footer>
+  </main>
+
+  <script>
+  /* Nav scroll-compaction — mirror of the home/changelog v4 nav. */
+  (function () {
+    const nav = document.querySelector('header.site-nav.v4');
+    if (!nav) return;
+    let last = 0;
+    const onScroll = () => {
+      const y = window.scrollY || 0;
+      if (y > 12 && last <= 12) nav.classList.add('scrolled');
+      else if (y <= 12 && last > 12) nav.classList.remove('scrolled');
+      last = y;
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+
+  /* Reveal-on-scroll for the hero stage + colophon. */
+  (function () {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const items = document.querySelectorAll('.cs-stage, .v4-colophon');
+    if (reduce || !('IntersectionObserver' in window)) {
+      items.forEach((el) => el.classList.add('is-in'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px 20% 0px', threshold: 0.01 });
+    items.forEach((el) => io.observe(el));
+  })();
+  </script>
+</body>
+</html>
