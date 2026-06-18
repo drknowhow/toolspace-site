@@ -188,6 +188,7 @@ NAV_HTML = """\
     </a>
     <nav>
       <a href="/registry/">registry</a>
+      <a href="/publish/">publish</a>
       <a href="/changelog/">changelog</a>
       <a href="https://github.com/drknowhow/install-manifest-spec">spec</a>
       <a href="https://yepgent.com/">yepgent</a>
