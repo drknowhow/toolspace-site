@@ -111,6 +111,7 @@ PAGE_HEAD = """<!doctype html>
     </a>
     <nav>
       <a href="/registry/">registry</a>
+      <a href="/publish/">publish</a>
       <a href="/changelog/" aria-current="page">changelog</a>
       <a href="https://yepgent.com/">yepgent</a>
       <a href="https://github.com/drknowhow/install-manifest-spec">spec</a>
