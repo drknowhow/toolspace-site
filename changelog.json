@@ -1,9 +1,22 @@
 {
   "schema": "toolspace-changelog/1",
   "url": "https://toolspace.yepgent.com/changelog.json",
-  "generated_at": "2026-05-28T09:00:00Z",
-  "current_version": "0.14",
+  "generated_at": "2026-06-19T00:00:00Z",
+  "current_version": "0.15",
   "versions": [
+    {
+      "version": "0.15",
+      "date": "2026-06-19",
+      "label": "Catch-up: v4 redesign, v0.4 everywhere, privacy redaction, publisher landing",
+      "changes": [
+        "**v4 visual redesign** shipped across the site \u2014 aurora hero, glass sticky nav with always-on backdrop, refreshed prose, and quick-link CTAs ([`#42`](https://github.com/drknowhow/toolspace-site/pull/42), [`#43`](https://github.com/drknowhow/toolspace-site/pull/43), [`#44`](https://github.com/drknowhow/toolspace-site/pull/44)). The [`/changelog`](https://toolspace.yepgent.com/changelog) page was restyled to the same shared v4 design as [yepgent.com/changelog](https://yepgent.com/changelog) ([`#45`](https://github.com/drknowhow/toolspace-site/pull/45)).",
+        "**Schema references moved to v0.4 site-wide.** Homepage + README refreshed to v0.4 (manifest snippet, schemas, examples, version pills) ([`#27`](https://github.com/drknowhow/toolspace-site/pull/27), [`#38`](https://github.com/drknowhow/toolspace-site/pull/38)); a CI guard now fails the build if the homepage manifest snippet drifts from the spec's current version ([`#39`](https://github.com/drknowhow/toolspace-site/pull/39)); and the registry's \"Want yours listed?\" footer, which still pointed at the superseded v0.3 schema, was corrected to v0.4 ([`#50`](https://github.com/drknowhow/toolspace-site/pull/50)).",
+        "**Privacy: third-party publisher and maintainer surnames redacted site-wide** to first-name + last-initial (e.g. `Oskar A.`), across examples, the registry, and the deep-research page, with a guard test to keep it that way ([`#34`](https://github.com/drknowhow/toolspace-site/pull/34), [`#35`](https://github.com/drknowhow/toolspace-site/pull/35), [`#47`](https://github.com/drknowhow/toolspace-site/pull/47)).",
+        "**New publisher on-ramp.** A value-prop landing page at [`/publish/`](https://toolspace.yepgent.com/publish/) with live tool/publisher counts ([`#48`](https://github.com/drknowhow/toolspace-site/pull/48)) and a `publish` link added to the header nav site-wide ([`#49`](https://github.com/drknowhow/toolspace-site/pull/49)). A [Muninn federation case study](https://toolspace.yepgent.com/case-study) with a homepage proof link was also added ([`#46`](https://github.com/drknowhow/toolspace-site/pull/46)).",
+        "**Federation hardening.** Fetched manifest bodies are now validated against the canonical schema before merge ([`#26`](https://github.com/drknowhow/toolspace-site/pull/26)), example descriptions auto-refresh from upstream publishers ([`#37`](https://github.com/drknowhow/toolspace-site/pull/37)), and daily-sync label creation was made idempotent ([`#32`](https://github.com/drknowhow/toolspace-site/pull/32)).",
+        "**Registry + tooling.** Added the [`drknowhow/deep-research`](https://toolspace.yepgent.com/registry/deep-research/) v0.4 example ([`#33`](https://github.com/drknowhow/toolspace-site/pull/33)) and refreshed its description for v0.2.0 ([`#36`](https://github.com/drknowhow/toolspace-site/pull/36)); added an `install-manifest` lint advisory CI job over `examples/` ([`#29`](https://github.com/drknowhow/toolspace-site/pull/29), [`#30`](https://github.com/drknowhow/toolspace-site/pull/30)). The registry now lists 20 manifests."
+      ]
+    },
     {
       "version": "0.14",
       "date": "2026-05-28",
