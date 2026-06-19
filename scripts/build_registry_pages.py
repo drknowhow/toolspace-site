@@ -940,7 +940,7 @@ def render_registry_index(
       <a href="https://github.com/drknowhow/toolspace-site">toolspace-site</a>
       adding an entry to <a href="/manifests.json"><code>manifests.json</code></a>.
       Manifest must validate against the
-      <a href="/schemas/install-manifest-v0.3.json"><code>v0.3 schema</code></a>.
+      <a href="/schemas/install-manifest-v0.4.json"><code>v0.4 schema</code></a>.
     </p>
 """
 
