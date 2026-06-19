@@ -40,6 +40,9 @@ import sys
 import tempfile
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _external_links import mark_external_links  # noqa: E402
+
 SITE_ROOT = Path(__file__).resolve().parent.parent
 CHANGELOG_JSON = SITE_ROOT / "changelog.json"
 CHANGELOG_HTML = SITE_ROOT / "changelog" / "index.html"
@@ -230,7 +233,7 @@ def render_entry(entry: dict) -> str:
 def render_page(data: dict) -> str:
     versions = data.get("versions", [])
     entries = "\n".join(render_entry(v) for v in versions)
-    return PAGE_HEAD + entries + PAGE_TAIL
+    return mark_external_links(PAGE_HEAD + entries + PAGE_TAIL)
 
 
 # ---------------------------------------------------------------------------

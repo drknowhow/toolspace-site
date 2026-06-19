@@ -33,6 +33,9 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _external_links import mark_external_links  # noqa: E402
+
 SITE_ROOT = Path(__file__).resolve().parent.parent
 INDEX_PATH = SITE_ROOT / "manifests.json"
 REGISTRY_DIR = SITE_ROOT / "registry"
@@ -1488,12 +1491,12 @@ def build(out_root: Path) -> int:
         )
         sub = out_registry / entry["id"]
         sub.mkdir(parents=True, exist_ok=True)
-        (sub / "index.html").write_text(page, encoding="utf-8")
+        (sub / "index.html").write_text(mark_external_links(page), encoding="utf-8")
         fetched.append((entry, manifest))
         print(f"  wrote registry/{entry['id']}/index.html")
 
     idx_html = render_registry_index(fetched, generated_at)
-    (out_registry / "index.html").write_text(idx_html, encoding="utf-8")
+    (out_registry / "index.html").write_text(mark_external_links(idx_html), encoding="utf-8")
     print(f"  wrote registry/index.html ({len(fetched)} cards)")
 
     return 0
