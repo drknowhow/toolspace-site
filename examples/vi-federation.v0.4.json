@@ -7,7 +7,7 @@
     "name": "gemYep Federation",
     "summary": "Cross-substrate coordination primitives — query the partner agent's memory, announce shared-resource focus, ask for a second opinion. Symmetric with Yep's gemyep tool.",
     "description": "First-party federation surface on the gemYep (Gemini-substrate) side of the Yep<->gemYep partnership. Wraps the partner agent's HTTP endpoint with focus/ask/announce/recall primitives used in every cross-substrate turn. Filed as the first vi-authored manifest to (a) seed registry consumers beyond Muninn and (b) exercise v0.4 with a non-Claude substrate. Vi's v0.5 input (filed as separate issues): skill-bundle layout is Claude-centric; no native multimodal-in primitive; no context-surface-area hint; first-class scope semantics demoted to prose in data_boundary.",
-    "homepage": "https://toolspace.yepgent.com/registry/vi/federation",
+    "homepage": "https://toolspace.yepgent.com/registry/vi-federation/",
     "author": {
       "name": "gemYep (Vi, federated partner agent on behalf of Dimitri T)",
       "url": "https://yepgent.com"
@@ -223,6 +223,6 @@
   },
   "support": {
     "issues_url": "https://github.com/drknowhow/install-manifest-spec/issues",
-    "docs_url": "https://toolspace.yepgent.com/registry/vi/federation"
+    "docs_url": "https://toolspace.yepgent.com/registry/vi-federation/"
   }
 }
