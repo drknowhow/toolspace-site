@@ -65,6 +65,22 @@
 
         <li class="cv4-entry">
           <div class="cv4-entry-head">
+            <span class="cv4-tag">v0.15</span>
+            <span class="cv4-label">Catch-up: v4 redesign, v0.4 everywhere, privacy redaction, publisher landing</span>
+            <time class="cv4-date" datetime="2026-06-19">2026-06-19</time>
+          </div>
+          <ul class="cv4-changes">
+            <li>**v4 visual redesign** shipped across the site — aurora hero, glass sticky nav with always-on backdrop, refreshed prose, and quick-link CTAs (<a href="https://github.com/drknowhow/toolspace-site/pull/42"><code>#42</code></a>, <a href="https://github.com/drknowhow/toolspace-site/pull/43"><code>#43</code></a>, <a href="https://github.com/drknowhow/toolspace-site/pull/44"><code>#44</code></a>). The <a href="https://toolspace.yepgent.com/changelog"><code>/changelog</code></a> page was restyled to the same shared v4 design as <a href="https://yepgent.com/changelog">yepgent.com/changelog</a> (<a href="https://github.com/drknowhow/toolspace-site/pull/45"><code>#45</code></a>).</li>
+            <li>**Schema references moved to v0.4 site-wide.** Homepage + README refreshed to v0.4 (manifest snippet, schemas, examples, version pills) (<a href="https://github.com/drknowhow/toolspace-site/pull/27"><code>#27</code></a>, <a href="https://github.com/drknowhow/toolspace-site/pull/38"><code>#38</code></a>); a CI guard now fails the build if the homepage manifest snippet drifts from the spec&#x27;s current version (<a href="https://github.com/drknowhow/toolspace-site/pull/39"><code>#39</code></a>); and the registry&#x27;s &quot;Want yours listed?&quot; footer, which still pointed at the superseded v0.3 schema, was corrected to v0.4 (<a href="https://github.com/drknowhow/toolspace-site/pull/50"><code>#50</code></a>).</li>
+            <li>**Privacy: third-party publisher and maintainer surnames redacted site-wide** to first-name + last-initial (e.g. <code>Oskar A.</code>), across examples, the registry, and the deep-research page, with a guard test to keep it that way (<a href="https://github.com/drknowhow/toolspace-site/pull/34"><code>#34</code></a>, <a href="https://github.com/drknowhow/toolspace-site/pull/35"><code>#35</code></a>, <a href="https://github.com/drknowhow/toolspace-site/pull/47"><code>#47</code></a>).</li>
+            <li>**New publisher on-ramp.** A value-prop landing page at <a href="https://toolspace.yepgent.com/publish/"><code>/publish/</code></a> with live tool/publisher counts (<a href="https://github.com/drknowhow/toolspace-site/pull/48"><code>#48</code></a>) and a <code>publish</code> link added to the header nav site-wide (<a href="https://github.com/drknowhow/toolspace-site/pull/49"><code>#49</code></a>). A <a href="https://toolspace.yepgent.com/case-study">Muninn federation case study</a> with a homepage proof link was also added (<a href="https://github.com/drknowhow/toolspace-site/pull/46"><code>#46</code></a>).</li>
+            <li>**Federation hardening.** Fetched manifest bodies are now validated against the canonical schema before merge (<a href="https://github.com/drknowhow/toolspace-site/pull/26"><code>#26</code></a>), example descriptions auto-refresh from upstream publishers (<a href="https://github.com/drknowhow/toolspace-site/pull/37"><code>#37</code></a>), and daily-sync label creation was made idempotent (<a href="https://github.com/drknowhow/toolspace-site/pull/32"><code>#32</code></a>).</li>
+            <li>**Registry + tooling.** Added the <a href="https://toolspace.yepgent.com/registry/deep-research/"><code>drknowhow/deep-research</code></a> v0.4 example (<a href="https://github.com/drknowhow/toolspace-site/pull/33"><code>#33</code></a>) and refreshed its description for v0.2.0 (<a href="https://github.com/drknowhow/toolspace-site/pull/36"><code>#36</code></a>); added an <code>install-manifest</code> lint advisory CI job over <code>examples/</code> (<a href="https://github.com/drknowhow/toolspace-site/pull/29"><code>#29</code></a>, <a href="https://github.com/drknowhow/toolspace-site/pull/30"><code>#30</code></a>). The registry now lists 20 manifests.</li>
+          </ul>
+        </li>
+
+        <li class="cv4-entry">
+          <div class="cv4-entry-head">
             <span class="cv4-tag">v0.14</span>
             <span class="cv4-label">Surface federation v1 on the homepage (publishers can self-host)</span>
             <time class="cv4-date" datetime="2026-05-28">2026-05-28</time>
