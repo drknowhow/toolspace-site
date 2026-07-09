@@ -1,0 +1,140 @@
+{
+  "manifest_version": "0.4",
+  "tool": {
+    "id": "yep-memory",
+    "namespace": "yep",
+    "version": "0.1.0",
+    "name": "Yep Memory",
+    "summary": "Persistent memory primitives for personal agents \u2014 facts, reflections, and episodes with semantic recall across conversations.",
+    "description": "Yep's memory subsystem exposes three orthogonal stores: facts (key-value, upsert), reflections (free-form learned generalizations), and episodes (event log with semantic search). Used internally by Yep and surfaced here as the canonical example for any personal-agent stack that wants long-running cross-session memory. Backed by Supabase + pgvector; reflection writes are deliberate and sparse, not autopilot. Published as the first dogfood entry on drknowhow/Yep to validate the federation pipeline end-to-end against toolspace.yepgent.com.",
+    "homepage": "https://yepgent.com",
+    "author": {
+      "name": "Yep (agent on behalf of Dimitri T)",
+      "url": "https://yepgent.com"
+    },
+    "license": "MIT",
+    "tags": ["memory", "personal-agent", "semantic-search", "supabase", "pgvector"]
+  },
+  "runtime": {
+    "kind": "python-module",
+    "install": {
+      "method": "preinstalled",
+      "locator": {
+        "kind": "python-module",
+        "module": "src.memory"
+      }
+    },
+    "entrypoint": {
+      "command": ["python", "-m", "src.memory"]
+    }
+  },
+  "scopes": [
+    {
+      "resource": "db.memory",
+      "actions": ["read", "write"],
+      "rationale": "Reads and writes facts, reflections, and episodes to the agent's persistent memory store."
+    }
+  ],
+  "data_boundary": {
+    "reads": [
+      {
+        "resource": "db.memory",
+        "sensitivity": "medium"
+      }
+    ],
+    "transmits": [
+      {
+        "to_kind": "agent-supplied",
+        "to_constraint": "Supabase instance configured for this agent only.",
+        "fields": ["facts.*", "reflections.*", "episodes.*"],
+        "purpose": "persistence",
+        "third_party_retention": "persistent-indefinite"
+      }
+    ]
+  },
+  "actions": [
+    {
+      "name": "remember_fact",
+      "summary": "Store or update a key-value fact. Upserts on key.",
+      "invocation": {
+        "kind": "subcommand",
+        "argv_template": ["remember_fact", "--key", "${input.key}", "--value", "${input.value}"]
+      },
+      "input": {
+        "type": "object",
+        "required": ["key", "value"],
+        "additionalProperties": false,
+        "properties": {
+          "key": {"type": "string", "minLength": 1, "description": "Dotted key, e.g. 'user.timezone'."},
+          "value": {"type": "string"}
+        }
+      },
+      "output": {"format": "json"},
+      "side_effects": "write",
+      "idempotent": true,
+      "scopes_used": ["db.memory"]
+    },
+    {
+      "name": "recall_fact",
+      "summary": "Retrieve a fact by exact key.",
+      "invocation": {
+        "kind": "subcommand",
+        "argv_template": ["recall_fact", "--key", "${input.key}"]
+      },
+      "input": {
+        "type": "object",
+        "required": ["key"],
+        "additionalProperties": false,
+        "properties": {
+          "key": {"type": "string", "minLength": 1}
+        }
+      },
+      "output": {"format": "json"},
+      "side_effects": "read",
+      "idempotent": true,
+      "scopes_used": ["db.memory"]
+    },
+    {
+      "name": "reflect",
+      "summary": "Write a reflection (learned generalization). Use sparingly \u2014 reflections are precious.",
+      "invocation": {
+        "kind": "subcommand",
+        "argv_template": ["reflect", "--content", "${input.content}"]
+      },
+      "input": {
+        "type": "object",
+        "required": ["content"],
+        "additionalProperties": false,
+        "properties": {
+          "content": {"type": "string", "minLength": 1, "maxLength": 4000}
+        }
+      },
+      "output": {"format": "json"},
+      "side_effects": "write",
+      "idempotent": false,
+      "scopes_used": ["db.memory"]
+    }
+  ],
+  "smoke": {
+    "kind": "action-call",
+    "action": "recall_fact",
+    "arguments": {"key": "registry.smoke_test"},
+    "timeout_seconds": 5,
+    "success": {
+      "exit_code": 0
+    }
+  },
+  "kill_switch": {
+    "kind": "manual",
+    "instructions": "Revoke by either (a) unsetting SUPABASE_URL / SUPABASE_KEY in the runtime env \u2014 the memory module fails closed without DB credentials, or (b) removing src.memory from the registered tool surface in src/core/mcp_registry.py. The module is read-write; revoking DB access stops both ingestion and recall in the same step."
+  },
+  "cost": {
+    "install_fee_cents": 0,
+    "monthly_fee_cents": 0,
+    "usage_model": "external"
+  },
+  "support": {
+    "issues_url": "https://yepgent.com",
+    "docs_url": "https://toolspace.yepgent.com/registry/yep-memory/"
+  }
+}

@@ -1,9 +1,15 @@
 name: federation-sync
 
 # Fetches every publisher's .well-known/install-manifests.json, merges
-# into manifests.json, and opens a PR with the diff (if any). The PR is
-# created with the `auto-sync-federation` label and `--auto --squash`
-# enabled, so it merges itself the moment required checks go green.
+# into manifests.json, refreshes the committed manifest mirrors
+# (mirrors/manifests/), rebuilds registry/ pages from those mirrors, and
+# opens a PR with the combined diff (if any). The PR is created with the
+# `auto-sync-federation` label and `--auto --squash` enabled, so it
+# merges itself the moment required checks go green.
+#
+# Manifest content, its mirror, and the rebuilt pages land in ONE
+# commit — syncing manifests without rebuilding pages is what kept
+# redding the registry drift check (PRs #54/#55/#58).
 #
 # Scheduled daily; can also be triggered manually via the Actions UI.
 
@@ -41,10 +47,14 @@ jobs:
       - name: Run federation sync (live fetch)
         run: python scripts/sync_from_publishers.py --allow-network
 
+      - name: Refresh manifest mirrors + rebuild registry pages
+        run: python scripts/build_registry_pages.py --refresh
+
       - name: Check for diff
         id: diff
         run: |
-          if git diff --quiet manifests.json; then
+          # git status (not diff) so brand-new mirror/page files count.
+          if [ -z "$(git status --porcelain -- manifests.json mirrors registry)" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
@@ -69,12 +79,12 @@ jobs:
           git config user.name "yep-federation-bot"
           git config user.email "yep-federation-bot@users.noreply.github.com"
           git checkout -b "$BRANCH"
-          git add manifests.json
+          git add manifests.json mirrors registry
           git commit -m "auto: federation sync $(date -u +%Y-%m-%d)"
           git push origin "$BRANCH"
           PR_URL=$(gh pr create \
             --title "auto: federation sync $(date -u +%Y-%m-%d)" \
-            --body "Automated federation pull. Diff is the result of fetching every publisher in publishers.json and re-rendering manifests.json. Merging this updates the public registry. See federation-sync workflow for details." \
+            --body "Automated federation pull. Diff is the result of fetching every publisher in publishers.json, re-rendering manifests.json, refreshing the committed manifest mirrors, and rebuilding registry pages from them. Merging this updates the public registry. See federation-sync workflow for details." \
             --label "auto-sync-federation" \
             --base main \
             --head "$BRANCH")
