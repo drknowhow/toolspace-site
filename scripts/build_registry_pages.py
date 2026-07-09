@@ -40,6 +40,11 @@ SITE_ROOT = Path(__file__).resolve().parent.parent
 INDEX_PATH = SITE_ROOT / "manifests.json"
 REGISTRY_DIR = SITE_ROOT / "registry"
 CACHE_DIR = SITE_ROOT / "_cache" / "registry"
+# Committed mirror of every non-self-hosted manifest (raw upstream bytes).
+# Makes builds — and the CI drift check — a function of the working tree
+# instead of whatever a publisher is serving at check time. Refreshed by
+# the federation-sync workflow via --refresh.
+MIRROR_DIR = SITE_ROOT / "mirrors" / "manifests"
 
 USER_AGENT = "toolspace-build/0.1 (+https://toolspace.yepgent.com/)"
 FETCH_TIMEOUT = 10  # seconds
@@ -80,8 +85,14 @@ def _load_manifest(entry: dict) -> tuple[dict, str]:
 
     Resolution order:
       1. local file (if manifest_url is self-hosted on this site)
-      2. live fetch
-      3. on-disk cache fallback
+      2. committed mirror (mirrors/manifests/<id>.json)
+      3. live fetch
+      4. on-disk cache fallback
+
+    The mirror short-circuit is what keeps --check hermetic: a remote
+    publisher editing their manifest must not red this repo's CI until
+    federation-sync lands the new bytes (mirror + rebuilt pages) in one
+    commit.
     """
     eid = entry["id"]
     cache_path = CACHE_DIR / f"{eid}.json"
@@ -90,6 +101,10 @@ def _load_manifest(entry: dict) -> tuple[dict, str]:
     local = _resolve_self_hosted(url)
     if local is not None:
         return json.loads(local.read_text(encoding="utf-8")), "local"
+
+    mirror_path = MIRROR_DIR / f"{eid}.json"
+    if mirror_path.is_file():
+        return json.loads(mirror_path.read_text(encoding="utf-8")), "mirror"
 
     try:
         raw = _fetch(url)
@@ -1480,7 +1495,7 @@ def build(out_root: Path) -> int:
         if eid in pinned_fetched:
             fetched_at = pinned_fetched[eid]
             source_label = pinned_source.get(eid, source_label)
-        elif source_label == "live":
+        elif source_label in ("live", "mirror"):
             fetched_at = _now_utc_iso()
         elif source_label == "local":
             fetched_at = "(working tree)"
@@ -1502,17 +1517,17 @@ def build(out_root: Path) -> int:
     return 0
 
 
-def check() -> int:
-    """Regenerate to a tempdir and diff against committed registry/."""
-    if not REGISTRY_DIR.is_dir():
-        print(f"missing committed dir: {REGISTRY_DIR}", file=sys.stderr)
-        print("Run 'python scripts/build_registry_pages.py' locally and commit.",
-              file=sys.stderr)
-        return 1
+def _pin_stamps_from_committed(exclude: set[str] | None = None) -> None:
+    """Pin wall-clock stamps from the committed pages onto build().
 
-    # Pin the "Pages generated" timestamp so the diff doesn't drift only
-    # because of wall-clock. Read it back from the existing committed
-    # index page.
+    'Pages generated' comes from committed registry/index.html; per-product
+    'Last fetched' stamps come from each committed page. Pinning makes a
+    rebuild byte-comparable against the committed tree: content drift is
+    what we care about, not the clock. Ids in ``exclude`` are NOT pinned —
+    refresh() passes the just-changed mirrors so those pages get a truthful
+    fresh stamp.
+    """
+    exclude = exclude or set()
     committed_index = REGISTRY_DIR / "index.html"
     if committed_index.is_file():
         text = committed_index.read_text(encoding="utf-8")
@@ -1520,13 +1535,10 @@ def check() -> int:
         if m:
             build._pinned_generated_at = m.group(1)  # type: ignore[attr-defined]
 
-    # Pin per-product Last-fetched timestamps from committed pages, same
-    # rationale: the wall-clock changes every run, but content drift is
-    # what we actually care about.
     pinned_fetched: dict[str, str] = {}
     pinned_source: dict[str, str] = {}
     for sub in REGISTRY_DIR.iterdir():
-        if not sub.is_dir():
+        if not sub.is_dir() or sub.name in exclude:
             continue
         page = sub / "index.html"
         if not page.is_file():
@@ -1541,11 +1553,18 @@ def check() -> int:
     build._pinned_fetched = pinned_fetched  # type: ignore[attr-defined]
     build._pinned_source = pinned_source    # type: ignore[attr-defined]
 
+
+def _diff_against_committed() -> list[str] | None:
+    """Rebuild to a tempdir and byte-compare against committed registry/.
+
+    Returns the drift list (empty == match), or None if the build failed.
+    Caller is responsible for pinning stamps first.
+    """
     with tempfile.TemporaryDirectory() as td:
         tdp = Path(td)
         rc = build(tdp)
         if rc != 0:
-            return rc
+            return None
         drift: list[str] = []
         # Compare every committed file against the rebuilt one.
         for committed in REGISTRY_DIR.rglob("*"):
@@ -1566,18 +1585,94 @@ def check() -> int:
             committed = REGISTRY_DIR / rel
             if not committed.is_file():
                 drift.append(f"MISSING {rel}")
+        return drift
 
-        if drift:
-            for d in drift:
-                print(f"  {d}", file=sys.stderr)
-            print(
-                f"\nERROR: {len(drift)} file(s) drift from a fresh build.\n"
-                "Run 'python scripts/build_registry_pages.py' locally and commit.",
-                file=sys.stderr,
-            )
-            return 1
+
+def check() -> int:
+    """Regenerate to a tempdir and diff against committed registry/."""
+    if not REGISTRY_DIR.is_dir():
+        print(f"missing committed dir: {REGISTRY_DIR}", file=sys.stderr)
+        print("Run 'python scripts/build_registry_pages.py' locally and commit.",
+              file=sys.stderr)
+        return 1
+
+    _pin_stamps_from_committed()
+    drift = _diff_against_committed()
+    if drift is None:
+        return 1
+    if drift:
+        for d in drift:
+            print(f"  {d}", file=sys.stderr)
+        print(
+            f"\nERROR: {len(drift)} file(s) drift from a fresh build.\n"
+            "Run 'python scripts/build_registry_pages.py' locally and commit.",
+            file=sys.stderr,
+        )
+        return 1
     print("ok: registry pages match a fresh build")
     return 0
+
+
+def _refresh_mirrors() -> set[str]:
+    """Refetch every non-self-hosted manifest into mirrors/manifests/.
+
+    Writes raw upstream bytes (byte-exact, diffable). Returns the ids
+    whose mirror content changed (including first-time writes). A failed
+    fetch keeps the existing mirror and warns — a flaky publisher must
+    not blow up the daily sync — but is fatal if no mirror exists yet.
+    """
+    index = json.loads(INDEX_PATH.read_text(encoding="utf-8"))
+    changed: set[str] = set()
+    for entry in index.get("manifests") or []:
+        eid = entry["id"]
+        url = entry["manifest_url"]
+        if _resolve_self_hosted(url) is not None:
+            continue
+        mirror_path = MIRROR_DIR / f"{eid}.json"
+        try:
+            raw = _fetch(url)
+        except (urllib.error.URLError, urllib.error.HTTPError,
+                TimeoutError, OSError) as e:
+            if mirror_path.is_file():
+                print(f"  warn  refresh failed for {eid} ({e}); keeping mirror",
+                      file=sys.stderr)
+                continue
+            raise SystemExit(
+                f"FATAL: could not fetch {url} and no mirror at {mirror_path}: {e}"
+            )
+        old = mirror_path.read_bytes() if mirror_path.is_file() else None
+        if old != raw:
+            MIRROR_DIR.mkdir(parents=True, exist_ok=True)
+            mirror_path.write_bytes(raw)
+            changed.add(eid)
+            print(f"  mirror updated: {eid}")
+    return changed
+
+
+def refresh() -> int:
+    """Refetch mirrors, then rebuild registry/ only if anything changed.
+
+    federation-sync mode: called after sync_from_publishers.py so that
+    manifest updates, their mirrors, and the rebuilt pages land in ONE
+    commit — the drift that redded PRs #54/#55/#58 becomes impossible.
+    No-change days produce a byte-identical tree (stamps stay pinned),
+    so the workflow's diff gate sees nothing and opens no PR.
+    """
+    changed = _refresh_mirrors()
+    _pin_stamps_from_committed(exclude=changed)
+    if not changed:
+        drift = _diff_against_committed()
+        if drift is None:
+            return 1
+        if not drift:
+            print("ok: mirrors and registry pages already current")
+            return 0
+        # Mirrors are current but pages drift anyway (template edit or
+        # manifests.json change landed without a rebuild) — fall through.
+        print(f"  {len(drift)} stale page(s) despite current mirrors; rebuilding")
+    # Real changes: rebuild in place with a truthful fresh stamp.
+    build._pinned_generated_at = _now_utc_iso()  # type: ignore[attr-defined]
+    return build(SITE_ROOT)
 
 
 def main() -> int:
@@ -1586,9 +1681,18 @@ def main() -> int:
         "--check", action="store_true",
         help="Regenerate to a tempdir and diff against committed pages. CI mode.",
     )
+    parser.add_argument(
+        "--refresh", action="store_true",
+        help="Refetch manifest mirrors and rebuild pages if anything "
+             "changed. federation-sync mode.",
+    )
     args = parser.parse_args()
+    if args.check and args.refresh:
+        parser.error("--check and --refresh are mutually exclusive")
     if args.check:
         return check()
+    if args.refresh:
+        return refresh()
     return build(SITE_ROOT)
 
 

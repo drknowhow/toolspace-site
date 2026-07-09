@@ -1,0 +1,284 @@
+{
+  "manifest_version": "0.4",
+  "tool": {
+    "namespace": "drknowhow",
+    "id": "deep-research",
+    "version": "0.2.0",
+    "name": "deep_research",
+    "summary": "Protocol-first, gated, multi-agent literature investigation with no-fabrication enforced via verbatim quote spans.",
+    "description": "deep_research is an agent-runtime-agnostic workflow that turns an empirical research question into a citation-grade synthesis. Two human-in-the-loop gates (protocol pre-registration, Pass-2 spend) bracket a four-role subagent crew (Scout / Skeptic / Methodologist / Synthesizer). Every claim a synthesis ships must be backed by a row in the research_evidence table with a verbatim quote_span; claims without their quote get cut. v0.2.0 adds the Python reference implementation: a stdlib-urllib scholar adapter (OpenAlex / Semantic Scholar / PubMed / arXiv / Europe PMC / Crossref / Unpaywall) and a python-docx + matplotlib synthesis builder with pluggable upload. Core stays stdlib-only; the docx builder is gated behind the optional `[viz]` extra.",
+    "homepage": "https://github.com/drknowhow/deep-research",
+    "author": {
+      "name": "Dimitri T",
+      "url": "https://yepgent.com"
+    },
+    "license": "Apache-2.0",
+    "tags": [
+      "research",
+      "literature-review",
+      "meta-analysis",
+      "agents",
+      "subagent-fan-out",
+      "no-fabrication",
+      "skill-bundle"
+    ]
+  },
+  "runtime": {
+    "kind": "python-module",
+    "install": {
+      "method": "git",
+      "url": "https://github.com/drknowhow/deep-research",
+      "ref": "v0.2.0",
+      "layout": "skill-bundle"
+    },
+    "entrypoint": {
+      "command": ["python", "-m", "deep_research"]
+    }
+  },
+  "scopes": [
+    {
+      "resource": "net.outbound.scholarly",
+      "actions": ["read"],
+      "rationale": "Calls public scholarly APIs (OpenAlex, Semantic Scholar, PubMed, arXiv, Europe PMC, Crossref, Unpaywall) and fetches open-access PDFs to extract verbatim quote spans."
+    },
+    {
+      "resource": "db.research_tables",
+      "actions": ["read", "write"],
+      "rationale": "Persists the project row, every query (research_searches), and every claim with provenance (research_evidence). These three append-only tables are the audit trail."
+    }
+  ],
+  "actions": [
+    {
+      "name": "start_project",
+      "summary": "Create a new research project row in 'planned' status with the user-supplied question.",
+      "docs": {
+        "goal": "Open a new research investigation.",
+        "inputs_brief": "name (slug), title, question",
+        "outputs_brief": "research_project_id (uuid)",
+        "errors_brief": "schema_missing, db_unreachable",
+        "example": "start_project(name='cholesterol-acm', title='Primary-prevention LDL lowering and all-cause mortality', question='Does pharmacological LDL lowering reduce ACM in strict primary prevention?')"
+      },
+      "invocation": {
+        "kind": "stdin-json"
+      },
+      "input": {
+        "type": "object",
+        "required": ["name", "title", "question"],
+        "properties": {
+          "name": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "title": {"type": "string", "minLength": 1},
+          "question": {"type": "string", "minLength": 1}
+        }
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "required": ["research_project_id", "status"],
+          "properties": {
+            "research_project_id": {"type": "string", "format": "uuid"},
+            "status": {"type": "string", "const": "planned"}
+          }
+        }
+      },
+      "side_effects": "write",
+      "idempotent": false,
+      "scopes_used": ["db.research_tables"],
+      "error_envelope": "standard"
+    },
+    {
+      "name": "submit_protocol",
+      "summary": "Attach the pre-registered protocol JSON to a project and move status to protocol_gated.",
+      "docs": {
+        "goal": "Lock the search/inclusion/effect/analysis plan before any paid searches.",
+        "inputs_brief": "research_project_id, protocol (PICO + queries + inclusion/exclusion + analysis_plan + gate_thresholds)",
+        "outputs_brief": "status='protocol_gated', awaiting_human_approval=true",
+        "errors_brief": "project_not_found, protocol_invalid",
+        "example": "submit_protocol(research_project_id=..., protocol={...})"
+      },
+      "invocation": {"kind": "stdin-json"},
+      "input": {
+        "type": "object",
+        "required": ["research_project_id", "protocol"],
+        "properties": {
+          "research_project_id": {"type": "string", "format": "uuid"},
+          "protocol": {"type": "object"}
+        }
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "required": ["status", "awaiting_human_approval"],
+          "properties": {
+            "status": {"type": "string"},
+            "awaiting_human_approval": {"type": "boolean"}
+          }
+        }
+      },
+      "side_effects": "write",
+      "idempotent": true,
+      "scopes_used": ["db.research_tables"],
+      "error_envelope": "standard"
+    },
+    {
+      "name": "approve_gate",
+      "summary": "Append a human-decision row to gate_log and transition the project to the next phase.",
+      "docs": {
+        "goal": "Record a Gate 1 or Gate 2 decision and advance state.",
+        "inputs_brief": "research_project_id, gate ('protocol'|'pass2'), decision ('approve'|'revise'|'abort'), notes",
+        "outputs_brief": "new status",
+        "errors_brief": "project_not_found, wrong_phase, unknown_gate",
+        "example": "approve_gate(research_project_id=..., gate='protocol', decision='approve')"
+      },
+      "invocation": {"kind": "stdin-json"},
+      "input": {
+        "type": "object",
+        "required": ["research_project_id", "gate", "decision"],
+        "properties": {
+          "research_project_id": {"type": "string", "format": "uuid"},
+          "gate": {"type": "string", "enum": ["protocol", "pass2"]},
+          "decision": {"type": "string", "enum": ["approve", "revise", "abort"]},
+          "notes": {"type": "string"}
+        }
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {"status": {"type": "string"}}
+        }
+      },
+      "side_effects": "write",
+      "idempotent": false,
+      "scopes_used": ["db.research_tables"],
+      "error_envelope": "standard"
+    },
+    {
+      "name": "run_pass1",
+      "summary": "Fan out Scout / Skeptic / Methodologist subagents over the approved protocol. Writes research_searches and research_evidence rows.",
+      "docs": {
+        "goal": "Build the Pass-1 candidate corpus from abstracts.",
+        "inputs_brief": "research_project_id",
+        "outputs_brief": "scout_run, skeptic_run, methodologist_run summaries; corpus rollup",
+        "errors_brief": "wrong_phase, scholarly_api_unreachable, subagent_cap_exceeded",
+        "example": "run_pass1(research_project_id=...)"
+      },
+      "invocation": {"kind": "stdin-json"},
+      "input": {
+        "type": "object",
+        "required": ["research_project_id"],
+        "properties": {
+          "research_project_id": {"type": "string", "format": "uuid"}
+        }
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "required": ["scout", "skeptic", "methodologist", "rollup"],
+          "properties": {
+            "scout": {"type": "object"},
+            "skeptic": {"type": "object"},
+            "methodologist": {"type": "object"},
+            "rollup": {"type": "object"}
+          }
+        }
+      },
+      "side_effects": "write",
+      "idempotent": false,
+      "scopes_used": ["net.outbound.scholarly", "db.research_tables"],
+      "error_envelope": "standard"
+    },
+    {
+      "name": "run_pass2",
+      "summary": "Retrieve full text for the approved candidate set and stage it for the Synthesizer.",
+      "docs": {
+        "goal": "Pull OA PDFs and extract to text.",
+        "inputs_brief": "research_project_id",
+        "outputs_brief": "n_retrieved, n_paywalled, n_unavailable, candidate ids",
+        "errors_brief": "wrong_phase, pdf_extract_failed",
+        "example": "run_pass2(research_project_id=...)"
+      },
+      "invocation": {"kind": "stdin-json"},
+      "input": {
+        "type": "object",
+        "required": ["research_project_id"],
+        "properties": {
+          "research_project_id": {"type": "string", "format": "uuid"}
+        }
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "n_retrieved": {"type": "integer"},
+            "n_paywalled": {"type": "integer"},
+            "n_unavailable": {"type": "integer"}
+          }
+        }
+      },
+      "side_effects": "write",
+      "idempotent": false,
+      "scopes_used": ["net.outbound.scholarly", "db.research_tables"],
+      "error_envelope": "standard"
+    },
+    {
+      "name": "synthesize",
+      "summary": "Run the Synthesizer subagent. Produces a structured document; enforces verbatim-quote-or-cut on every claim.",
+      "docs": {
+        "goal": "Produce the no-fabrication synthesis document.",
+        "inputs_brief": "research_project_id",
+        "outputs_brief": "doc_artifact_id, n_cited, n_supports, n_refutes, n_mixed, complete",
+        "errors_brief": "wrong_phase, fabrication_detected, doc_build_failed",
+        "example": "synthesize(research_project_id=...)"
+      },
+      "invocation": {"kind": "stdin-json"},
+      "input": {
+        "type": "object",
+        "required": ["research_project_id"],
+        "properties": {
+          "research_project_id": {"type": "string", "format": "uuid"}
+        }
+      },
+      "output": {
+        "format": "json",
+        "schema": {
+          "type": "object",
+          "required": ["doc_artifact_id", "n_cited", "complete"],
+          "properties": {
+            "doc_artifact_id": {"type": "string"},
+            "n_cited": {"type": "integer"},
+            "n_supports": {"type": "integer"},
+            "n_refutes": {"type": "integer"},
+            "n_mixed": {"type": "integer"},
+            "complete": {"type": "boolean"}
+          }
+        }
+      },
+      "side_effects": "write",
+      "idempotent": false,
+      "scopes_used": ["db.research_tables"],
+      "error_envelope": "standard"
+    }
+  ],
+  "smoke": {
+    "kind": "shell",
+    "command": ["python", "-c", "import deep_research; print(deep_research.__version__)"],
+    "timeout_seconds": 15,
+    "success": {
+      "exit_code": 0,
+      "stdout_regex": "^0\\."
+    }
+  },
+  "kill_switch": {
+    "kind": "manual",
+    "instructions": "deep_research holds no credentials and persists nothing outside the research_* tables the host application provisions. To revoke: (1) drop or revoke INSERT/UPDATE/DELETE on research_projects, research_searches, research_evidence in your application's database; (2) remove the deep_research module from your agent's runtime PYTHONPATH or skill registry. No vendor account to close."
+  },
+  "support": {
+    "issues_url": "https://github.com/drknowhow/deep-research/issues",
+    "docs_url": "https://github.com/drknowhow/deep-research#readme"
+  }
+}
