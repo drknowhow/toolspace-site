@@ -19,7 +19,7 @@ jobs:
     # than stall the surface; CI failures will show up as deploy-time
     # errors which is acceptable for a static-only site.
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Node
         uses: actions/setup-node@v4

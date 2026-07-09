@@ -12,18 +12,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout toolspace-site
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           path: toolspace-site
 
       - name: Checkout install-manifest-spec
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: drknowhow/install-manifest-spec
           path: install-manifest-spec
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -35,10 +35,10 @@ jobs:
     name: manifests.json structure
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -49,10 +49,10 @@ jobs:
     name: registry pages match a fresh build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -63,10 +63,10 @@ jobs:
     name: changelog page matches a fresh build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -77,10 +77,10 @@ jobs:
     name: federation pipeline unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -97,18 +97,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout toolspace-site
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           path: toolspace-site
 
       - name: Checkout install-manifest-spec
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: drknowhow/install-manifest-spec
           path: install-manifest-spec
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -128,10 +128,10 @@ jobs:
     # scope for this gate. Flip to --strict once examples are cleaned up in
     # a dedicated PR.
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
