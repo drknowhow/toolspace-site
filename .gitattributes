@@ -14,3 +14,8 @@ manifests.json text eol=lf
 netlify.toml text eol=lf
 _headers text eol=lf
 _redirects text eol=lf
+
+# Manifest mirrors are byte-exact copies of upstream responses; any eol
+# normalization would make the checkout differ from the fetched bytes and
+# _refresh_mirrors would see phantom changes on Windows checkouts.
+mirrors/** -text
